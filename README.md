@@ -1,7 +1,7 @@
 # CDAP-Connect
 Purpose-built data connectors for Google CDAP data pipelines
 
-Google CDAP offers a wide range of out-of-the-box data connectors for data integration purposes. The list (far from complete) comprises connectors to 
+Google CDAP provides a wide range of out-of-the-box data connectors for data integration purposes. The list of connectors (far from complete) offer access to cloud solutions and platforms such as 
 
 * Facebook
 * HubSpot
