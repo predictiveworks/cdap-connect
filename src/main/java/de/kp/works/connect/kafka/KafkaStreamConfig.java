@@ -56,9 +56,6 @@ public class KafkaStreamConfig extends StreamConfig {
 	private static final String NAME_MAX_RATE = "maxRatePerPartition";
 	private static final String NAME_INITIAL_PARTITION_OFFSETS = "initialPartitionOffsets";
 	private static final String NAME_TIMEFIELD = "timeField";
-	private static final String NAME_KEYFIELD = "keyField";
-	private static final String NAME_PARTITION_FIELD = "partitionField";
-	private static final String NAME_OFFSET_FIELD = "offsetField";
 	private static final String NAME_FORMAT = "format";
 	private static final String SEPARATOR = ":";
 
@@ -104,24 +101,6 @@ public class KafkaStreamConfig extends StreamConfig {
 	@Nullable
 	private String timeField;
 
-	@Description("Optional name of the field containing the message key. "
-			+ "If this is not set, no key field will be added to output records. "
-			+ "If set, this field must be present in the schema property and must be bytes.")
-	@Nullable
-	private String keyField;
-
-	@Description("Optional name of the field containing the kafka partition that was read from. "
-			+ "If this is not set, no partition field will be added to output records. "
-			+ "If set, this field must be present in the schema property and must be an integer.")
-	@Nullable
-	private String partitionField;
-
-	@Description("Optional name of the field containing the kafka offset that the message was read from. "
-			+ "If this is not set, no offset field will be added to output records. "
-			+ "If set, this field must be present in the schema property and must be a long.")
-	@Nullable
-	private String offsetField;
-
 	@Description("Max number of records to read per second per partition. 0 means there is no limit. Defaults to 1000.")
 	@Nullable
 	private Integer maxRatePerPartition;
@@ -145,21 +124,6 @@ public class KafkaStreamConfig extends StreamConfig {
 		 * is either provided by the user or it is set internal
 		 */
 		return Strings.isNullOrEmpty(timeField) ? "_timestamp" : timeField;
-	}
-
-	@Nullable
-	public String getKeyField() {
-		return Strings.isNullOrEmpty(keyField) ? null : keyField;
-	}
-
-	@Nullable
-	public String getPartitionField() {
-		return Strings.isNullOrEmpty(partitionField) ? null : partitionField;
-	}
-
-	@Nullable
-	public String getOffsetField() {
-		return Strings.isNullOrEmpty(offsetField) ? null : offsetField;
 	}
 
 	@Nullable
@@ -250,11 +214,6 @@ public class KafkaStreamConfig extends StreamConfig {
 
 		if (maxRatePerPartition < 0) {
 			throw new IllegalArgumentException(String.format("Invalid maxRatePerPartition '%d'.", maxRatePerPartition));
-		}
-
-		if (!Strings.isNullOrEmpty(timeField) && !Strings.isNullOrEmpty(keyField) && timeField.equals(keyField)) {
-			throw new IllegalArgumentException(
-					String.format("The timeField and keyField cannot both have the same name (%s).", timeField));
 		}
 
 		KafkaHelpers.validateKerberosSetting(principal, keytabLocation);
