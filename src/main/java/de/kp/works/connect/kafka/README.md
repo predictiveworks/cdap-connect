@@ -1,0 +1,2 @@
+# Apache Kafka Connector
+This data connector is used to read real-time event streams from Apache Kafka. The Kafka connector is limited to events in JSON format, but infers the data schema associated with the events automatically.
