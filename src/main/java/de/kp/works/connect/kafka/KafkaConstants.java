@@ -1,5 +1,4 @@
 package de.kp.works.connect.kafka;
-
 /*
  * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
  *

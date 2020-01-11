@@ -42,9 +42,12 @@
       <docs.dir>docs</docs.dir>
       <widgets.dir>widgets</widgets.dir>
 
+    	  <bouncycastle.version>1.52</bouncycastle.version>
       <cdap.version>5.1.1</cdap.version>    
+      <hadoop.version>2.8.0</hadoop.version>    
       <kafka.version>0.10.0.1</kafka.version>
-      <spark.version>2.1.3</spark.version>
+      <spark.version>2.1.3</spark.version>   
+      <thingsboard.version>2.2.1-SNAPSHOT</thingsboard.version>
 
 	</properties>
 
@@ -97,8 +100,15 @@
 	  <dependency>
     		<groupId>co.cask.cdap</groupId>
     		<artifactId>cdap-api-spark2_2.11</artifactId>
-    		<version>5.1.1</version>
+    		<version>${cdap.version}</version>
 	  </dependency>
+
+      <dependency>
+        <groupId>org.apache.hadoop</groupId>
+        <artifactId>hadoop-common</artifactId>
+        <version>${hadoop.version}</version>
+        <scope>provided</scope>
+      </dependency>
 		
 	  <!-- Spark streaming dependencies -->
   	  <dependency>
@@ -142,6 +152,20 @@
         <groupId>de.kp.works</groupId>
         <artifactId>works-core</artifactId>
         <version>0.3.0</version>
+      </dependency>
+	  
+      <!--  Bouncycastle dependencies -->  
+      <dependency>
+        <groupId>org.bouncycastle</groupId>
+        <artifactId>bcpkix-jdk15on</artifactId>
+        <version>${bouncycastle.version}</version>
+      </dependency>
+    
+      <!-- ThingsBoard Dependencies-->
+      <dependency>
+        <groupId>org.thingsboard.common</groupId>
+        <artifactId>data</artifactId>
+        <version>${thingsboard.version}</version>
       </dependency>
 	  
 	</dependencies>
