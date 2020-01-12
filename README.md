@@ -17,3 +17,4 @@ Google CDAP provides a wide range of out-of-the-box data connectors for data int
 and more.
 
 **CDAP-Connect** complements this list and offers data connectors that either improve ease-of-use of existing ones or appends connectors for business areas such as cyber defense and internet-of-things.
+
