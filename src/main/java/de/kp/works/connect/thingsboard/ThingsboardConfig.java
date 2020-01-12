@@ -36,12 +36,12 @@ public class ThingsboardConfig extends PluginConfig {
 	public static final String USER = "user";
 	public static final String PASSWORD = "password";
 
-	public static final String ASSET_FIELD = "assetField";
+	public static final String ASSET_NAME = "assetName";
 
 	public static final String ASSET_LIMIT = "assetLimit";
 	public static final String ASSET_TYPE = "assetType";
 
-	public static final String COLUMNS = "columns";
+	public static final String ASSET_FEATURES = "assetFeatures";
 
 	@Name(Constants.Reference.REFERENCE_NAME)
 	@Description(Constants.Reference.REFERENCE_NAME_DESCRIPTION)
@@ -67,10 +67,10 @@ public class ThingsboardConfig extends PluginConfig {
 	@Macro
 	public String password;
 
-	@Name(ASSET_FIELD)
-	@Description("The name of the asset.")
+	@Name(ASSET_NAME)
+	@Description("The name of the asset name.")
 	@Macro
-	public String assetField;
+	public String assetName;
 
 	@Name(ASSET_TYPE)
 	@Description("Asset type.")
@@ -78,14 +78,14 @@ public class ThingsboardConfig extends PluginConfig {
 	public String assetType;
 
 	@Name(ASSET_LIMIT)
-	@Description("Asset limit.")
+	@Description("The number of assets of the specified asset type to take into account to decide whether an asset with the provided name already exists.")
 	@Macro
 	public String assetLimit;
 	   
-	@Name(COLUMNS)
-	@Description("A comma-separated list of field names, that describe the sending asset.")
+	@Name(ASSET_FEATURES)
+	@Description("A comma-separated list of field names, that describe the features of the sending asset.")
 	@Macro
-	public String columns;
+	public String assetFeatures;
 
 	public ThingsboardConfig() {
 		
@@ -136,7 +136,7 @@ public class ThingsboardConfig extends PluginConfig {
 		
 		/** ASSET **/
 		
-		if (!Strings.isNullOrEmpty(assetField)) {
+		if (!Strings.isNullOrEmpty(assetName)) {
 			throw new IllegalArgumentException(
 					String.format("[%s] The asset field must not be empty.", this.getClass().getName()));
 		}
@@ -151,12 +151,12 @@ public class ThingsboardConfig extends PluginConfig {
 					String.format("[%s] The asset limit must not be empty.", this.getClass().getName()));
 		}
 		
-		if (!Strings.isNullOrEmpty(columns)) {
+		if (!Strings.isNullOrEmpty(assetFeatures)) {
 			throw new IllegalArgumentException(
 					String.format("[%s] The asset limit must not be empty.", this.getClass().getName()));
 		}
 		
-		if (!Strings.isNullOrEmpty(columns)) {
+		if (!Strings.isNullOrEmpty(assetFeatures)) {
 			throw new IllegalArgumentException(
 					String.format("[%s] The columns that contain asset values must not be empty.", this.getClass().getName()));
 		}

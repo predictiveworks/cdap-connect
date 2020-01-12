@@ -81,7 +81,7 @@ public class ThingsboardClient {
 
 	public void sendTelemetryToAsset(StructuredRecord record) throws Exception {
 
-		String assetName = (String) record.get(this.config.assetField);
+		String assetName = (String) record.get(this.config.assetName);
 		String assetType = this.config.assetType;
 
 		if (StringUtils.isEmpty(assetName)) {
@@ -126,7 +126,7 @@ public class ThingsboardClient {
 
 		List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
 
-		List<String> columns = new ArrayList<String>(Arrays.asList(this.config.columns.split(",")));
+		List<String> columns = new ArrayList<String>(Arrays.asList(this.config.assetFeatures.split(",")));
 		Schema schema = record.getSchema();
 		/*
 		 * This approach is restricted to numeric fields
