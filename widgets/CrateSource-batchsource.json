@@ -1,0 +1,60 @@
+{
+"metadata": {"spec-version": "1.5"},
+
+"display-name": "Crate Source",
+ "configuration-groups": [
+    {
+      "label": "Server Configuration",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "Reference Name",
+          "name": "referenceName"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Crate Host",
+          "name": "host"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Crate Port",
+          "name": "port"
+        }
+      ]
+    },
+    {
+      "label": "Table Configuration",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "Table Name",
+          "name": "tableName"
+        },
+        {
+          "widget-type": "textarea",
+          "label": "Insert Query",
+          "name": "inputQuery",
+          "widget-attributes": {
+            "rows": "10"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Authentication",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "User Name",
+          "name": "user"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Password",
+          "name": "password"
+        }
+      ]
+    }
+  ]
+}

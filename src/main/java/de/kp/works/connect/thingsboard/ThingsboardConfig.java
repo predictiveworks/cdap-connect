@@ -78,7 +78,8 @@ public class ThingsboardConfig extends PluginConfig {
 	public String assetType;
 
 	@Name(ASSET_LIMIT)
-	@Description("The number of assets of the specified asset type to take into account to decide whether an asset with the provided name already exists.")
+	@Description("The number of assets of the specified asset type to take into account to decide whether "
+			+ "an asset with the provided name already exists. Default is 1000.")
 	@Macro
 	public String assetLimit;
 	   
@@ -88,7 +89,7 @@ public class ThingsboardConfig extends PluginConfig {
 	public String assetFeatures;
 
 	public ThingsboardConfig() {
-		
+		assetLimit = "1000";
 	}
 	/**
 	 * This method determines the basic REST endpoint of the Thingsboard server
@@ -153,12 +154,7 @@ public class ThingsboardConfig extends PluginConfig {
 		
 		if (!Strings.isNullOrEmpty(assetFeatures)) {
 			throw new IllegalArgumentException(
-					String.format("[%s] The asset limit must not be empty.", this.getClass().getName()));
-		}
-		
-		if (!Strings.isNullOrEmpty(assetFeatures)) {
-			throw new IllegalArgumentException(
-					String.format("[%s] The columns that contain asset values must not be empty.", this.getClass().getName()));
+					String.format("[%s] The fields that contain asset properties must not be empty.", this.getClass().getName()));
 		}
 		
 	}
