@@ -36,7 +36,7 @@ Either leverage [Google CDAP's](https://cdap.io) built-in user interface or [Pre
 
 >Remainder: Data integration (e.g. connecting Crate Database with readings from ThingsBoard IoT platform) is not an end in itself. It is an important **but first step** towards data analytics to learn what these device & sensor readings tell about a manufacturer's production line or any other technical infrastructure.
 
-**CDAP Spark** is the gateway to the world of IoT analytics, and, it is just another set of Google CDAP plugins.
+**CDAP Spark** is the gateway to the world of data analytics, and, it is just another set of Google CDAP plugins.
 
 Suppose trends within sensor readings have to be detected (e.g. a constant rise in the temperature of a certain machine), then **Works TS**, a module of CDAP Spark for time series analysis, can be used to extract trends in time series data. 
 
