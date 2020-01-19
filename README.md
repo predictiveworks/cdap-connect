@@ -41,3 +41,11 @@ Either leverage [Google CDAP's](https://cdap.io) built-in user interface or [Pre
 Suppose trends within sensor readings have to be detected (e.g. a constant rise in the temperature of a certain machine), then **Works TS**, a module of CDAP Spark for time series analysis, can be used to extract trends in time series data. 
 
 **Works TS** ships with an STL decomposition plugin for CDAP data pipelines. STL is short for *Seasonal and Trend decomposition using Loess* and is a proven algorithm to decompose a time signal into its seasonality, trend and remainder components.
+
+<img src="https://github.com/predictiveworks/cdap-connect/blob/master/images/iot-by-sample.png" width="800" alt="IoT by Sample">
+
+The STL plugin is accompanied by various other time series specific plugins, and trend detection is a first example.
+
+### Endpoint Security & osquery
+
+*to be continued*
