@@ -32,3 +32,9 @@ This setting requires CDAP Connect's [Apache Kafka](https://kafka.apache.org) pl
 
 The Kafka plugin can be complemented by CDAP-Spark's query or rule plugin if intermediate event processing is necessary and finally sends the readings to CDAP Connect's [Crate](https://crate.io) plugin to persist this time series.
 
+Either leverage [Google CDAP's](https://cdap.io) built-in user interface or [Predictive Works](https://predictiveworks.eu) more advanced pipeline interface to *visually* connect and configure these plugins (from Kafka to Crate) and millions of device and sensor readings are made available for subsequent analytics.
+
+>Remainder: Data integration (e.g. connecting Crate Database with readings from ThingsBoard IoT platform)is not an end in itself. It is an important but first steps towards data analytics to learn what these device & sensor readings tell about a manufacturer's production line or any other technical infrastructure.
+
+
+ 
