@@ -106,53 +106,53 @@ public class ThingsboardConfig extends PluginConfig {
 
 	public void validate() {
 		
-		if (!Strings.isNullOrEmpty(referenceName)) {
+		if (Strings.isNullOrEmpty(referenceName)) {
 			throw new IllegalArgumentException(
 					String.format("[%s] The reference name must not be empty.", this.getClass().getName()));
 		}
 		
 		/** CONNECTION **/
 
-		if (!Strings.isNullOrEmpty(host)) {
+		if (Strings.isNullOrEmpty(host)) {
 			throw new IllegalArgumentException(
 					String.format("[%s] The host of the Thingsboard server must not be empty.", this.getClass().getName()));
 		}
 		
-		if (!Strings.isNullOrEmpty(host)) {
+		if (Strings.isNullOrEmpty(host)) {
 			throw new IllegalArgumentException(
 					String.format("[%s] The port of the Thingsboard server must not be empty.", this.getClass().getName()));
 		}
 		
 		/** CREDENTIALS **/
 		
-		if (!Strings.isNullOrEmpty(user)) {
+		if (Strings.isNullOrEmpty(user)) {
 			throw new IllegalArgumentException(
 					String.format("[%s] The user name must not be empty.", this.getClass().getName()));
 		}
 		
-		if (!Strings.isNullOrEmpty(password)) {
+		if (Strings.isNullOrEmpty(password)) {
 			throw new IllegalArgumentException(
 					String.format("[%s] The password must not be empty.", this.getClass().getName()));
 		}
 		
 		/** ASSET **/
 		
-		if (!Strings.isNullOrEmpty(assetName)) {
+		if (Strings.isNullOrEmpty(assetName)) {
 			throw new IllegalArgumentException(
 					String.format("[%s] The asset field must not be empty.", this.getClass().getName()));
 		}
 		
-		if (!Strings.isNullOrEmpty(assetType)) {
+		if (Strings.isNullOrEmpty(assetType)) {
 			throw new IllegalArgumentException(
 					String.format("[%s] The asset type must not be empty.", this.getClass().getName()));
 		}
 		
-		if (!Strings.isNullOrEmpty(assetLimit)) {
+		if (Strings.isNullOrEmpty(assetLimit)) {
 			throw new IllegalArgumentException(
 					String.format("[%s] The asset limit must not be empty.", this.getClass().getName()));
 		}
 		
-		if (!Strings.isNullOrEmpty(assetFeatures)) {
+		if (Strings.isNullOrEmpty(assetFeatures)) {
 			throw new IllegalArgumentException(
 					String.format("[%s] The fields that contain asset properties must not be empty.", this.getClass().getName()));
 		}
