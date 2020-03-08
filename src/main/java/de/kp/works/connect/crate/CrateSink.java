@@ -83,9 +83,6 @@ public class CrateSink extends BatchSink<StructuredRecord, CrateSqlWritable, Nul
 
 	}
 
-	/**
-	 * Batch source initialization is used to load the JDBC driver class
-	 */
 	@Override
 	public void initialize(BatchRuntimeContext context) throws Exception {
 		super.initialize(context);
