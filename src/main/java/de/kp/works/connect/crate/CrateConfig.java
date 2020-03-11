@@ -18,10 +18,6 @@ package de.kp.works.connect.crate;
  * 
  */
 
-import co.cask.cdap.api.annotation.Description;
-import co.cask.cdap.api.annotation.Name;
-import co.cask.hydrator.common.Constants;
-
 import javax.annotation.Nullable;
 
 import com.google.common.base.Strings;
@@ -29,10 +25,6 @@ import com.google.common.base.Strings;
 public class CrateConfig extends ConnectionConfig {
 
 	private static final long serialVersionUID = -406793834902076982L;
-
-	@Name(Constants.Reference.REFERENCE_NAME)
-	@Description(Constants.Reference.REFERENCE_NAME_DESCRIPTION)
-	public String referenceName;
 
 	public CrateConfig(String referenceName, String host, String port, @Nullable String user,
 			@Nullable String password) {

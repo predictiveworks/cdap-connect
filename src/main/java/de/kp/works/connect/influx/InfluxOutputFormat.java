@@ -30,6 +30,8 @@ import org.influxdb.InfluxDB;
 import org.influxdb.InfluxDBFactory;
 import org.influxdb.dto.Point;
 
+import de.kp.works.connect.EmptyOutputCommiter;
+
 public class InfluxOutputFormat<K extends InfluxWritable, V> extends OutputFormat<K, V> {
 
 	@Override
@@ -38,7 +40,7 @@ public class InfluxOutputFormat<K extends InfluxWritable, V> extends OutputForma
 
 	@Override
 	public OutputCommitter getOutputCommitter(TaskAttemptContext context) throws IOException, InterruptedException {
-		return new EmptyOutputCommitter();
+		return new EmptyOutputCommiter();
 	}
 
 	public class InfluxRecordWriter extends RecordWriter<K,V> {
@@ -121,34 +123,6 @@ public class InfluxOutputFormat<K extends InfluxWritable, V> extends OutputForma
 			throw new IOException(String.format("Instantiating RecordWriter for InfluxDB failed: %s", e.getLocalizedMessage()));
 		}
 		
-	}
-	
-	/*
-	 * Empty OutputCommitter to be compliant with Hadoop's OutputFormat 
-	 */
-	public static class EmptyOutputCommitter extends OutputCommitter {
-
-		@Override
-		public void abortTask(TaskAttemptContext context) throws IOException {
-		}
-
-		@Override
-		public void commitTask(TaskAttemptContext context) throws IOException {
-		}
-
-		@Override
-		public boolean needsTaskCommit(TaskAttemptContext context) throws IOException {
-			return false;
-		}
-
-		@Override
-		public void setupJob(JobContext context) throws IOException {
-		}
-
-		@Override
-		public void setupTask(TaskAttemptContext context) throws IOException {
-		}
-
 	}
 
 }

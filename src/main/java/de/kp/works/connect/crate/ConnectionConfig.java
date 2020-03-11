@@ -21,13 +21,13 @@ package de.kp.works.connect.crate;
 import co.cask.cdap.api.annotation.Description;
 import co.cask.cdap.api.annotation.Macro;
 import co.cask.cdap.api.annotation.Name;
-import co.cask.cdap.api.plugin.PluginConfig;
+import de.kp.works.connect.BaseConfig;
 
 import java.util.Locale;
 
 import javax.annotation.Nullable;
 
-public class ConnectionConfig extends PluginConfig {
+public class ConnectionConfig extends BaseConfig {
 	/*
 	 * This is a base configuration class; validation of the
 	 * provided parameters is performed in the derived source
@@ -85,4 +85,7 @@ public class ConnectionConfig extends PluginConfig {
 		return false;
 	}
 
+	public void validate() {
+		super.validate();
+	}
 }

@@ -1,7 +1,4 @@
 package de.kp.works.connect.influx;
-
-import org.influxdb.dto.Point;
-
 /*
  * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -20,6 +17,8 @@ import org.influxdb.dto.Point;
  * @author Stefan Krusche, Dr. Krusche & Partner PartG
  * 
  */
+
+import org.influxdb.dto.Point;
 
 public interface InfluxWritable {
 

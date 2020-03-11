@@ -24,17 +24,11 @@ import com.google.common.base.Strings;
 
 import co.cask.cdap.api.annotation.Description;
 import co.cask.cdap.api.annotation.Macro;
-import co.cask.cdap.api.annotation.Name;
-import co.cask.cdap.api.plugin.PluginConfig;
-import co.cask.hydrator.common.Constants;
+import de.kp.works.connect.BaseConfig;
 
-public class InfluxConfig extends PluginConfig {
+public class InfluxConfig extends BaseConfig {
 
 	private static final long serialVersionUID = -158092676227470967L;
-
-	@Name(Constants.Reference.REFERENCE_NAME)
-	@Description(Constants.Reference.REFERENCE_NAME_DESCRIPTION)
-	public String referenceName;
 
 	/*** CONNECTION PARAMETERS ***/
 	
@@ -91,11 +85,7 @@ public class InfluxConfig extends PluginConfig {
 	}
 	
 	public void validate() {
-		
-		if (Strings.isNullOrEmpty(referenceName)) {
-			throw new IllegalArgumentException(
-					String.format("[%s] The reference name must not be empty.", this.getClass().getName()));
-		}
+		super.validate();
 		
 		if (Strings.isNullOrEmpty(host)) {
 			throw new IllegalArgumentException(
