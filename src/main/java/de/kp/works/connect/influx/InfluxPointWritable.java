@@ -27,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.hadoop.conf.Configurable;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Writable;
+import org.influxdb.InfluxDB;
 import org.influxdb.dto.Point;
 
 import co.cask.cdap.api.data.format.StructuredRecord;
@@ -113,7 +114,7 @@ public class InfluxPointWritable implements Writable, InfluxWritable, Configurab
 
 	}
 
-	public Point record2Point() {
+	public void write(InfluxDB influxDB) {
 
 		Schema schema = record.getSchema();
 
@@ -189,7 +190,8 @@ public class InfluxPointWritable implements Writable, InfluxWritable, Configurab
 
 		}
 
-		return builder.build();
+		Point point = builder.build();
+		influxDB.write(point);
 
 	}
 

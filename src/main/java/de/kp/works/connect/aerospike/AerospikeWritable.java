@@ -1,4 +1,8 @@
-package de.kp.works.connect.influx;
+package de.kp.works.connect.aerospike;
+
+import com.aerospike.client.AerospikeClient;
+import com.aerospike.client.policy.WritePolicy;
+
 /*
  * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -18,10 +22,7 @@ package de.kp.works.connect.influx;
  * 
  */
 
-import org.influxdb.InfluxDB;
+public interface AerospikeWritable {
 
-public interface InfluxWritable {
-
-	public void write(InfluxDB influxDB);
-	
+	public void write(AerospikeClient client, WritePolicy policy, String namespace, String setName);
 }

@@ -42,6 +42,7 @@
       <docs.dir>docs</docs.dir>
       <widgets.dir>widgets</widgets.dir>
 
+	  <aerospike.version>4.4.9</aerospike.version>
     	  <bouncycastle.version>1.52</bouncycastle.version>
       <cdap.version>5.1.1</cdap.version>    
       <hadoop.version>2.8.0</hadoop.version>    
@@ -159,6 +160,13 @@
         <artifactId>works-core</artifactId>
         <version>0.3.0</version>
       </dependency>
+	  
+	  <!-- Aerospike dependencies -->
+	  <dependency>
+	    <groupId>com.aerospike</groupId>
+		<artifactId>aerospike-client</artifactId>
+		<version>${aerospike.version}</version>
+	  </dependency>	  
 	  
       <!--  Bouncycastle dependencies -->  
       

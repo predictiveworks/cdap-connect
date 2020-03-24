@@ -1,4 +1,4 @@
-package de.kp.works.connect.influx;
+package de.kp.works.connect.orientdb;
 /*
  * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -18,10 +18,29 @@ package de.kp.works.connect.influx;
  * 
  */
 
-import org.influxdb.InfluxDB;
+import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
+import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
 
-public interface InfluxWritable {
+public class OrientFactory {
 
-	public void write(InfluxDB influxDB);
+	private OrientGraphFactory db;
+	private OrientGraphNoTx conn;
+	/*
+	 * The url is of the format remote:192.168.163.10 (or any other IP address)
+	 */
+	public OrientFactory(String url, String user, String password) {
+		db = new OrientGraphFactory(url, user, password);
+	}
 	
+	public OrientGraphNoTx getConn() {
+		
+		conn = db.getNoTx();
+		return conn;
+		
+	}
+	
+	public void closeConn() {
+		db.close();
+	}
+
 }

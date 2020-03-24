@@ -1,4 +1,4 @@
-package de.kp.works.connect.influx;
+package de.kp.works.connect.orientdb;
 /*
  * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -26,12 +26,12 @@ import org.apache.hadoop.mapreduce.OutputCommitter;
 import org.apache.hadoop.mapreduce.OutputFormat;
 import org.apache.hadoop.mapreduce.RecordWriter;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
-import org.influxdb.InfluxDB;
-import org.influxdb.InfluxDBFactory;
+
+import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
 
 import de.kp.works.connect.EmptyOutputCommiter;
 
-public class InfluxOutputFormat<K extends InfluxWritable, V> extends OutputFormat<K, V> {
+public class OrientOutputFormat<K extends OrientWritable, V> extends OutputFormat<K, V> {
 
 	@Override
 	public void checkOutputSpecs(JobContext context) throws IOException, InterruptedException {
@@ -42,25 +42,27 @@ public class InfluxOutputFormat<K extends InfluxWritable, V> extends OutputForma
 		return new EmptyOutputCommiter();
 	}
 
-	public class InfluxRecordWriter extends RecordWriter<K,V> {
+	public class OrientRecordWriter extends RecordWriter<K,V> {
 
-		private InfluxDB influxDB;
+		private OrientFactory factory;
+		private OrientGraphNoTx connection;
 		
-		public InfluxRecordWriter(InfluxDB influxDB) {
-			this.influxDB = influxDB;
+		public OrientRecordWriter(OrientFactory factory) {
+			this.factory = factory;
+			this.connection = factory.getConn();
 		}
-
+		
 		@Override
 		public void close(TaskAttemptContext context) throws IOException, InterruptedException {
 			/*
 			 * This method is used to close the connection
-			 * to the InfluxDB database
+			 * to the OrientDB database
 			 */
 			try {
-				influxDB.close();
+				factory.closeConn();
 				
 			} catch (Exception e) {
-				throw new IOException(String.format("Closing connection to InfluxDB failed: %s", e.getLocalizedMessage()));
+				throw new IOException(String.format("Closing connection toOrientDB failed: %s", e.getLocalizedMessage()));
 			}
 			
 		}
@@ -68,7 +70,8 @@ public class InfluxOutputFormat<K extends InfluxWritable, V> extends OutputForma
 		@Override
 		public void write(K key, V value) throws IOException, InterruptedException {
 			try {
-				key.write(influxDB);
+
+				key.write(connection);
 				
 			} catch (Exception e) {
 				throw new IOException(String.format("Writing record to InfluxDB failed: %s", e.getLocalizedMessage()));
@@ -79,45 +82,25 @@ public class InfluxOutputFormat<K extends InfluxWritable, V> extends OutputForma
 	}
 	
 	@Override
-	public RecordWriter<K, V> getRecordWriter(TaskAttemptContext context)
-			throws IOException, InterruptedException {
+	public RecordWriter<K, V> getRecordWriter(TaskAttemptContext context) throws IOException, InterruptedException {
 		/*
 		 * The configuration has been provided by the 
-		 * Influx Output Format Provider
+		 * Orient Output Format Provider
 		 */
 		Configuration conf = context.getConfiguration();
-		/*
-		 * At this stage, there is no check whether the
-		 * InfluxDB connection is valid or not; also no
-		 * checks are performed whether database and
-		 * measurement exist.
-		 * 
-		 * It is expected that this has been checked in a
-		 * preparation phase already (Sink implementation).
-		 * 
-		 * Note, the InfluxDB measurement is sent to the
-		 * InfluxWritable already and is irrelevant here
-		 */
-		String conn = conf.get("influx.conn");
-		String database = conf.get("influx.database");
+
+		String conn = conf.get("orient.conn");
 		
-		String user = conf.get("influx.user");
-		String password = conf.get("influx.password");
+		String user = conf.get("orient.user");
+		String password = conf.get("orient.password");
 
 		try {
-			/*
-			 * The current implementation connects twice to the
-			 * specified InfluxDB: first, when the pipeline stage
-			 * is prepared, and second when the RecordWriter is
-			 * initiated
-			 */
-			InfluxDB influxDB = InfluxDBFactory.connect(conn, user, password);
-			influxDB.setDatabase(database);
-
-			return new InfluxRecordWriter(influxDB);
+			
+			OrientFactory factory = new OrientFactory(conn, user, password);
+			return new OrientRecordWriter(factory);
 			
 		} catch (Exception e) {
-			throw new IOException(String.format("Instantiating RecordWriter for InfluxDB failed: %s", e.getLocalizedMessage()));
+			throw new IOException(String.format("Instantiating RecordWriter for OrientDB failed: %s", e.getLocalizedMessage()));
 		}
 		
 	}

@@ -1,4 +1,4 @@
-package de.kp.works.connect.influx;
+package de.kp.works.connect.orientdb;
 /*
  * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -18,10 +18,10 @@ package de.kp.works.connect.influx;
  * 
  */
 
-import org.influxdb.InfluxDB;
+import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
 
-public interface InfluxWritable {
+public interface OrientWritable {
 
-	public void write(InfluxDB influxDB);
+	public void write(OrientGraphNoTx connection);
 	
 }
