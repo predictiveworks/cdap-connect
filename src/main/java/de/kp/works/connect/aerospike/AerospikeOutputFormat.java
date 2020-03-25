@@ -58,21 +58,21 @@ public class AerospikeOutputFormat<K extends AerospikeWritable, V> extends Outpu
 		Configuration conf = context.getConfiguration();
 		
 		Properties props = new Properties();
-		props.setProperty(AerospikeConnect.AEROSPIKE_HOST, conf.get(AerospikeConnect.AEROSPIKE_HOST));
+		props.setProperty(AerospikeUtil.AEROSPIKE_HOST, conf.get(AerospikeUtil.AEROSPIKE_HOST));
 		
-		props.setProperty(AerospikeConnect.AEROSPIKE_PORT, conf.get(AerospikeConnect.AEROSPIKE_PORT));
-		props.setProperty(AerospikeConnect.AEROSPIKE_TIMEOUT, conf.get(AerospikeConnect.AEROSPIKE_TIMEOUT));
+		props.setProperty(AerospikeUtil.AEROSPIKE_PORT, conf.get(AerospikeUtil.AEROSPIKE_PORT));
+		props.setProperty(AerospikeUtil.AEROSPIKE_TIMEOUT, conf.get(AerospikeUtil.AEROSPIKE_TIMEOUT));
 		
-		props.setProperty(AerospikeConnect.AEROSPIKE_USER, conf.get(AerospikeConnect.AEROSPIKE_USER));
-		props.setProperty(AerospikeConnect.AEROSPIKE_PASSWORD, conf.get(AerospikeConnect.AEROSPIKE_PASSWORD));
+		props.setProperty(AerospikeUtil.AEROSPIKE_USER, conf.get(AerospikeUtil.AEROSPIKE_USER));
+		props.setProperty(AerospikeUtil.AEROSPIKE_PASSWORD, conf.get(AerospikeUtil.AEROSPIKE_PASSWORD));
 		
 		AerospikeClient client = new AerospikeConnect().getClient(props);
 		WritePolicy policy = new WritePolicy(client.writePolicyDefault);
 		
-		Integer expiration = Integer.valueOf(conf.get(AerospikeConnect.AEROSPIKE_EXPIRATION));
+		Integer expiration = Integer.valueOf(conf.get(AerospikeUtil.AEROSPIKE_EXPIRATION));
 		policy.expiration = expiration;
 		
-		String writeMode = conf.get(AerospikeConnect.AEROSPIKE_WRITE);
+		String writeMode = conf.get(AerospikeUtil.AEROSPIKE_WRITE);
 		switch (writeMode) {
 		case "ErrorIfExists": {
 			policy.recordExistsAction = RecordExistsAction.CREATE_ONLY;
@@ -100,8 +100,8 @@ public class AerospikeOutputFormat<K extends AerospikeWritable, V> extends Outpu
 		 * Generation Policy
 		 */
 		AerospikeRecordWriter writer = new AerospikeRecordWriter(client, policy);
-		writer.setNamespace(conf.get(AerospikeConnect.AEROSPIKE_NAMESPACE));
-		writer.setSetName(conf.get(AerospikeConnect.AEROSPIKE_SET));
+		writer.setNamespace(conf.get(AerospikeUtil.AEROSPIKE_NAMESPACE));
+		writer.setSetName(conf.get(AerospikeUtil.AEROSPIKE_SET));
 		
 		return writer;
 	}

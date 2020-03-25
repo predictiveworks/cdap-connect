@@ -27,28 +27,15 @@ import com.aerospike.client.policy.ClientPolicy;
 
 public class AerospikeConnect {
 	
-	public static final String AEROSPIKE_HOST = "aerospike.host";
-	public static final String AEROSPIKE_PORT = "aerospike.port";
-	
-	public static final String AEROSPIKE_NAMESPACE = "aerospike.namespace";
-	public static final String AEROSPIKE_SET = "aerospike.set";
-
-	public static final String AEROSPIKE_EXPIRATION = "aerospike.expiration";
-	
-	public static final String AEROSPIKE_TIMEOUT = "aerospike.timeout";
-	public static final String AEROSPIKE_WRITE = "aerospike.write";
-
-	public static final String AEROSPIKE_USER = "aerospike.user";
-	public static final String AEROSPIKE_PASSWORD = "aerospike.password";
-	
 	private Map<String, AerospikeClient> cache = new HashMap<>();
+
 	
 	public AerospikeClient getClient(Properties config) {
 		
 		synchronized(AerospikeConnect.class) {
 			
-			String host = config.getProperty(AEROSPIKE_HOST);
-			String port = config.getProperty(AEROSPIKE_PORT);
+			String host = config.getProperty(AerospikeUtil.AEROSPIKE_HOST);
+			String port = config.getProperty(AerospikeUtil.AEROSPIKE_PORT);
 			
 			String key = String.format("%s:%s", host, port);
 			if (cache.containsKey(key)) return cache.get(key);
@@ -64,20 +51,20 @@ public class AerospikeConnect {
 	
 	private AerospikeClient createClient(Properties config) {
 		
-		String host = config.getProperty(AEROSPIKE_HOST);
-		Integer port = Integer.valueOf(config.getProperty(AEROSPIKE_PORT));
+		String host = config.getProperty(AerospikeUtil.AEROSPIKE_HOST);
+		Integer port = Integer.valueOf(config.getProperty(AerospikeUtil.AEROSPIKE_PORT));
 		
-		Integer timeout = Integer.valueOf(config.getProperty(AEROSPIKE_TIMEOUT));
+		Integer timeout = Integer.valueOf(config.getProperty(AerospikeUtil.AEROSPIKE_TIMEOUT));
 		
 		/* Define Client Policy */
 		ClientPolicy policy = new ClientPolicy();
 		policy.timeout = timeout;
 		policy.failIfNotConnected = true;
 		
-		String user = config.getProperty(AEROSPIKE_USER);
+		String user = config.getProperty(AerospikeUtil.AEROSPIKE_USER);
 		policy.user = user;
 		
-		String password = config.getProperty(AEROSPIKE_PASSWORD);
+		String password = config.getProperty(AerospikeUtil.AEROSPIKE_PASSWORD);
 		policy.password = password;
 		
 		
