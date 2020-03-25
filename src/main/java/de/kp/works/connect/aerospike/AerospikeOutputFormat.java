@@ -69,7 +69,10 @@ public class AerospikeOutputFormat<K extends AerospikeWritable, V> extends Outpu
 		AerospikeClient client = new AerospikeConnect().getClient(props);
 		WritePolicy policy = new WritePolicy(client.writePolicyDefault);
 		
-		String writeMode =conf.get(AerospikeConnect.AEROSPIKE_WRITE);
+		Integer expiration = Integer.valueOf(conf.get(AerospikeConnect.AEROSPIKE_EXPIRATION));
+		policy.expiration = expiration;
+		
+		String writeMode = conf.get(AerospikeConnect.AEROSPIKE_WRITE);
 		switch (writeMode) {
 		case "ErrorIfExists": {
 			policy.recordExistsAction = RecordExistsAction.CREATE_ONLY;
@@ -92,7 +95,10 @@ public class AerospikeOutputFormat<K extends AerospikeWritable, V> extends Outpu
 			policy.recordExistsAction = RecordExistsAction.UPDATE_ONLY;			
 		}
 		}
-		
+		/*
+		 * NOTE: The current implementation does not support 
+		 * Generation Policy
+		 */
 		AerospikeRecordWriter writer = new AerospikeRecordWriter(client, policy);
 		writer.setNamespace(conf.get(AerospikeConnect.AEROSPIKE_NAMESPACE));
 		writer.setSetName(conf.get(AerospikeConnect.AEROSPIKE_SET));

@@ -33,6 +33,8 @@ public class AerospikeConnect {
 	public static final String AEROSPIKE_NAMESPACE = "aerospike.namespace";
 	public static final String AEROSPIKE_SET = "aerospike.set";
 
+	public static final String AEROSPIKE_EXPIRATION = "aerospike.expiration";
+	
 	public static final String AEROSPIKE_TIMEOUT = "aerospike.timeout";
 	public static final String AEROSPIKE_WRITE = "aerospike.write";
 
