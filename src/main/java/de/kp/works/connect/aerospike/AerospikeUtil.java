@@ -58,17 +58,33 @@ public class AerospikeUtil {
 	
 	}
 
+	public static void setBins(Configuration conf, String bins) {
+		conf.set(AEROSPIKE_BINS, bins);
+	}
+
 	public static String getHost(Configuration conf) {
 		return conf.get(AEROSPIKE_HOST);
+	}
+
+	public static void setHost(Configuration conf, String host) {
+		conf.set(AEROSPIKE_HOST, host);
 	}
 
 	public static String getNamespace(Configuration conf) {
 		return conf.get(AEROSPIKE_NAMESPACE);
 	}
 
+	public static void setNamespace(Configuration conf, String namespace) {
+		conf.set(AEROSPIKE_NAMESPACE, namespace);
+	}
+
 	public static String getNumRangeBin(Configuration conf) {
-		String binname = conf.get(AEROSPIKE_NUMRANGE_BIN);
+		String binname = conf.get(AEROSPIKE_NUMRANGE_BIN, "");
 		return binname;
+	}
+
+	public static void setNumRangeBin(Configuration conf, String binname) {
+		conf.set(AEROSPIKE_NUMRANGE_BIN, binname);
 	}
 
 	public static long getNumRangeBegin(Configuration conf) {
@@ -81,6 +97,10 @@ public class AerospikeUtil {
 
 	}
 
+	public static void setNumRangeBegin(Configuration conf, long begin) {
+		conf.setLong(AEROSPIKE_NUMRANGE_BEGIN, begin);
+	}
+
 	public static long getNumRangeEnd(Configuration conf) {
 
 		long end = conf.getLong(AEROSPIKE_NUMRANGE_END, INVALID_LONG);
@@ -89,6 +109,10 @@ public class AerospikeUtil {
 
 		return end;
 	
+	}
+
+	public static void setNumRangeEnd(Configuration conf, long end) {
+		conf.setLong(AEROSPIKE_NUMRANGE_END, end);
 	}
 	
 	public static String getOperation(Configuration conf) {
@@ -101,12 +125,29 @@ public class AerospikeUtil {
 	
 	}
 
+	public static void setOperation(Configuration conf, String operation) {
+		
+		if (!operation.equals("scan") && !operation.equals("numrange"))
+			throw new UnsupportedOperationException("Input operation must be 'scan' or 'numrange'");
+
+		conf.set(AEROSPIKE_OPERATION, operation);
+	
+	}
+
 	public static int getPort(Configuration conf) {
 		return conf.getInt(AEROSPIKE_PORT, 3000);
 	}
 
+	public static void setPort(Configuration conf, int port) {
+		conf.setInt(AEROSPIKE_PORT, port);
+	}
+
 	public static String getSetName(Configuration conf) {
 		return conf.get(AEROSPIKE_SET);
+	}
+
+	public static void setSetName(Configuration conf, String setName) {
+		conf.set(AEROSPIKE_SET, setName);
 	}
 
 }

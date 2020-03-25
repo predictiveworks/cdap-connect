@@ -97,7 +97,7 @@ public class AerospikeInputFormat extends InputFormat<AerospikeEntry.Key, Aerosp
 			for (int i = 0; i < numNodes; i++) {
 
 				Node node = nodes[i];
-				splits[i] = new AerospikeSplit(node, conf);
+				splits[i] = new AerospikeSplit(node.getName(), conf);
 
 			}
 
@@ -190,9 +190,9 @@ public class AerospikeInputFormat extends InputFormat<AerospikeEntry.Key, Aerosp
 		public class QueryReader extends java.lang.Thread {
 
 			private Configuration conf;
-			private Node node;
+			private String node;
 
-			public QueryReader(Node node, Configuration conf) {
+			public QueryReader(String node, Configuration conf) {
 				this.conf = conf;
 				this.node = node;
 			}
@@ -229,7 +229,7 @@ public class AerospikeInputFormat extends InputFormat<AerospikeEntry.Key, Aerosp
 					/* STEP #3: Evaluate query result and send to queue */
 					
 					QueryPolicy queryPolicy = new QueryPolicy();
-					RecordSet rs = client.queryNode(queryPolicy, stmt, node);
+					RecordSet rs = client.queryNode(queryPolicy, stmt, client.getNode(node));
 					
 					isRunning = true;
 					
@@ -261,9 +261,9 @@ public class AerospikeInputFormat extends InputFormat<AerospikeEntry.Key, Aerosp
 		public class ScanReader extends java.lang.Thread {
 
 			private Configuration conf;
-			private Node node;
+			private String node;
 			
-			public ScanReader(Node node, Configuration conf) {
+			public ScanReader(String node, Configuration conf) {
 				this.conf = conf;
 				this.node = node;
 			}
@@ -292,10 +292,10 @@ public class AerospikeInputFormat extends InputFormat<AerospikeEntry.Key, Aerosp
 					
 					String[] bins = AerospikeUtil.getBins(conf);
 					if (bins != null) {
-						client.scanNode(scanPolicy, node, namespace, setName, cb, bins);
+						client.scanNode(scanPolicy, client.getNode(node), namespace, setName, cb, bins);
 
 					} else
-						client.scanNode(scanPolicy, node, namespace, setName, cb);
+						client.scanNode(scanPolicy, client.getNode(node), namespace, setName, cb);
 
 					isFinished = true;
 
