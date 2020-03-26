@@ -28,7 +28,6 @@ import com.aerospike.client.policy.ClientPolicy;
 public class AerospikeConnect {
 	
 	private Map<String, AerospikeClient> cache = new HashMap<>();
-
 	
 	public AerospikeClient getClient(Properties config) {
 		

@@ -76,12 +76,21 @@ public class AerospikeInputFormat extends InputFormat<AerospikeEntry.Key, Aerosp
 
 		try {
 
-			/* STEP #1: Build Aerospike Client */
-
+			/* STEP #1: Build Aerospike Client 
+			 * 
+			 * - host
+			 * - port
+			 * - user
+			 * - password 
+			 */
 			String host = AerospikeUtil.getHost(conf);
 			int port = AerospikeUtil.getPort(conf);
 
-			AerospikeClient client = AerospikeClientSingleton.getInstance(new ClientPolicy(), host, port);
+			ClientPolicy policy = new ClientPolicy();
+			policy.user = AerospikeUtil.getUser(conf);
+			policy.password = AerospikeUtil.getPassword(conf);
+			
+			AerospikeClient client = AerospikeClientSingleton.getInstance(policy, host, port);
 
 			/* STEP #2: Determine nodes */
 

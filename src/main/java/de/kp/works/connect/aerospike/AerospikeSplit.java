@@ -53,7 +53,21 @@ public class AerospikeSplit extends InputSplit implements org.apache.hadoop.mapr
 	public void readFields(DataInput in) throws IOException {
 		
 		conf = new Configuration();
-		
+		/*
+		 * - operation
+		 * - nodeName
+		 * - host
+		 * - port
+		 * - namespace
+		 * - setName
+		 * - user
+		 * - password
+		 * - binLength
+		 * - bin ...
+		 * - numRangeBin
+		 * - numRangeBegin
+		 * - numRangeEnd
+		 */		
 		String operation = new String(Text.readString(in));
 		AerospikeUtil.setOperation(conf, operation);
 
@@ -70,6 +84,12 @@ public class AerospikeSplit extends InputSplit implements org.apache.hadoop.mapr
 		
 		String setName = new String(Text.readString(in));
 		AerospikeUtil.setSetName(conf, setName);
+		
+		String user = new String(Text.readString(in));
+		AerospikeUtil.setUser(conf, user);
+		
+		String password = new String(Text.readString(in));
+		AerospikeUtil.setPassword(conf, password);
 
 		int binLen = in.readInt();
 		if (binLen == 0)
@@ -107,6 +127,8 @@ public class AerospikeSplit extends InputSplit implements org.apache.hadoop.mapr
 		 * - port
 		 * - namespace
 		 * - setName
+		 * - user
+		 * - password
 		 * - binLength
 		 * - bin ...
 		 * - numRangeBin
@@ -130,6 +152,12 @@ public class AerospikeSplit extends InputSplit implements org.apache.hadoop.mapr
 		
 		String setName = AerospikeUtil.getSetName(conf);
 		Text.writeString(out, setName);
+		
+		String user = AerospikeUtil.getUser(conf);
+		Text.writeString(out, user);
+		
+		String password = AerospikeUtil.getPassword(conf);
+		Text.writeString(out, password);
 
 		String[] bins = AerospikeUtil.getBins(conf);
 		if (bins == null) {

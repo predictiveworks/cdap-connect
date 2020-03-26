@@ -22,21 +22,26 @@ import org.apache.hadoop.conf.Configuration;
 
 public class AerospikeUtil {
 
+	/** COMMON **/
+	
 	public static final String AEROSPIKE_HOST = "aerospike.host";
 	public static final String AEROSPIKE_PORT = "aerospike.port";
 
 	public static final String AEROSPIKE_NAMESPACE = "aerospike.namespace";
 	public static final String AEROSPIKE_SET = "aerospike.set";
 
+	public static final String AEROSPIKE_TIMEOUT = "aerospike.timeout";
+
+	public static final String AEROSPIKE_USER = "aerospike.user";
+	public static final String AEROSPIKE_PASSWORD = "aerospike.password";
+
+	/** READ / WRITE **/
+	
 	public static final String AEROSPIKE_BINS = "aerospike.bins";
 	
 	public static final String AEROSPIKE_EXPIRATION = "aerospike.expiration";
 
-	public static final String AEROSPIKE_TIMEOUT = "aerospike.timeout";
 	public static final String AEROSPIKE_WRITE = "aerospike.write";
-
-	public static final String AEROSPIKE_USER = "aerospike.user";
-	public static final String AEROSPIKE_PASSWORD = "aerospike.password";
 
 	public static final String AEROSPIKE_OPERATION = "aerospike.operation";
 	public static final String DEFAULT_OPERATION = "scan";
@@ -148,6 +153,22 @@ public class AerospikeUtil {
 
 	public static void setSetName(Configuration conf, String setName) {
 		conf.set(AEROSPIKE_SET, setName);
+	}
+
+	public static String getUser(Configuration conf) {
+		return conf.get(AEROSPIKE_USER);
+	}
+
+	public static void setUser(Configuration conf, String user) {
+		conf.set(AEROSPIKE_USER, user);
+	}
+
+	public static String getPassword(Configuration conf) {
+		return conf.get(AEROSPIKE_PASSWORD);
+	}
+
+	public static void setPassword(Configuration conf, String password) {
+		conf.set(AEROSPIKE_PASSWORD, password);
 	}
 
 }
