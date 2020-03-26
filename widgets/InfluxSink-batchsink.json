@@ -1,0 +1,90 @@
+{
+"metadata": {"spec-version": "1.5"},
+
+"display-name": "Influx Sink",
+ "configuration-groups": [
+    {
+      "label": "Server Configuration",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "Reference Name",
+          "name": "referenceName"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Influx Host",
+          "name": "host"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Influx Port",
+          "name": "port"
+        },
+        {
+          "widget-type": "select",
+          "label": "Protocol",
+          "name": "protocol",
+          "widget-attributes": {
+            "values": [
+              "http",
+              "https"
+            ],
+            "default": "https"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Data Configuration",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "Database",
+          "name": "database"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Measurement",
+          "name": "measurement"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Time Field",
+          "name": "timefield"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Retention Interval",
+          "name": "duration",
+          "widget-attributes": {
+            "default": "30d"
+          }
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Replication",
+          "name": "replication",
+          "widget-attributes": {
+            "default": "1"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Authentication",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "User Name",
+          "name": "user"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Password",
+          "name": "password"
+        }
+      ]
+    }
+  ]
+}

@@ -162,5 +162,10 @@ public class AerospikeSource extends BatchSource<AerospikeEntry.Key, AerospikeEn
 		public AerospikeSourceConfig() {
 			super();
 		}
+		
+		public void validate() {
+			super.validate();
+		}
+		
 	}
 }

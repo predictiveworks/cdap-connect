@@ -1,0 +1,88 @@
+{
+"metadata": {"spec-version": "1.5"},
+
+"display-name": "Aerospike Sink",
+ "configuration-groups": [
+    {
+      "label": "Server Configuration",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "Reference Name",
+          "name": "referenceName"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Aerospike Host",
+          "name": "host"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Aerospike Port",
+          "name": "port"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Timeout",
+          "name": "timeout",
+          "widget-attributes": {
+            "default": "1000"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Data Configuration",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "Namespace",
+          "name": "namespace"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Set Name",
+          "name": "setname"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Expiration",
+          "name": "expiration",
+          "widget-attributes": {
+            "default": "0"
+          }
+        },
+        {
+          "widget-type": "select",
+          "label": "Write Option",
+          "name": "writeOption",
+          "widget-attributes": {
+            "values": [
+              "Append",
+              "ErrorIfExists",
+              "Ignore",
+              "Overwrite"
+            ],
+            "default": "Append"
+          }
+        }
+
+      ]
+    },
+    {
+      "label": "Authentication",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "User Name",
+          "name": "user"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Password",
+          "name": "password"
+        }
+      ]
+    }
+  ]
+}
