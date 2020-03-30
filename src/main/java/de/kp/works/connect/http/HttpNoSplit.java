@@ -1,4 +1,4 @@
-package de.kp.works.connect.orientdb;
+package de.kp.works.connect.http;
 /*
  * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -18,10 +18,37 @@ package de.kp.works.connect.orientdb;
  * 
  */
 
-import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
+import org.apache.hadoop.io.Writable;
+import org.apache.hadoop.mapreduce.InputSplit;
 
-public interface OrientWritable {
+import java.io.DataInput;
+import java.io.DataOutput;
 
-	public void write(OrientGraphNoTx connection, String vertexType, String edgeType);
-	
+/**
+ * A no-op split.
+ */
+public class HttpNoSplit extends InputSplit implements Writable {
+  public HttpNoSplit() {
+  }
+
+  @Override
+  public void readFields(DataInput dataInput) {
+	  ;
+  }
+
+  @Override
+  public void write(DataOutput dataOutput) {
+	  ;
+  }
+
+  @Override
+  public long getLength() {
+    return 0;
+  }
+
+  @Override
+  public String[] getLocations() {
+    return new String[0];
+  }
+  
 }

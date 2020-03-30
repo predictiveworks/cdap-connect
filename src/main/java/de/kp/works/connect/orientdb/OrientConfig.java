@@ -18,6 +18,8 @@ package de.kp.works.connect.orientdb;
  * 
  */
 
+import javax.annotation.Nullable;
+
 import com.google.common.base.Strings;
 
 import co.cask.cdap.api.annotation.Description;
@@ -30,13 +32,27 @@ public class OrientConfig extends BaseConfig {
 
 	/*** CONNECTION PARAMETERS ***/
 	
-	@Description("The host (IP address) of the OrientDB.")
+	@Description("The host (e.g. IP address) of the OrientDB.")
 	@Macro
 	public String host;
+	
+	@Description("The port of the OrientDB.")
+	@Macro
+	public Integer port;
 
 	@Description("The name of the OrientDB database.")
 	@Macro
 	public String database;
+
+	@Description("The name of the vertex type if the provided dataset describes vertices.")
+	@Macro
+	@Nullable
+	public String vertexType;
+
+	@Description("The name of the edge type if the provided dataset describes edges.")
+	@Macro
+	@Nullable
+	public String edgeType;
 
 	/*** CREDENTIALS ***/
 	
@@ -47,6 +63,32 @@ public class OrientConfig extends BaseConfig {
 	@Description("Password of the registered user. Required for authentication.")
 	public String password;
 
+	public OrientConfig() {
+		/*
+		 * The initial port of the OrientDB is set to 0,
+		 * which indicates that no port must be considered
+		 */
+		port = 0;
+	}
+	/*
+	 * We support connections to an OrientDB server;
+	 * 
+	 * remote:127.0.0.1:2424/myDatabase
+	 */
+	public String getUrl() {
+		
+		String url = null;
+		if (port == 0) {
+			url = String.format("remote:%s/%s", host, database);
+		} else {
+			url = String.format("remote:%s:%s/%s", host, String.valueOf(port), database);
+			
+		}
+		
+		return url;
+
+	}
+	
 	public void validate() {
 		super.validate();
 		
@@ -57,11 +99,26 @@ public class OrientConfig extends BaseConfig {
 					String.format("[%s] The database host must not be empty.", this.getClass().getName()));
 		}
 		
+		if (port < 0) {
+			throw new IllegalArgumentException(
+					String.format("[%s] The database post must nonnegative.", this.getClass().getName()));
+		}
+		
 		if (Strings.isNullOrEmpty(database)) {
 			throw new IllegalArgumentException(
 					String.format("[%s] The database name must not be empty.", this.getClass().getName()));
 		}
-
+		
+		if (Strings.isNullOrEmpty(vertexType) && Strings.isNullOrEmpty(edgeType)) {
+			throw new IllegalArgumentException(
+					String.format("[%s] Either the vertex or the edge type must not be empty.", this.getClass().getName()));
+		}		
+		
+		if (Strings.isNullOrEmpty(edgeType) == false && Strings.isNullOrEmpty(vertexType)) {
+			throw new IllegalArgumentException(
+					String.format("[%s] The vertex type must not be empty.", this.getClass().getName()));
+		}				
+		
 		/*** CREDENTIALS ***/
 		
 		if (Strings.isNullOrEmpty(user)) {

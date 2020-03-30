@@ -1,4 +1,4 @@
-package de.kp.works.connect.orientdb;
+package de.kp.works.connect.http.core;
 /*
  * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -18,10 +18,6 @@ package de.kp.works.connect.orientdb;
  * 
  */
 
-import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
-
-public interface OrientWritable {
-
-	public void write(OrientGraphNoTx connection, String vertexType, String edgeType);
-	
+public interface EnumWithValue {
+	String getValue();
 }

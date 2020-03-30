@@ -1,4 +1,4 @@
-package de.kp.works.connect.orientdb;
+package de.kp.works.connect.http.core;
 /*
  * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -18,10 +18,27 @@ package de.kp.works.connect.orientdb;
  * 
  */
 
-import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
-
-public interface OrientWritable {
-
-	public void write(OrientGraphNoTx connection, String vertexType, String edgeType);
+/**
+ * An enum which represents a retry policy.
+ */
+public enum RetryPolicy implements EnumWithValue {
 	
+	LINEAR("linear"), 
+	EXPONENTIAL("exponential");
+
+	private final String value;
+
+	RetryPolicy(String value) {
+		this.value = value;
+	}
+
+	@Override
+	public String getValue() {
+		return value;
+	}
+
+	@Override
+	public String toString() {
+		return this.getValue();
+	}
 }

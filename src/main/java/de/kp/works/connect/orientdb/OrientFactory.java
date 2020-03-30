@@ -18,6 +18,12 @@ package de.kp.works.connect.orientdb;
  * 
  */
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.orientechnologies.orient.core.sql.OCommandSQL;
+import com.tinkerpop.blueprints.Edge;
+import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
 
@@ -36,6 +42,95 @@ public class OrientFactory {
 		
 		conn = db.getNoTx();
 		return conn;
+		
+	}
+
+	public void dropVertexType(String vertexTypeName) {
+
+		if (conn == null)
+			conn = getConn();
+
+		if (conn.getVertexType(vertexTypeName) != null) {
+			/*
+			 * Delete all vertices that are described
+			 * by the vertex type first and then delete
+			 * the type
+			 */
+			deleteVertices(vertexTypeName);
+			conn.dropVertexType(vertexTypeName);
+		}
+
+	}
+
+	public void dropEdgeType(String edgeTypeName) {
+
+		if (conn == null)
+			conn = getConn();
+
+		if (conn.getEdgeType(edgeTypeName) != null) {
+			/*
+			 * Delete all edges that are described
+			 * by the edge type first and then delete
+			 * the type
+			 */
+			deleteEdges(edgeTypeName);
+			conn.dropEdgeType(edgeTypeName);
+
+		}
+	}
+
+	private void deleteVertices(String vertexTypeName) {
+
+		String sql = String.format("select * from %s", vertexTypeName);
+		OCommandSQL sqlCmd = new OCommandSQL(sql);
+
+		@SuppressWarnings("unchecked")
+		Iterable<Vertex> result = (Iterable<Vertex>) conn.command(sqlCmd).execute();
+
+		List<Vertex> vertices = new ArrayList<>();
+		result.forEach(vertices::add);
+
+		for (Vertex vertex : vertices) {
+			conn.removeVertex(vertex);
+		}
+
+	}
+	
+	private void deleteEdges(String edgeTypeName) {
+
+		String sql = String.format("select * from %s", edgeTypeName);
+		OCommandSQL sqlCmd = new OCommandSQL(sql);
+
+		@SuppressWarnings("unchecked")
+		Iterable<Edge> result = (Iterable<Edge>) conn.command(sqlCmd).execute();
+
+		List<Edge> edges = new ArrayList<>();
+		result.forEach(edges::add);
+
+		for (Edge edge : edges) {
+			conn.removeEdge(edge);
+		}
+	}
+	
+	/*
+	 * Check whether the vertex type already exists 
+	 * in the OrientDB
+	 */
+	public Boolean doesVertexTypeExist(String vertexTypeName) {
+
+		Boolean exists = conn.getVertexType(vertexTypeName) != null;
+		return exists;
+
+	}
+	
+	/*
+	 * Check whether the edge type already exists
+	 * in the OrientDB
+	 */
+	public Boolean doesEdgeTypeExist(String edgeTypeName) {
+		
+		boolean exists = conn.getEdgeType(edgeTypeName) != null;
+		return exists;
 		
 	}
 	

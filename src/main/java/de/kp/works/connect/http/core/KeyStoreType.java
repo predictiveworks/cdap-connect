@@ -1,4 +1,4 @@
-package de.kp.works.connect.orientdb;
+package de.kp.works.connect.http.core;
 /*
  * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -18,10 +18,30 @@ package de.kp.works.connect.orientdb;
  * 
  */
 
-import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
+/**
+ * An enum which represent a type of keystore or truststore.
+ */
+public enum KeyStoreType implements EnumWithValue {
 
-public interface OrientWritable {
+	JKS("Java KeyStore (JKS)"),
 
-	public void write(OrientGraphNoTx connection, String vertexType, String edgeType);
-	
+	JCEKS("Java Cryptography Extension KeyStore (JCEKS)"),
+
+	PKCS12("PKCS #12");
+
+	private final String value;
+
+	KeyStoreType(String value) {
+		this.value = value;
+	}
+
+	@Override
+	public String getValue() {
+		return value;
+	}
+
+	@Override
+	public String toString() {
+		return this.getValue();
+	}
 }

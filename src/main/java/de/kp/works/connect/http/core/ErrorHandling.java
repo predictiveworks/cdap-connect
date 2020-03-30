@@ -1,4 +1,4 @@
-package de.kp.works.connect.orientdb;
+package de.kp.works.connect.http.core;
 /*
  * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -18,10 +18,33 @@ package de.kp.works.connect.orientdb;
  * 
  */
 
-import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
+/**
+ * Indicates error handling strategy which will be used during reading HTTP
+ * records.
+ */
+public enum ErrorHandling implements EnumWithValue {
 
-public interface OrientWritable {
+	SUCCESS("success"),
 
-	public void write(OrientGraphNoTx connection, String vertexType, String edgeType);
-	
+	SKIP("skipOnError"),
+
+	SEND("sendToError"),
+
+	STOP("stopOnError");
+
+	private final String value;
+
+	ErrorHandling(String value) {
+		this.value = value;
+	}
+
+	@Override
+	public String getValue() {
+		return value;
+	}
+
+	@Override
+	public String toString() {
+		return this.getValue();
+	}
 }

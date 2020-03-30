@@ -28,7 +28,6 @@ import org.apache.hadoop.mapreduce.RecordWriter;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
 
 import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
-
 import de.kp.works.connect.EmptyOutputCommiter;
 
 public class OrientOutputFormat<K extends OrientWritable, V> extends OutputFormat<K, V> {
@@ -42,67 +41,187 @@ public class OrientOutputFormat<K extends OrientWritable, V> extends OutputForma
 		return new EmptyOutputCommiter();
 	}
 
-	public class OrientRecordWriter extends RecordWriter<K,V> {
+	public class OrientRecordWriter extends RecordWriter<K, V> {
 
-		private OrientFactory factory;
-		private OrientGraphNoTx connection;
+		private OrientFactory factory = null;
+		private OrientGraphNoTx connection = null;
+
+		private String vertexType = null;
+		private String edgeType = null;
 		
 		public OrientRecordWriter(OrientFactory factory) {
+
 			this.factory = factory;
-			this.connection = factory.getConn();
+			if (this.factory != null)
+				this.connection = factory.getConn();
+		}
+
+		public void setEdgeType(String edgeType) {
+			this.edgeType = edgeType;
+		}
+
+		public void setVertexType(String vertexType) {
+			this.vertexType = vertexType;
 		}
 		
 		@Override
 		public void close(TaskAttemptContext context) throws IOException, InterruptedException {
 			/*
-			 * This method is used to close the connection
+			 * This method is used to close the connection 
 			 * to the OrientDB database
 			 */
 			try {
-				factory.closeConn();
-				
+				if (factory != null) factory.closeConn();
+
 			} catch (Exception e) {
-				throw new IOException(String.format("Closing connection toOrientDB failed: %s", e.getLocalizedMessage()));
+				throw new IOException(
+						String.format("Closing connection to OrientDB failed: %s", e.getLocalizedMessage()));
 			}
-			
+
 		}
 
 		@Override
 		public void write(K key, V value) throws IOException, InterruptedException {
 			try {
 
-				key.write(connection);
-				
+				key.write(connection, vertexType, edgeType);
+
 			} catch (Exception e) {
-				throw new IOException(String.format("Writing record to InfluxDB failed: %s", e.getLocalizedMessage()));
+				throw new IOException(String.format("Writing record to OrientDB failed: %s", e.getLocalizedMessage()));
 			}
-			
+
 		}
-		
+
 	}
-	
+
 	@Override
 	public RecordWriter<K, V> getRecordWriter(TaskAttemptContext context) throws IOException, InterruptedException {
 		/*
-		 * The configuration has been provided by the 
-		 * Orient Output Format Provider
+		 * The configuration has been provided by the Orient Output Format Provider
 		 */
 		Configuration conf = context.getConfiguration();
 
-		String conn = conf.get("orient.conn");
-		
-		String user = conf.get("orient.user");
-		String password = conf.get("orient.password");
-
 		try {
+			/*
+			 * Extract the connection specific parameters to initiate the OrientDB factory
+			 */
+			String url = conf.get(OrientUtil.ORIENT_URL);
+
+			String user = conf.get(OrientUtil.ORIENT_USER);
+			String password = conf.get(OrientUtil.ORIENT_PASSWORD);
+
+			OrientFactory factory = new OrientFactory(url, user, password);
+			/*
+			 * Next we have to check whether this writer persists vertices or edges; note,
+			 * previous checks have validated that one of these write modes is specified
+			 */
+			String edgeType = conf.get(OrientUtil.ORIENT_EDGE_TYPE);
+			String vertexType = conf.get(OrientUtil.ORIENT_VERTEX_TYPE);
+
+			String writeOption = conf.get(OrientUtil.ORIENT_WRITE);
 			
-			OrientFactory factory = new OrientFactory(conn, user, password);
-			return new OrientRecordWriter(factory);
+			Boolean doSave = true;
+			/*
+			 * The parameters edge type and vertex type have to be provided as follows:
+			 * 
+			 * a) the dataset contains vertices only
+			 * 
+			 * - edgeType    = null
+			 * - vertexType != null (has be checked earlier)
+			 * 
+			 * b) the dataset contains edges only
+			 * 
+			 * - edgeType   != null
+			 * - vertexType != null
+			 * 
+			 */
+			if (edgeType == null) {
+				/*
+				 * The provided structured data records describe vertices
+				 */
+				switch (writeOption) {
+				case "Append": {
+					break;
+				}
+				case "Overwrite": {
+					/*
+					 * We drop all vertices that refer to the provided vertex 
+					 * type and finally also remove the type
+					 */
+					factory.dropVertexType(vertexType);
+					break;
+				}
+				case "ErrorIfExists": {
+
+					if (factory.doesVertexTypeExist(vertexType))
+						throw new IllegalArgumentException(
+								String.format("Vertex type '%s' already exists.", vertexType));
+
+					break;
+				}
+				case "Ignore": {
+					if (factory.doesVertexTypeExist(vertexType))
+						doSave = false;
+
+					break;
+				}
+				default:
+					;
+				}
+
+			} else {
+				/*
+				 * The provided structured data records describe edges
+				 */				
+				switch (writeOption) {
+				case "Append": {
+					break;
+				}
+				case "Overwrite": {
+					/*
+					 * We drop all edges that refer to the provided edge 
+					 * type and finally also remove the type
+					 */
+					factory.dropEdgeType(edgeType);
+					break;
+
+				}
+				case "ErrorIfExists": {
+					if (factory.doesEdgeTypeExist(edgeType))
+						throw new IllegalArgumentException(String.format("Edge type '%s' already exists.", edgeType));
+
+					break;
+				}
+				case "Ignore": {
+					if (factory.doesEdgeTypeExist(edgeType))
+						doSave = false;
+					
+					break;
+				}
+				default:
+					;
+				}
+				
+			} 
 			
+			if (doSave) {
+				
+				OrientRecordWriter writer = new OrientRecordWriter(factory);
+				
+				writer.setEdgeType(edgeType);
+				writer.setVertexType(vertexType);
+				
+				return writer;
+
+			} else {
+				return new OrientRecordWriter(null);
+			}
+
 		} catch (Exception e) {
-			throw new IOException(String.format("Instantiating RecordWriter for OrientDB failed: %s", e.getLocalizedMessage()));
+			throw new IOException(
+					String.format("Instantiating RecordWriter for OrientDB failed: %s", e.getLocalizedMessage()));
 		}
-		
+
 	}
 
 }
