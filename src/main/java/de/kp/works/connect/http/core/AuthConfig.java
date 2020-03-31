@@ -59,8 +59,15 @@ public class AuthConfig extends ConnConfig {
 	public static final String PROPERTY_TRUSTSTORE_TYPE = "trustStoreType";
 	public static final String PROPERTY_TRUSTSTORE_PASSWORD = "trustStorePassword";
 	public static final String PROPERTY_TRUSTSTORE_KEY_ALGORITHM = "trustStoreKeyAlgorithm";
+
+	public static final String PROPERTY_CIPHER_SUITES = "cipherSuites";
 	
-	/** BASIC AUTHENTICATION **/
+	/** BASIC AUTHENTICATION 
+	 * 
+	 * The Http Client performs basic authentication for use cases where 
+	 * user name and password are provided. Then no other authentication
+	 * method is used
+	 */
 	
 	@Nullable
 	@Name(PROPERTY_USERNAME)
@@ -188,6 +195,13 @@ public class AuthConfig extends ConnConfig {
 	@Description("An algorithm used for truststore.")
 	@Macro
 	public String trustStoreKeyAlgorithm;
+
+	@Nullable
+	@Name(PROPERTY_CIPHER_SUITES)
+	@Description("Cipher suites which are allowed for connection. "
+			+ "Colons, commas or spaces are also acceptable separators.")
+	@Macro
+	protected String cipherSuites;
 	
 	public AuthConfig() {
 		super();
@@ -289,6 +303,11 @@ public class AuthConfig extends ConnConfig {
 	@Nullable
 	public String getTrustStoreKeyAlgorithm() {
 		return trustStoreKeyAlgorithm;
+	}
+
+	@Nullable
+	public String getCipherSuites() {
+		return cipherSuites;
 	}
 	
 	public void validate() {

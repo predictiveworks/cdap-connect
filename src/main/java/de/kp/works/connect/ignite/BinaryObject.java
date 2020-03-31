@@ -1,4 +1,4 @@
-package de.kp.works.connect.http;
+package de.kp.works.connect.ignite;
 /*
  * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -18,36 +18,24 @@ package de.kp.works.connect.http;
  * 
  */
 
-import org.apache.hadoop.mapreduce.InputSplit;
-
 import java.io.DataInput;
 import java.io.DataOutput;
+import java.io.IOException;
 
-/**
- * A no-op split.
- */
-public class HttpNoSplit extends InputSplit implements org.apache.hadoop.mapred.InputSplit {
-  public HttpNoSplit() {
-  }
+import org.apache.hadoop.io.Writable;
 
-  @Override
-  public void readFields(DataInput dataInput) {
-	  ;
-  }
+public class BinaryObject implements Writable {
 
-  @Override
-  public void write(DataOutput dataOutput) {
-	  ;
-  }
+	@Override
+	public void readFields(DataInput arg0) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
 
-  @Override
-  public long getLength() {
-    return 0;
-  }
+	@Override
+	public void write(DataOutput arg0) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
 
-  @Override
-  public String[] getLocations() {
-    return new String[0];
-  }
-  
 }

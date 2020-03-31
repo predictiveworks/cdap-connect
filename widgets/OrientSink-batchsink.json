@@ -1,0 +1,76 @@
+{
+"metadata": {"spec-version": "1.5"},
+
+"display-name": "OrientDB Sink",
+ "configuration-groups": [
+    {
+      "label": "Server Configuration",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "Reference Name",
+          "name": "referenceName"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "OrientDB Host",
+          "name": "host"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "OrientDB Port",
+          "name": "port"
+        }
+      ]
+    },
+    {
+      "label": "Data Configuration",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "Database",
+          "name": "database"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Vertex Type",
+          "name": "vertexType"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Edge Type",
+          "name": "edgeType"
+        },
+        {
+          "widget-type": "select",
+          "label": "Write Option",
+          "name": "writeOption",
+          "widget-attributes": {
+            "values": [
+              "Append",
+              "ErrorIfExists",
+              "Ignore",
+              "Overwrite"
+            ],
+            "default": "Append"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Authentication",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "User Name",
+          "name": "user"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Password",
+          "name": "password"
+        }
+      ]
+    }
+  ]
+}
