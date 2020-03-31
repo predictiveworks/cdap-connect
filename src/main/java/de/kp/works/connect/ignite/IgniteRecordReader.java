@@ -18,7 +18,10 @@ package de.kp.works.connect.ignite;
  * 
  */
 
+import javax.cache.Cache;
+
 import java.io.IOException;
+import java.util.Iterator;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.NullWritable;
@@ -26,11 +29,19 @@ import org.apache.hadoop.mapred.Reporter;
 import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.RecordReader;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
+import org.apache.ignite.Ignite;
+import org.apache.ignite.IgniteCache;
+import org.apache.ignite.cache.query.ScanQuery;
 
 public class IgniteRecordReader extends RecordReader<NullWritable, BinaryObject>
 		implements org.apache.hadoop.mapred.RecordReader<NullWritable, BinaryObject> {
 
+	private Iterator<Cache.Entry<String,org.apache.ignite.binary.BinaryObject>> iterator;
+	private int count = 0;
 
+	private NullWritable key;
+	private BinaryObject value;
+	
 	/* Default constructor used by the NEW API */
 	public IgniteRecordReader() {
 	}
@@ -38,70 +49,97 @@ public class IgniteRecordReader extends RecordReader<NullWritable, BinaryObject>
 	/* Constructor used by the OLD API */
 	public IgniteRecordReader(org.apache.hadoop.mapred.InputSplit split, Configuration job, Reporter reporter) {
 		reporter.setStatus(split.toString());
-		init((IgniteSplit) split);
+		init((IgniteSplit) split, job);
 	}
 	
 	@Override
 	public boolean next(NullWritable key, BinaryObject value) throws IOException {
-		// TODO Auto-generated method stub
-		return false;
+		
+		if (!iterator.hasNext()) {
+			return false;
+		}
+		
+		Cache.Entry<String,org.apache.ignite.binary.BinaryObject> entry = iterator.next();
+		value = new BinaryObject(entry.getValue());
+		
+		return true;
+		
 	}
 
 	@Override
 	public NullWritable createKey() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public BinaryObject createValue() {
-		// TODO Auto-generated method stub
-		return null;
+		return new BinaryObject();
 	}
 
 	@Override
 	public long getPos() throws IOException {
-		// TODO Auto-generated method stub
-		return 0;
+		return count;
 	}
 
 	@Override
 	public void initialize(InputSplit split, TaskAttemptContext context) throws IOException, InterruptedException {
-		init((IgniteSplit) split);
+
+		Configuration conf = context.getConfiguration();		
+		init((IgniteSplit) split, conf);
+		
 	}
 
 	@Override
 	public boolean nextKeyValue() throws IOException, InterruptedException {
-		// TODO Auto-generated method stub
-		return false;
+		/* 
+		 * Create dummy key and value
+		 * and delegate to old API
+		 */
+		key = createKey();
+		value = createValue();
+		
+		return next(key, value);
+
 	}
 
 	@Override
 	public NullWritable getCurrentKey() throws IOException, InterruptedException {
-		// TODO Auto-generated method stub
-		return null;
+		return key;
 	}
 
 	@Override
 	public BinaryObject getCurrentValue() throws IOException, InterruptedException {
-		// TODO Auto-generated method stub
-		return null;
+		return value;
 	}
 
 	@Override
 	public float getProgress() {
-		// TODO Auto-generated method stub
+		/* This is not applicable */
 		return 0;
 	}
 
 	@Override
 	public void close() throws IOException {
-		// TODO Auto-generated method stub
-
+		/* Do nothing */
+		;
 	}
 
-	private void init(IgniteSplit split) {
-		// TODO
+	private void init(IgniteSplit split, Configuration conf) {
+		
+		/*
+		 * STEP #1: Retrieve cache; note, the current implementation
+		 * is restricted to IgniteCache<String, BinaryObject>
+		 */
+		String cacheName = IgniteUtil.getCacheName(conf);
+		
+		Ignite ignite = IgniteContext.getInstance().getIgnite();
+		IgniteCache<String, org.apache.ignite.binary.BinaryObject> cache = ignite.cache(cacheName).withKeepBinary();
+		/*
+		 * STEP #2: Build ScanQuery
+		 */
+		ScanQuery<String, org.apache.ignite.binary.BinaryObject> scan = new ScanQuery<>(split.getIndex());
+		iterator = cache.query(scan).iterator();
+
 	}
 
 }

@@ -83,7 +83,7 @@ public class IgniteInputFormat extends InputFormat<NullWritable, BinaryObject>
 
 			splits = new IgniteSplit[partitions];
 			for (int i = 0; i < partitions; i++) {
-				splits[i] = new IgniteSplit();
+				splits[i] = new IgniteSplit(cacheName, i);
 			}
 			
 		} catch (Exception e) {

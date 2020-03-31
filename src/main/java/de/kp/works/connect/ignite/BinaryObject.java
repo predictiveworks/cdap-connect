@@ -26,16 +26,29 @@ import org.apache.hadoop.io.Writable;
 
 public class BinaryObject implements Writable {
 
+	private org.apache.ignite.binary.BinaryObject object;
+	
+	public BinaryObject() {
+		
+	}
+	
+	public BinaryObject(org.apache.ignite.binary.BinaryObject object) {
+		this.object = object;
+	}
+	
+	public Object getField(String fieldName) {
+		return this.object.field(fieldName);
+	}
+	
 	@Override
-	public void readFields(DataInput arg0) throws IOException {
-		// TODO Auto-generated method stub
+	public void readFields(DataInput in) throws IOException {
+		throw new IOException("Method 'readField' is not supported.");
 		
 	}
 
 	@Override
-	public void write(DataOutput arg0) throws IOException {
-		// TODO Auto-generated method stub
-		
+	public void write(DataOutput out) throws IOException {
+		throw new IOException("Method 'write' is not supported.");
 	}
 
 }

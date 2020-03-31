@@ -21,33 +21,89 @@ package de.kp.works.connect.ignite;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.InputSplit;
+import org.apache.ignite.Ignite;
+import org.apache.ignite.cluster.ClusterNode;
+import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi;
+import org.apache.ignite.spi.discovery.tcp.internal.TcpDiscoveryNode;
 
 public class IgniteSplit extends InputSplit implements org.apache.hadoop.mapred.InputSplit {
 
+	private String name;
+	private int index;
+	
+	public IgniteSplit(String name, int index) {
+		this.name = name;
+		this.index = index;
+	}
+	
+	public int getIndex() {
+		return index;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
 	@Override
-	public void readFields(DataInput arg0) throws IOException {
-		// TODO Auto-generated method stub
+	public void readFields(DataInput in) throws IOException {
+		
+		name = new String(Text.readString(in));
+		index = in.readInt();
 		
 	}
 
 	@Override
-	public void write(DataOutput arg0) throws IOException {
-		// TODO Auto-generated method stub
+	public void write(DataOutput out) throws IOException {
+		
+		Text.writeString(out, name);
+		out.writeInt(index);
 		
 	}
 
 	@Override
 	public long getLength() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 1;
 	}
 
 	@Override
 	public String[] getLocations() {
-		// TODO Auto-generated method stub
-		return null;
+
+		List<String> hostNames = new ArrayList<>();
+		
+		Ignite ignite = IgniteContext.getInstance().getIgnite();
+		if (ignite.configuration().getDiscoverySpi() instanceof TcpDiscoverySpi) {
+			
+			Collection<ClusterNode> nodes = ignite.affinity(name).mapPartitionToPrimaryAndBackups(index);
+			for (ClusterNode node: nodes) {
+				
+				Collection<InetSocketAddress> socketAddresses = ((TcpDiscoveryNode) node).socketAddresses();
+				for (InetSocketAddress socketAddress: socketAddresses) {
+					hostNames.add(socketAddress.getHostName());
+				}
+				
+			}
+
+        } else {
+        	
+			Collection<ClusterNode> nodes = ignite.affinity(name).mapPartitionToPrimaryAndBackups(index);
+			for (ClusterNode node: nodes) {
+				hostNames.addAll(node.hostNames());
+			}
+        	
+        }
+
+		String[] locations = new String[hostNames.size()];
+        locations = hostNames.toArray(locations);
+		
+		return locations;
+
 	}
 
 }
