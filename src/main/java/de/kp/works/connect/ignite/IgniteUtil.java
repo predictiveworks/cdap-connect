@@ -22,7 +22,14 @@ import org.apache.hadoop.conf.Configuration;
 
 public class IgniteUtil {
 
+	public static final String IGNITE_CACHE_NAME = "ignite.cache";
+	
 	public static String getCacheName(Configuration conf) {
-		return null;
+		return conf.get(IGNITE_CACHE_NAME);
 	}
+
+	public static void setCacheName(Configuration conf, String cacheName) {
+		conf.set(IGNITE_CACHE_NAME, cacheName);
+	}
+	
 }

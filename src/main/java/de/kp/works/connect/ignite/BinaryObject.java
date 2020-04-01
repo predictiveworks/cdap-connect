@@ -40,6 +40,10 @@ public class BinaryObject implements Writable {
 		return this.object.field(fieldName);
 	}
 	
+	public org.apache.ignite.binary.BinaryObject getObject() {
+		return object;
+	}
+	
 	@Override
 	public void readFields(DataInput in) throws IOException {
 		throw new IOException("Method 'readField' is not supported.");
