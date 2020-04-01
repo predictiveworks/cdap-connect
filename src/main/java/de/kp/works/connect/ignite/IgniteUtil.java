@@ -23,6 +23,8 @@ import org.apache.hadoop.conf.Configuration;
 public class IgniteUtil {
 
 	public static final String IGNITE_CACHE_NAME = "ignite.cache";
+	public static final String IGNITE_FIELDS = "ignite.fields";
+	public static final String IGNITE_PARTITIONS = "ignite.partitionS";
 	
 	public static String getCacheName(Configuration conf) {
 		return conf.get(IGNITE_CACHE_NAME);
@@ -30,6 +32,29 @@ public class IgniteUtil {
 
 	public static void setCacheName(Configuration conf, String cacheName) {
 		conf.set(IGNITE_CACHE_NAME, cacheName);
+	}
+	
+	public static String[] getFields(Configuration conf) {
+
+		String fields = conf.get(IGNITE_FIELDS);
+		if (fields == null || fields.equals(""))
+			return null;
+
+		else
+			return fields.split(",");
+	
+	}
+
+	public static void setFields(Configuration conf, String fields) {
+		conf.set(IGNITE_FIELDS, fields);
+	}
+	
+	public static int getPartitions(Configuration conf) {
+		return Integer.valueOf(conf.get(IGNITE_PARTITIONS));
+	}
+
+	public static void setPartitions(Configuration conf, int partitions) {
+		conf.set(IGNITE_PARTITIONS, String.valueOf(partitions));
 	}
 	
 }

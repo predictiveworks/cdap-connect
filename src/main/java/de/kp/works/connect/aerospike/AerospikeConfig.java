@@ -108,6 +108,11 @@ public class AerospikeConfig extends BaseConfig {
 					String.format("[%s] The database host must not be empty.", this.getClass().getName()));
 		}
 
+		if (port < 1) {
+			throw new IllegalArgumentException(
+					String.format("[%s] The database port must be positive.", this.getClass().getName()));
+		}
+
 		if (Strings.isNullOrEmpty(namespace)) {
 			throw new IllegalArgumentException(
 					String.format("[%s] The namespace name must not be empty.", this.getClass().getName()));

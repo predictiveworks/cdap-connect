@@ -26,12 +26,13 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.cache.Cache;
 
-import org.apache.ignite.Ignite;
-import org.apache.ignite.IgniteCache;
 import org.apache.ignite.cache.query.ScanQuery;
+import org.apache.ignite.client.ClientCache;
+import org.apache.ignite.client.IgniteClient;
 
 import com.google.common.base.Strings;
 
@@ -45,6 +46,14 @@ public class IgniteConfig extends BaseConfig {
 
 	private static final long serialVersionUID = 2258065855745759770L;
 
+	@Description("The host of the Apache Ignite cluster.")
+	@Macro
+	public String host;
+
+	@Description("The port of the Apache Ignite cluster.")
+	@Macro
+	public Integer port;
+
 	@Description("The name of the Apache Ignite cache used to organize data.")
 	@Macro
 	public String cacheName;
@@ -52,9 +61,32 @@ public class IgniteConfig extends BaseConfig {
 	@Description("The comma-separated list of field names that are used to extract from the specified Ignite cache.")
 	@Macro
 	public String fieldNames;
+
+	@Description("The number of partitions to organize the data of the specified Ignite cache. Default is 1.")
+	@Macro
+	public int partitions;
 	
+	public IgniteConfig() {
+		partitions = 1;
+	}
+	
+	public Properties getConfig() {
+		// TODO
+		return null;
+	}
+		
 	public void validate() {
 		super.validate();
+
+		if (Strings.isNullOrEmpty(host)) {
+			throw new IllegalArgumentException(
+					String.format("[%s] The cluster host must not be empty.", this.getClass().getName()));
+		}
+
+		if (port < 1) {
+			throw new IllegalArgumentException(
+					String.format("[%s] The cluster port must be positive.", this.getClass().getName()));
+		}
 
 		if (Strings.isNullOrEmpty(cacheName)) {
 			throw new IllegalArgumentException(
@@ -65,9 +97,29 @@ public class IgniteConfig extends BaseConfig {
 			throw new IllegalArgumentException(
 					String.format("[%s] The cache field names must not be empty.", this.getClass().getName()));
 		}
+
+		if (partitions < 1) {
+			throw new IllegalArgumentException(
+					String.format("[%s] The number of partitions must be positive.", this.getClass().getName()));
+		}
 		
 	}
 
+	private Map<String, Integer> getIndices() {
+
+		Map<String, Integer> fieldIndices = new HashMap<>();
+		
+		String[] tokens = fieldNames.split(",");
+		
+		for (int i= 0; i < tokens.length; i++) {
+			String fieldName = tokens[i].trim();
+			fieldIndices.put(fieldName, i);
+		}
+		
+		return fieldIndices;
+		
+	}
+	
 	private String[] getFieldNames() {
 		
 		String[] tokens = fieldNames.split(",");
@@ -91,9 +143,8 @@ public class IgniteConfig extends BaseConfig {
 			 * We expect here that the Apache Ignite 
 			 * context is initiated properly already
 			 */
-			Ignite ignite = IgniteContext.getInstance().getIgnite();
-			
-			IgniteCache<String, org.apache.ignite.binary.BinaryObject> cache = ignite.cache(cacheName).withKeepBinary();
+			IgniteClient ignite = IgniteContext.getInstance().getClient();
+			ClientCache<String, org.apache.ignite.binary.BinaryObject> cache = ignite.cache(cacheName).withKeepBinary();
 			/*
 			 * STEP #2: Build ScanQuery
 			 */
@@ -121,13 +172,22 @@ public class IgniteConfig extends BaseConfig {
 
 	}
 	
-	public StructuredRecord object2Record(org.apache.ignite.binary.BinaryObject object, Schema schema) {
+	public StructuredRecord values2Record(List<Object> values, Schema schema) {
 
+		Map<String, Integer> indices = getIndices();
+		
 		StructuredRecord.Builder builder = StructuredRecord.builder(schema);
 		for (Schema.Field field : schema.getFields()) {
 
 			String fieldName = field.getName();
-			Object fieldValue = object.field(fieldName);
+			Integer fieldIndex = indices.get(fieldName);
+			/*
+			 * The list of values contains the _key field
+			 * as its initial or first value; we therefore
+			 * have to increment by one to get user field
+			 * values
+			 */			
+			Object fieldValue = values.get(fieldIndex + 1);
 			/*
 			 * We do not expect nullable field schemas;
 			 * therefore no addition check is performed

@@ -18,6 +18,8 @@ package de.kp.works.connect.ignite;
  * 
  */
 
+import java.util.List;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.Job;
@@ -116,9 +118,9 @@ public class IgniteSource extends BatchSource<NullWritable, BinaryObject, Struct
 	@Override
 	public void transform(KeyValue<NullWritable, BinaryObject> input, Emitter<StructuredRecord> emitter) throws Exception {
 
-		org.apache.ignite.binary.BinaryObject object = input.getValue().getObject();
+		List<Object> values = input.getValue().getValues();
 		
-		StructuredRecord record = config.object2Record(object, outputSchema);
+		StructuredRecord record = config.values2Record(values, outputSchema);
 		emitter.emit(record);
 		
 	}

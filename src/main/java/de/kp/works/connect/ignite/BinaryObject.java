@@ -21,27 +21,24 @@ package de.kp.works.connect.ignite;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.hadoop.io.Writable;
 
 public class BinaryObject implements Writable {
 
-	private org.apache.ignite.binary.BinaryObject object;
+	private List<Object> values;
 	
 	public BinaryObject() {
 		
 	}
 	
-	public BinaryObject(org.apache.ignite.binary.BinaryObject object) {
-		this.object = object;
+	public BinaryObject(List<Object> values) {
+		this.values = values;
 	}
 	
-	public Object getField(String fieldName) {
-		return this.object.field(fieldName);
-	}
-	
-	public org.apache.ignite.binary.BinaryObject getObject() {
-		return object;
+	public List<Object> getValues() {
+		return values;
 	}
 	
 	@Override

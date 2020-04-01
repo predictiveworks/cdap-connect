@@ -18,10 +18,10 @@ package de.kp.works.connect.ignite;
  * 
  */
 
-import javax.cache.Cache;
-
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.NullWritable;
@@ -29,19 +29,19 @@ import org.apache.hadoop.mapred.Reporter;
 import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.RecordReader;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
-import org.apache.ignite.Ignite;
-import org.apache.ignite.IgniteCache;
-import org.apache.ignite.cache.query.ScanQuery;
+import org.apache.ignite.cache.query.SqlFieldsQuery;
+import org.apache.ignite.client.ClientCache;
+import org.apache.ignite.client.IgniteClient;
 
 public class IgniteRecordReader extends RecordReader<NullWritable, BinaryObject>
 		implements org.apache.hadoop.mapred.RecordReader<NullWritable, BinaryObject> {
 
-	private Iterator<Cache.Entry<String,org.apache.ignite.binary.BinaryObject>> iterator;
+	private Iterator<List<?>> iterator;
 	private int count = 0;
 
 	private NullWritable key;
 	private BinaryObject value;
-	
+
 	/* Default constructor used by the NEW API */
 	public IgniteRecordReader() {
 	}
@@ -51,19 +51,19 @@ public class IgniteRecordReader extends RecordReader<NullWritable, BinaryObject>
 		reporter.setStatus(split.toString());
 		init((IgniteSplit) split, job);
 	}
-	
+
 	@Override
 	public boolean next(NullWritable key, BinaryObject value) throws IOException {
-		
+
 		if (!iterator.hasNext()) {
 			return false;
 		}
-		
-		Cache.Entry<String,org.apache.ignite.binary.BinaryObject> entry = iterator.next();
-		value = new BinaryObject(entry.getValue());
-		
+
+		List<Object> values = new ArrayList<>(iterator.next());
+		value = new BinaryObject(values);
+
 		return true;
-		
+
 	}
 
 	@Override
@@ -84,20 +84,19 @@ public class IgniteRecordReader extends RecordReader<NullWritable, BinaryObject>
 	@Override
 	public void initialize(InputSplit split, TaskAttemptContext context) throws IOException, InterruptedException {
 
-		Configuration conf = context.getConfiguration();		
+		Configuration conf = context.getConfiguration();
 		init((IgniteSplit) split, conf);
-		
+
 	}
 
 	@Override
 	public boolean nextKeyValue() throws IOException, InterruptedException {
-		/* 
-		 * Create dummy key and value
-		 * and delegate to old API
+		/*
+		 * Create dummy key and value and delegate to old API
 		 */
 		key = createKey();
 		value = createValue();
-		
+
 		return next(key, value);
 
 	}
@@ -125,21 +124,39 @@ public class IgniteRecordReader extends RecordReader<NullWritable, BinaryObject>
 	}
 
 	private void init(IgniteSplit split, Configuration conf) {
-		
+
 		/*
-		 * STEP #1: Retrieve cache; note, the current implementation
-		 * is restricted to IgniteCache<String, BinaryObject>
+		 * STEP #1: Retrieve cache; note, the current implementation is restricted to
+		 * IgniteCache<String, BinaryObject>
 		 */
 		String cacheName = IgniteUtil.getCacheName(conf);
-		
-		Ignite ignite = IgniteContext.getInstance().getIgnite();
-		IgniteCache<String, org.apache.ignite.binary.BinaryObject> cache = ignite.cache(cacheName).withKeepBinary();
-		/*
-		 * STEP #2: Build ScanQuery
-		 */
-		ScanQuery<String, org.apache.ignite.binary.BinaryObject> scan = new ScanQuery<>(split.getIndex());
-		iterator = cache.query(scan).iterator();
 
+		IgniteClient ignite = IgniteContext.getInstance().getClient();
+		ClientCache<String, org.apache.ignite.binary.BinaryObject> cache = ignite.cache(cacheName).withKeepBinary();
+		/*
+		 * STEP #2: Build SqlFieldsQuery
+		 */
+		String[] fieldNames = IgniteUtil.getFields(conf);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT _key, ");
+
+		for (int i = 0; i < fieldNames.length; i++) {
+			sql.append(fieldNames[i]);
+			if (i != fieldNames.length - 1) {
+				sql.append(", ");
+			}
+		}
+
+		sql.append(" FROM ").append(cacheName);
+		sql.append(" ORDER BY _key ASC ");
+
+		sql.append(" LIMIT ").append(split.getLength());
+		sql.append(" OFFSET ").append(split.getStart());
+
+		SqlFieldsQuery query = new SqlFieldsQuery(sql.toString());
+
+		iterator = cache.query(query).iterator();
 	}
 
 }

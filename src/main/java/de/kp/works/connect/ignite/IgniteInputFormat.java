@@ -31,6 +31,7 @@ import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.JobContext;
 import org.apache.hadoop.mapreduce.RecordReader;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
+import org.apache.ignite.client.ClientCache;
 
 public class IgniteInputFormat extends InputFormat<NullWritable, BinaryObject>
 		implements org.apache.hadoop.mapred.InputFormat<NullWritable, BinaryObject> {
@@ -62,34 +63,50 @@ public class IgniteInputFormat extends InputFormat<NullWritable, BinaryObject>
 		IgniteSplit[] splits = null;
 		try {
 			/*
-			 * This approach expects that the Ignite client
-			 * is configured properly already elsewhere
+			 * This approach expects that the Ignite client is configured properly already
+			 * elsewhere
 			 */
 			String cacheName = IgniteUtil.getCacheName(conf);
 			IgniteContext context = IgniteContext.getInstance();
 			/*
 			 * Partitioned Mode
 			 * 
-			 * PARTITIONED mode is the most scalable distributed cache mode. 
-			 * This is also the default cache mode. In this mode, the overall 
-			 * data set is divided equally into partitions and all partitions 
-			 * are split equally between participating nodes, essentially creating 
-			 * one huge distributed store for data. 
+			 * PARTITIONED mode is the most scalable distributed cache mode. This is also
+			 * the default cache mode. In this mode, the overall data set is divided equally
+			 * into partitions and all partitions are split equally between participating
+			 * nodes, essentially creating one huge distributed store for data.
 			 * 
-			 * This approach allows you to store as much data as can be fit in the 
-			 * total memory (RAM and disk) available across all nodes.
+			 * This approach allows you to store as much data as can be fit in the total
+			 * memory (RAM and disk) available across all nodes.
 			 */
-			int partitions = context.getIgnite().affinity(cacheName).partitions();
+			ClientCache<String, org.apache.ignite.binary.BinaryObject> cache = context.getClient().cache(cacheName)
+					.withKeepBinary();
 
+			int partitions = IgniteUtil.getPartitions(conf);
+			long count = cache.size();
+
+			long partitionSize = (count / partitions);
+			/*
+			 * Split the rows into n-number of chunks and adjust the last chunk accordingly
+			 */
 			splits = new IgniteSplit[partitions];
 			for (int i = 0; i < partitions; i++) {
-				splits[i] = new IgniteSplit(cacheName, i);
+
+				IgniteSplit split;
+
+				if ((i + 1) == partitions)
+					split = new IgniteSplit(i * partitionSize, count);
+				
+				else
+					split = new IgniteSplit(i * partitionSize, (i * partitionSize) +partitionSize);
+
+				splits[i] = split;
 			}
-			
+
 		} catch (Exception e) {
 			throw new IOException(e.getLocalizedMessage());
 		}
-		
+
 		return splits;
 	}
 
