@@ -20,9 +20,13 @@ package de.kp.works.connect.ignite;
 
 import java.util.Properties;
 
+import javax.cache.configuration.Factory;
+import javax.net.ssl.SSLContext;
+
 import org.apache.directory.api.util.Strings;
 import org.apache.ignite.Ignition;
 import org.apache.ignite.client.IgniteClient;
+import org.apache.ignite.client.SslMode;
 import org.apache.ignite.configuration.ClientConfiguration;
 
 public class IgniteContext {
@@ -50,16 +54,16 @@ public class IgniteContext {
 		 * application can communicate with the Ignite cluster and 
 		 * perform cache operations using the established format.
 		 */
-		String host = props.getProperty("ignite.host");
-		String port = props.getProperty("ignite.port");
+		String host = props.getProperty(IgniteUtil.IGNITE_HOST);
+		String port = props.getProperty(IgniteUtil.IGNITE_PORT);
 
 		String address = String.format("%s:%s", host, port);
 		config.setAddresses(address);
 		
 		/* BASIC AUTHENTICATION */
 		
-		String user = props.containsKey("ignite.user") ? props.getProperty("ignite.user") : null;
-		String pass = props.containsKey("ignite.password") ? props.getProperty("ignite.password") : null;
+		String user = props.containsKey(IgniteUtil.IGNITE_USER) ? props.getProperty(IgniteUtil.IGNITE_USER) : null;
+		String pass = props.containsKey(IgniteUtil.IGNITE_PASSWORD) ? props.getProperty(IgniteUtil.IGNITE_PASSWORD) : null;
 
 		if (Strings.isNotEmpty(user) && Strings.isNotEmpty(pass)) {
 
@@ -75,27 +79,19 @@ public class IgniteContext {
 		
 	}
 
+	private Factory<SSLContext> getSslContextFactory(Properties props) {
+		return new SslContextFactory(props);
+	}
+	
 	private void setSecurity(ClientConfiguration config, Properties props) {
 
-		if (props.containsKey("ignite.ssl")) {
+		if (props.containsKey(IgniteUtil.IGNITE_SSL_MODE)) {
 
-			String igniteSsl = props.getProperty("ignite.ssl");
-			if (igniteSsl.equals("true")) {
-				/*
-
-        			clientCfg
-        			    .setSslMode(SslMode.REQUIRED)
-        			    .setSslClientCertificateKeyStorePath("client.jks")
-        			    .setSslClientCertificateKeyStoreType("JKS")
-        			    .setSslClientCertificateKeyStorePassword("123456")
-        			    .setSslTrustCertificateKeyStorePath("trust.jks")
-        			    .setSslTrustCertificateKeyStoreType("JKS")
-        			    .setSslTrustCertificateKeyStorePassword("123456")
-        			    .setSslKeyAlgorithm("SunX509")
-        			    .setSslTrustAll(false)
-        			    .setSslProtocol(SslProtocol.TLS);
-				 */
-
+			String sslMode = props.getProperty(IgniteUtil.IGNITE_SSL_MODE);
+			if (sslMode.equals("true")) {
+				
+				config.setSslMode(SslMode.REQUIRED);
+				config.setSslContextFactory(getSslContextFactory(props));
 
 			}
 		}

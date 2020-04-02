@@ -22,9 +22,62 @@ import org.apache.hadoop.conf.Configuration;
 
 public class IgniteUtil {
 
+	public static final String IGNITE_HOST = "ignite.host";
+	public static final String IGNITE_PORT = "ignite.port";
+
+	public static final String IGNITE_USER = "ignite.user";
+	public static final String IGNITE_PASSWORD = "ignite.password";
+
 	public static final String IGNITE_CACHE_NAME = "ignite.cache";
 	public static final String IGNITE_FIELDS = "ignite.fields";
-	public static final String IGNITE_PARTITIONS = "ignite.partitionS";
+	public static final String IGNITE_PARTITIONS = "ignite.partitions";
+	
+	/** SSL SUPPORT **/
+	
+	public static final String IGNITE_SSL_MODE = "ignite.ssl.mode";
+	public static final String IGNITE_SSL_VERIFY = "ignite.ssl.verify";
+
+	public static final String IGNITE_SSL_KEYSTORE_PATH = "ignite.ssl.keystore.path";
+	public static final String IGNITE_SSL_KEYSTORE_TYPE = "ignite.ssl.keystore.type";
+	public static final String IGNITE_SSL_KEYSTORE_PASS = "ignite.ssl.keystore.password";	
+	public static final String IGNITE_SSL_KEYSTORE_ALGO = "ignite.ssl.keystore.algorithm";
+
+	public static final String IGNITE_SSL_TRUSTSTORE_PATH = "ignite.ssl.truststore.path";
+	public static final String IGNITE_SSL_TRUSTSTORE_TYPE = "ignite.ssl.truststore.type";
+	public static final String IGNITE_SSL_TRUSTSTORE_PASS = "ignite.ssl.truststore.password";	
+	public static final String IGNITE_SSL_TRUSTSTORE_ALGO = "ignite.ssl.truststore.algorithm";
+
+	public static String getHost(Configuration conf) {
+		return conf.get(IGNITE_HOST);
+	}
+
+	public static void setHost(Configuration conf, String host) {
+		conf.set(IGNITE_HOST, host);
+	}
+
+	public static String getPort(Configuration conf) {
+		return conf.get(IGNITE_PORT);
+	}
+
+	public static void setPort(Configuration conf, String port) {
+		conf.set(IGNITE_PORT, port);
+	}
+
+	public static String getUser(Configuration conf) {
+		return conf.get(IGNITE_USER);
+	}
+
+	public static void setUser(Configuration conf, String user) {
+		conf.set(IGNITE_USER, user);
+	}
+
+	public static String getPass(Configuration conf) {
+		return conf.get(IGNITE_PASSWORD);
+	}
+
+	public static void setPass(Configuration conf, String password) {
+		conf.set(IGNITE_PASSWORD, password);
+	}
 	
 	public static String getCacheName(Configuration conf) {
 		return conf.get(IGNITE_CACHE_NAME);
@@ -55,6 +108,90 @@ public class IgniteUtil {
 
 	public static void setPartitions(Configuration conf, int partitions) {
 		conf.set(IGNITE_PARTITIONS, String.valueOf(partitions));
+	}
+	
+	public static String getSslMode(Configuration conf) {
+		return conf.get(IGNITE_SSL_MODE);
+	}
+
+	public static void setSslMode(Configuration conf, String sslMode) {
+		conf.set(IGNITE_SSL_MODE, sslMode);
+	}
+	
+	public static String getSslVerify(Configuration conf) {
+		return conf.get(IGNITE_SSL_VERIFY);
+	}
+
+	public static void setSslVerify(Configuration conf, String sslVerify) {
+		conf.set(IGNITE_SSL_VERIFY, sslVerify);
+	}
+	
+	/** KEY STORE **/
+	
+	public static String getSslKeystorePath(Configuration conf) {
+		return conf.get(IGNITE_SSL_KEYSTORE_PATH);
+	}
+
+	public static void setSslKeystorePath(Configuration conf, String sslKeystorePath) {
+		conf.set(IGNITE_SSL_KEYSTORE_PATH, sslKeystorePath);
+	}
+	
+	public static String getSslKeystoreType(Configuration conf) {
+		return conf.get(IGNITE_SSL_KEYSTORE_TYPE);
+	}
+
+	public static void setSslKeystoreType(Configuration conf, String sslKeystoreType) {
+		conf.set(IGNITE_SSL_KEYSTORE_TYPE, sslKeystoreType);
+	}
+	
+	public static String getSsKeystorePass(Configuration conf) {
+		return conf.get(IGNITE_SSL_TRUSTSTORE_PASS);
+	}
+
+	public static void setSslKeystorePass(Configuration conf, String sslKeystorePass) {
+		conf.set(IGNITE_SSL_KEYSTORE_PASS, sslKeystorePass);
+	}
+	
+	public static String getSslKeystoreAlgo(Configuration conf) {
+		return conf.get(IGNITE_SSL_KEYSTORE_ALGO);
+	}
+
+	public static void setSslKeystoreAlgo(Configuration conf, String sslKeystoreAlgo) {
+		conf.set(IGNITE_SSL_KEYSTORE_ALGO, sslKeystoreAlgo);
+	}
+	
+	/** TRUST STORE **/
+	
+	public static String getSslTruststorePath(Configuration conf) {
+		return conf.get(IGNITE_SSL_TRUSTSTORE_PATH);
+	}
+
+	public static void setSslTruststorePath(Configuration conf, String sslTruststorePath) {
+		conf.set(IGNITE_SSL_TRUSTSTORE_PATH, sslTruststorePath);
+	}
+	
+	public static String getSslTruststoreType(Configuration conf) {
+		return conf.get(IGNITE_SSL_TRUSTSTORE_TYPE);
+	}
+
+	public static void setSslTruststoreType(Configuration conf, String sslTruststoreType) {
+		conf.set(IGNITE_SSL_TRUSTSTORE_TYPE, sslTruststoreType);
+	}
+	
+	public static String getSslTruststorePass(Configuration conf) {
+		return conf.get(IGNITE_SSL_TRUSTSTORE_PASS);
+	}
+
+	public static void setSslTruststorePass(Configuration conf, String sslTruststorePass) {
+		conf.set(IGNITE_SSL_TRUSTSTORE_PASS, sslTruststorePass);
+	}
+	
+	public static String getSslTruststoreAlgo(Configuration conf) {
+		return conf.get(IGNITE_SSL_TRUSTSTORE_ALGO);
+	}
+
+	public static void setSslTruststoreAlgo(Configuration conf, String sslTruststoreAlgo) {
+		conf.set(IGNITE_SSL_TRUSTSTORE_ALGO, sslTruststoreAlgo);
 	}
 	
 }
