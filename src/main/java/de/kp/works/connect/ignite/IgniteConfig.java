@@ -103,8 +103,40 @@ public class IgniteConfig extends SslConfig {
 		
 		/** SSL CONFIGURATION **/
 		
-		// TODO
-		return null;
+		config.setProperty(IgniteUtil.IGNITE_SSL_MODE, sslMode);
+
+		if (!Strings.isNullOrEmpty(IgniteUtil.IGNITE_SSL_VERIFY))
+			config.setProperty(IgniteUtil.IGNITE_SSL_VERIFY, sslVerify);
+
+		if (!Strings.isNullOrEmpty(IgniteUtil.IGNITE_SSL_CIPHER_SUITES))
+			config.setProperty(IgniteUtil.IGNITE_SSL_CIPHER_SUITES, sslCipherSuites);
+
+		if (!Strings.isNullOrEmpty(IgniteUtil.IGNITE_SSL_KEYSTORE_PATH))
+			config.setProperty(IgniteUtil.IGNITE_SSL_KEYSTORE_PATH, sslKeyStorePath);
+
+		if (!Strings.isNullOrEmpty(IgniteUtil.IGNITE_SSL_KEYSTORE_TYPE))
+			config.setProperty(IgniteUtil.IGNITE_SSL_KEYSTORE_TYPE, sslKeyStoreType);
+
+		if (!Strings.isNullOrEmpty(IgniteUtil.IGNITE_SSL_KEYSTORE_PASS))
+			config.setProperty(IgniteUtil.IGNITE_SSL_KEYSTORE_PASS, sslKeyStorePass);
+
+		if (!Strings.isNullOrEmpty(IgniteUtil.IGNITE_SSL_KEYSTORE_ALGO))
+			config.setProperty(IgniteUtil.IGNITE_SSL_KEYSTORE_ALGO, sslKeyStoreAlgo);
+
+		if (!Strings.isNullOrEmpty(IgniteUtil.IGNITE_SSL_TRUSTSTORE_PATH))
+			config.setProperty(IgniteUtil.IGNITE_SSL_TRUSTSTORE_PATH, sslTrustStorePath);
+
+		if (!Strings.isNullOrEmpty(IgniteUtil.IGNITE_SSL_TRUSTSTORE_TYPE))
+			config.setProperty(IgniteUtil.IGNITE_SSL_TRUSTSTORE_TYPE, sslTrustStoreType);
+
+		if (!Strings.isNullOrEmpty(IgniteUtil.IGNITE_SSL_TRUSTSTORE_PASS))
+			config.setProperty(IgniteUtil.IGNITE_SSL_TRUSTSTORE_PASS, sslTrustStorePass);
+
+		if (!Strings.isNullOrEmpty(IgniteUtil.IGNITE_SSL_TRUSTSTORE_ALGO))
+			config.setProperty(IgniteUtil.IGNITE_SSL_TRUSTSTORE_ALGO, sslTrustStoreAlgo);
+		
+		return config;
+		
 	}
 		
 	public void validate() {

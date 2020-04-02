@@ -53,7 +53,7 @@ public class SslConfig extends BaseConfig {
 	@Description("A path to a file which contains the client SSL keystore.")
 	@Macro
 	@Nullable
-	public String sslKeystorePath;
+	public String sslKeyStorePath;
 
 	@Description("The format of the client SSL keystore. Suported values are 'JKS', 'JCEKS' and 'PKCS12'. Default is 'JKS'.")
 	@Macro
@@ -75,7 +75,7 @@ public class SslConfig extends BaseConfig {
 	@Description("A path to a file which contains the client SSL truststore.")
 	@Macro
 	@Nullable
-	public String sslTruststorePath;
+	public String sslTrustStorePath;
 
 	@Description("The format of the client SSL truststore. Suported values are 'JKS', 'JCEKS' and 'PKCS12'. Default is 'JKS'.")
 	@Macro

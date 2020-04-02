@@ -61,11 +61,10 @@ public class IgniteSource extends BatchSource<NullWritable, BinaryObject, Struct
 	@Override
 	public void initialize(BatchRuntimeContext context) throws Exception {
 		super.initialize(context);
-		/*
-		 * Configure & initialize Apache Ignite connection
-		 */
-		
-		// TODO
+
+		/* Initialize Apache Ignite context */
+		IgniteContext.getInstance(config.getConfig());
+
 	}
 	
 	@Override
