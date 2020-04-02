@@ -20,11 +20,15 @@ package de.kp.works.connect;
 
 import javax.annotation.Nullable;
 
+import com.google.common.base.Strings;
+
 import co.cask.cdap.api.annotation.Description;
 import co.cask.cdap.api.annotation.Macro;
 
-public class SslConfig {
+public class SslConfig extends BaseConfig {
 	
+	private static final long serialVersionUID = 6634557540579917171L;
+
 	@Description("An indicator to determine whether SSL has to be used to secure a remote "
 			+ "connection. Supported values are 'true' and 'false'. Default is 'true'.")
 	@Macro
@@ -39,6 +43,12 @@ public class SslConfig {
 	public String sslVerify;
 
 	/** KEY STORE **/
+
+	@Description("A comma-separated list of cipher suites which are allowed for a secure connection. "
+			+ "Samples are TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256, TLS_RSA_WITH_AES_128_GCM_SHA256 and others.")
+	@Macro
+	@Nullable
+	public String sslCipherSuites;
 	
 	@Description("A path to a file which contains the client SSL keystore.")
 	@Macro
@@ -59,15 +69,6 @@ public class SslConfig {
 	@Macro
 	@Nullable
 	public String sslKeyStoreAlgo;
-	
-	/*
-	 *         cipherSuites = new String[] {
-            "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
-            "TLS_RSA_WITH_AES_128_GCM_SHA256",
-            "TLS_DHE_RSA_WITH_AES_128_GCM_SHA256"
-        };
-
-	 */
 	
 	/** TRUST STORE **/
 
@@ -90,5 +91,29 @@ public class SslConfig {
 	@Macro
 	@Nullable
 	public String sslTrustStoreAlgo;
+	
+	public SslConfig() {
+		super();
+		
+		sslMode = "true";
+		sslVerify = "true";
+		
+		sslKeyStoreType = "JKS";
+		sslKeyStoreAlgo = "SunX509";
+		
+		sslTrustStoreType = "JKS";
+		sslTrustStoreAlgo = "SunX509";
+		
+	}
+	
+	public void validate() {
+		super.validate();
+		
+		if (Strings.isNullOrEmpty(sslMode)) {
+			throw new IllegalArgumentException(
+					String.format("[%s] The SSL indicator must not be empty.", this.getClass().getName()));
+		}
+		
+	}
 	
 }

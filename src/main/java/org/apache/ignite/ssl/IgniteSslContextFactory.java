@@ -1,4 +1,4 @@
-package de.kp.works.connect.ignite;
+package org.apache.ignite.ssl;
 /*
  * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -26,20 +26,25 @@ import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.cache.configuration.Factory;
+
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLException;
+import javax.net.ssl.SSLParameters;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 
 import org.apache.ignite.IgniteException;
-
 import com.google.common.base.Strings;
 
 import de.kp.works.connect.DisabledTrustManager;
-
-public class SslContextFactory implements Factory<SSLContext>{
+import de.kp.works.connect.ignite.IgniteUtil;
+/**
+ * This is a re-implementation of Apache Ignite's SslContextFactory 
+ * to enable PredictiveWorks. specific adjustments
+ */
+public class IgniteSslContextFactory implements Factory<SSLContext>{
 
 	private static final long serialVersionUID = 7621139595929347183L;
 
@@ -48,26 +53,42 @@ public class SslContextFactory implements Factory<SSLContext>{
 	
     private final AtomicReference<SSLContext> sslCtx = new AtomicReference<>();
 	
-	public SslContextFactory(Properties props) {
+	public IgniteSslContextFactory(Properties props) {
 		this.props = props;
 	}
 	
     private SSLContext createSslContext() throws SSLException {
 
-    		// TODO CIPHER SUITES
-    		SSLContext sslContext = null;
+   		SSLContext sslContext = null;
+   		
 		try {
 			/*
 			 * The SSL protocol is currently hard coded
 			 * and set to TLS
 			 */
 			sslContext = SSLContext.getInstance(SSL_PROTOCOL);
+			/*
+			 * Extract cipher suites
+			 */
+			String sslCipherSuites = props.getProperty(IgniteUtil.IGNITE_SSL_CIPHER_SUITES);
+			String[] cipherSuites = (sslCipherSuites == null) ? null : IgniteUtil.string2Array(sslCipherSuites);
+	 			
+            if (cipherSuites != null) {
+            	
+                SSLParameters sslParameters = new SSLParameters();
+                sslParameters.setCipherSuites(cipherSuites);
+
+                sslContext = new SSLContextWrapper(sslContext, sslParameters);
 		
+            }
+            
 			/* Build key managers */
 			KeyManager[] keyManagers = getKeyManagers();
 
 			/* Build trust managers */
 			TrustManager[] trustManagers = getTrustManagers();
+
+			
 			
 			/* Build SSL context */
 			sslContext.init(keyManagers, trustManagers, null);

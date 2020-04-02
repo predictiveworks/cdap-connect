@@ -28,6 +28,7 @@ import org.apache.ignite.Ignition;
 import org.apache.ignite.client.IgniteClient;
 import org.apache.ignite.client.SslMode;
 import org.apache.ignite.configuration.ClientConfiguration;
+import org.apache.ignite.ssl.IgniteSslContextFactory;
 
 public class IgniteContext {
 	/*
@@ -80,7 +81,7 @@ public class IgniteContext {
 	}
 
 	private Factory<SSLContext> getSslContextFactory(Properties props) {
-		return new SslContextFactory(props);
+		return new IgniteSslContextFactory(props);
 	}
 	
 	private void setSecurity(ClientConfiguration config, Properties props) {

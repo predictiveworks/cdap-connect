@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.annotation.Nullable;
 import javax.cache.Cache;
 
 import org.apache.ignite.cache.query.ScanQuery;
@@ -40,9 +41,9 @@ import co.cask.cdap.api.annotation.Description;
 import co.cask.cdap.api.annotation.Macro;
 import co.cask.cdap.api.data.format.StructuredRecord;
 import co.cask.cdap.api.data.schema.Schema;
-import de.kp.works.connect.BaseConfig;
+import de.kp.works.connect.SslConfig;
 
-public class IgniteConfig extends BaseConfig {
+public class IgniteConfig extends SslConfig {
 
 	private static final long serialVersionUID = 2258065855745759770L;
 
@@ -65,12 +66,43 @@ public class IgniteConfig extends BaseConfig {
 	@Description("The number of partitions to organize the data of the specified Ignite cache. Default is 1.")
 	@Macro
 	public int partitions;
+
+	/*** CREDENTIALS ***/
+
+	@Description("Name of a registered user name. Required for authentication.")
+	@Macro
+	@Nullable
+	public String user;
+
+	@Description("Password of the registered user. Required for authentication.")
+	@Macro
+	@Nullable
+	public String password;
 	
 	public IgniteConfig() {
 		partitions = 1;
 	}
 	
 	public Properties getConfig() {
+		
+		Properties config = new Properties();
+		
+		config.setProperty(IgniteUtil.IGNITE_HOST, host);
+		config.setProperty(IgniteUtil.IGNITE_PORT, String.valueOf(port));
+		
+		config.setProperty(IgniteUtil.IGNITE_CACHE_NAME, cacheName);
+		config.setProperty(IgniteUtil.IGNITE_FIELDS, fieldNames);
+		
+		config.setProperty(IgniteUtil.IGNITE_PARTITIONS, String.valueOf(partitions));
+
+		if (!Strings.isNullOrEmpty(IgniteUtil.IGNITE_USER))
+			config.setProperty(IgniteUtil.IGNITE_USER, user);
+
+		if (!Strings.isNullOrEmpty(IgniteUtil.IGNITE_PASSWORD))
+			config.setProperty(IgniteUtil.IGNITE_PASSWORD, password);
+		
+		/** SSL CONFIGURATION **/
+		
 		// TODO
 		return null;
 	}

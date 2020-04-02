@@ -73,6 +73,7 @@ public class AerospikeConfig extends BaseConfig {
 	public String user;
 
 	@Description("Password of the registered user. Required for authentication.")
+	@Macro
 	public String password;
 
 	public AerospikeConfig() {

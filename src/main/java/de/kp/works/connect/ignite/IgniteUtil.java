@@ -20,6 +20,8 @@ package de.kp.works.connect.ignite;
 
 import org.apache.hadoop.conf.Configuration;
 
+import com.google.common.base.Strings;
+
 public class IgniteUtil {
 
 	public static final String IGNITE_HOST = "ignite.host";
@@ -37,6 +39,8 @@ public class IgniteUtil {
 	public static final String IGNITE_SSL_MODE = "ignite.ssl.mode";
 	public static final String IGNITE_SSL_VERIFY = "ignite.ssl.verify";
 
+	public static final String IGNITE_SSL_CIPHER_SUITES = "ignite.ssl.cipher.suites";
+	
 	public static final String IGNITE_SSL_KEYSTORE_PATH = "ignite.ssl.keystore.path";
 	public static final String IGNITE_SSL_KEYSTORE_TYPE = "ignite.ssl.keystore.type";
 	public static final String IGNITE_SSL_KEYSTORE_PASS = "ignite.ssl.keystore.password";	
@@ -90,11 +94,12 @@ public class IgniteUtil {
 	public static String[] getFields(Configuration conf) {
 
 		String fields = conf.get(IGNITE_FIELDS);
-		if (fields == null || fields.equals(""))
+		if (Strings.isNullOrEmpty(fields))
 			return null;
 
-		else
-			return fields.split(",");
+		else {
+			return string2Array(fields);
+		}
 	
 	}
 
@@ -127,6 +132,22 @@ public class IgniteUtil {
 	}
 	
 	/** KEY STORE **/
+	
+	public static String[] getCipherSuites(Configuration conf) {
+
+		String cipherSuites = conf.get(IGNITE_SSL_CIPHER_SUITES);
+		if (Strings.isNullOrEmpty(cipherSuites))
+			return null;
+
+		else {
+			return string2Array(cipherSuites);
+		}
+	
+	}
+
+	public static void setCipherSuites(Configuration conf, String cipherSuites) {
+		conf.set(IGNITE_SSL_CIPHER_SUITES, cipherSuites);
+	}
 	
 	public static String getSslKeystorePath(Configuration conf) {
 		return conf.get(IGNITE_SSL_KEYSTORE_PATH);
@@ -193,5 +214,24 @@ public class IgniteUtil {
 	public static void setSslTruststoreAlgo(Configuration conf, String sslTruststoreAlgo) {
 		conf.set(IGNITE_SSL_TRUSTSTORE_ALGO, sslTruststoreAlgo);
 	}
+		
+	public static String[] string2Array(String value) {
+
+		if (Strings.isNullOrEmpty(value))
+			return null;
+
+		else {
+			
+			String[] tokens = value.split(",");
+			String[] result = new String[tokens.length];
+			
+			for (int i = 0; i < tokens.length; i++) {
+				result[i] = tokens[i].trim();
+			}
+			
+			return result;
+		}
 	
+	}
+
 }
