@@ -31,6 +31,7 @@ public class IgniteUtil {
 	public static final String IGNITE_PASSWORD = "ignite.password";
 
 	public static final String IGNITE_CACHE_NAME = "ignite.cache";
+	public static final String IGNITE_CACHE_MODE = "ignite.cache.mode";
 	public static final String IGNITE_FIELDS = "ignite.fields";
 	public static final String IGNITE_PARTITIONS = "ignite.partitions";
 	
@@ -89,6 +90,14 @@ public class IgniteUtil {
 
 	public static void setCacheName(Configuration conf, String cacheName) {
 		conf.set(IGNITE_CACHE_NAME, cacheName);
+	}
+	
+	public static String getCacheMode(Configuration conf) {
+		return conf.get(IGNITE_CACHE_MODE);
+	}
+
+	public static void setCacheMode(Configuration conf, String cacheMode) {
+		conf.set(IGNITE_CACHE_MODE, cacheMode);
 	}
 	
 	public static String[] getFields(Configuration conf) {

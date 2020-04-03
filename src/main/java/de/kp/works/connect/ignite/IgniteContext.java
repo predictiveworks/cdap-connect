@@ -18,6 +18,8 @@ package de.kp.works.connect.ignite;
  * 
  */
 
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.Properties;
 
 import javax.cache.configuration.Factory;
@@ -25,10 +27,15 @@ import javax.net.ssl.SSLContext;
 
 import org.apache.directory.api.util.Strings;
 import org.apache.ignite.Ignition;
+import org.apache.ignite.cache.CacheMode;
+import org.apache.ignite.cache.QueryEntity;
+import org.apache.ignite.client.ClientCacheConfiguration;
 import org.apache.ignite.client.IgniteClient;
 import org.apache.ignite.client.SslMode;
 import org.apache.ignite.configuration.ClientConfiguration;
 import org.apache.ignite.ssl.IgniteSslContextFactory;
+
+import co.cask.cdap.api.data.schema.Schema;
 
 public class IgniteContext {
 	/*
@@ -80,6 +87,122 @@ public class IgniteContext {
 		
 	}
 
+	public Boolean cacheExists(String cacheName) throws Exception {
+		
+		if (ignite == null)
+			throw new Exception("Ignite client is not initiated.");
+		
+		Collection<String> cacheNames = ignite.cacheNames();
+		return cacheNames.contains(cacheName);
+		
+	}
+	
+	public void createCache(String cacheName, String cacheMode, Schema schema) throws Exception {
+		
+		if (ignite == null)
+			throw new Exception("Ignite client is not initiated.");
+		
+		ClientCacheConfiguration cfg = createCacheCfg(cacheName, getCacheMode(cacheMode), schema);
+		ignite.createCache(cfg);
+		
+	}
+	
+	public ClientCacheConfiguration createCacheCfg(String cacheName, CacheMode cacheMode, Schema schema) {
+
+		ClientCacheConfiguration cfg = new ClientCacheConfiguration();
+		cfg.setName(cacheName);
+		/*
+		 * Defining query entities is the Apache Ignite
+		 * mechanism to dynamically define a queryable
+		 * 'class'
+		 */
+		QueryEntity qe = schema2QueryEntity(cacheName, schema);
+
+		cfg.setCacheMode(cacheMode);
+		cfg.setQueryEntities(qe);
+		
+		return cfg;
+
+	}
+	private CacheMode getCacheMode(String value) {
+		
+		if (value.equals("partitioned"))
+			return CacheMode.PARTITIONED;
+		
+		return CacheMode.REPLICATED;
+		
+	}
+	
+	private QueryEntity schema2QueryEntity(String cacheName, Schema schema) {
+
+		QueryEntity queryEntity = new QueryEntity();
+		queryEntity.setKeyType("java.lang.String");
+		/*
+		 * The 'cacheName' is used as table name in select statements as well as the
+		 * name of 'ValueType'
+		 */
+		queryEntity.setValueType(cacheName);
+		
+		LinkedHashMap<String, String> cacheFields = new java.util.LinkedHashMap<>();
+		for (Schema.Field field : schema.getFields()) {
+			
+			String fieldName = field.getName();
+			Schema.Type fieldType = getType(field.getSchema());
+			
+			switch (fieldType) {
+			/** BASIC DATA TYPES **/
+			case BOOLEAN:
+				cacheFields.put(fieldName,"java.lang.Boolean");
+				break;
+			case DOUBLE:
+				cacheFields.put(fieldName,"java.lang.Double");
+				break;
+			case ENUM:
+				cacheFields.put(fieldName,"java.lang.String");
+				break;
+			case FLOAT:
+				cacheFields.put(fieldName,"java.lang.Float");
+				break;
+			case INT:
+				cacheFields.put(fieldName,"java.lang.Integer");
+				break;
+			case LONG:
+				cacheFields.put(fieldName,"java.lang.Long");
+				break;
+			case STRING:
+				cacheFields.put(fieldName,"java.lang.String");
+				break;
+				
+			/** COMPEX DATA TYPES **/
+			case BYTES:
+				cacheFields.put(fieldName, "java.nio.ByteBuffer");
+				break;
+			case ARRAY:
+			case MAP:
+			case RECORD:
+			case UNION:
+			case NULL:
+				/* Not supported */
+			default:
+					throw new IllegalArgumentException(String.format("Field type '%s' is not supported.", fieldType.name()));
+			}
+		}
+
+		queryEntity.setFields(cacheFields);
+		return queryEntity;
+
+	}
+	
+	private Schema.Type getType(Schema schema) {
+		
+		if (schema.isNullable())
+			return schema.getNonNullable().getType();
+		
+		else
+			return schema.getType();
+		
+	}
+	
 	private Factory<SSLContext> getSslContextFactory(Properties props) {
 		return new IgniteSslContextFactory(props);
 	}

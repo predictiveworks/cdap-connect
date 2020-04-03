@@ -79,7 +79,7 @@ public class IgniteSource extends BatchSource<NullWritable, BinaryObject, Struct
 			 * also checks whether an Apache Ignite connection can be
 			 * established or not
 			 */
-			outputSchema = config.getSchema();
+			outputSchema = config.getSchema(config.fieldNames);
 			pipelineConfigurer.getStageConfigurer().setOutputSchema(outputSchema);
 
 		} catch (Exception e) {
@@ -122,19 +122,6 @@ public class IgniteSource extends BatchSource<NullWritable, BinaryObject, Struct
 		StructuredRecord record = config.values2Record(values, outputSchema);
 		emitter.emit(record);
 		
-	}
-	
-	public static class IgniteSourceConfig extends IgniteConfig {
-
-		private static final long serialVersionUID = 3283612129920510117L;
-		
-		public IgniteSourceConfig() {
-			super();
-		}
-		
-		public void validate() {
-			super.validate();
-		}
 	}
 
 }

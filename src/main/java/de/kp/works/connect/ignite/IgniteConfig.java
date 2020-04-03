@@ -39,7 +39,6 @@ import com.google.common.base.Strings;
 
 import co.cask.cdap.api.annotation.Description;
 import co.cask.cdap.api.annotation.Macro;
-import co.cask.cdap.api.data.format.StructuredRecord;
 import co.cask.cdap.api.data.schema.Schema;
 import de.kp.works.connect.SslConfig;
 
@@ -59,14 +58,6 @@ public class IgniteConfig extends SslConfig {
 	@Macro
 	public String cacheName;
 
-	@Description("The comma-separated list of field names that are used to extract from the specified Ignite cache.")
-	@Macro
-	public String fieldNames;
-
-	@Description("The number of partitions to organize the data of the specified Ignite cache. Default is 1.")
-	@Macro
-	public int partitions;
-
 	/*** CREDENTIALS ***/
 
 	@Description("Name of a registered user name. Required for authentication.")
@@ -80,7 +71,6 @@ public class IgniteConfig extends SslConfig {
 	public String password;
 	
 	public IgniteConfig() {
-		partitions = 1;
 	}
 	
 	public Properties getConfig() {
@@ -91,9 +81,6 @@ public class IgniteConfig extends SslConfig {
 		config.setProperty(IgniteUtil.IGNITE_PORT, String.valueOf(port));
 		
 		config.setProperty(IgniteUtil.IGNITE_CACHE_NAME, cacheName);
-		config.setProperty(IgniteUtil.IGNITE_FIELDS, fieldNames);
-		
-		config.setProperty(IgniteUtil.IGNITE_PARTITIONS, String.valueOf(partitions));
 
 		if (!Strings.isNullOrEmpty(IgniteUtil.IGNITE_USER))
 			config.setProperty(IgniteUtil.IGNITE_USER, user);
@@ -156,48 +143,10 @@ public class IgniteConfig extends SslConfig {
 			throw new IllegalArgumentException(
 					String.format("[%s] The cache name must not be empty.", this.getClass().getName()));
 		}
-
-		if (Strings.isNullOrEmpty(fieldNames)) {
-			throw new IllegalArgumentException(
-					String.format("[%s] The cache field names must not be empty.", this.getClass().getName()));
-		}
-
-		if (partitions < 1) {
-			throw new IllegalArgumentException(
-					String.format("[%s] The number of partitions must be positive.", this.getClass().getName()));
-		}
-		
-	}
-
-	private Map<String, Integer> getIndices() {
-
-		Map<String, Integer> fieldIndices = new HashMap<>();
-		
-		String[] tokens = fieldNames.split(",");
-		
-		for (int i= 0; i < tokens.length; i++) {
-			String fieldName = tokens[i].trim();
-			fieldIndices.put(fieldName, i);
-		}
-		
-		return fieldIndices;
 		
 	}
 	
-	private String[] getFieldNames() {
-		
-		String[] tokens = fieldNames.split(",");
-		String[] names = new String[tokens.length];
-		
-		for (int i= 0; i < tokens.length; i++) {
-			names[i] = tokens[i].trim();
-		}
-		
-		return names;
-		
-	}
-	
-	public Schema getSchema() {
+	public Schema getSchema(String fieldNames) {
 
 		Schema schema = null;
 		List<Schema.Field> fields = new ArrayList<>();
@@ -220,7 +169,7 @@ public class IgniteConfig extends SslConfig {
 				throw new IllegalArgumentException(String.format("The cache '%s' provided has no entries", cacheName));
 						
 			org.apache.ignite.binary.BinaryObject binaryObject = entries.get(0).getValue();
-			for (String fieldName: getFieldNames()) {
+			for (String fieldName: IgniteUtil.string2Array(fieldNames)) {
 				Object fieldValue = binaryObject.field(fieldName);
 				fields.add(Schema.Field.of(fieldName, value2Schema(fieldValue)));
 			}
@@ -235,44 +184,8 @@ public class IgniteConfig extends SslConfig {
 		return schema;
 
 	}
-	
-	public StructuredRecord values2Record(List<Object> values, Schema schema) {
 
-		Map<String, Integer> indices = getIndices();
-		
-		StructuredRecord.Builder builder = StructuredRecord.builder(schema);
-		for (Schema.Field field : schema.getFields()) {
-
-			String fieldName = field.getName();
-			Integer fieldIndex = indices.get(fieldName);
-			/*
-			 * The list of values contains the _key field
-			 * as its initial or first value; we therefore
-			 * have to increment by one to get user field
-			 * values
-			 */			
-			Object fieldValue = values.get(fieldIndex + 1);
-			/*
-			 * We do not expect nullable field schemas;
-			 * therefore no addition check is performed
-			 */
-			Schema fieldSchema = field.getSchema();
-			/*
-			 * Apache Ignite supports date & time data
-			 * types which are all mapped onto LONG 
-			 */
-			if (fieldSchema.getType().equals(Schema.Type.LONG))
-				fieldValue = datetime2Long(fieldValue);
-			
-			builder.set(fieldName, fromFieldValue(fieldValue, fieldSchema));
-
-		}
-
-		return builder.build();
-
-	}
-
-	private Object datetime2Long(Object value) {
+	public Object datetime2Long(Object value) {
 		
 		/*
 		 * Java Date, Time & Timestamp are mapped
@@ -293,7 +206,7 @@ public class IgniteConfig extends SslConfig {
 		
 	}
 	
-	private Object fromFieldValue(Object value, Schema schema) {
+	public Object fromFieldValue(Object value, Schema schema) {
 
 		switch (schema.getType()) {
 		/** BASIC DATA TYPES **/
