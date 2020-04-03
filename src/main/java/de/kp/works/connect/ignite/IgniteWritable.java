@@ -20,4 +20,6 @@ package de.kp.works.connect.ignite;
 
 public interface IgniteWritable {
 
+	public void write(IgniteContext context, String cacheName, String cacheMode) throws Exception;
+	
 }

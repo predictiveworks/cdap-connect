@@ -18,6 +18,86 @@ package de.kp.works.connect.ignite;
  * 
  */
 
+import java.security.MessageDigest;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.ignite.binary.BinaryObjectBuilder;
+import org.apache.ignite.client.ClientCache;
+import org.apache.parquet.Strings;
+
+import co.cask.cdap.api.data.format.StructuredRecord;
+import co.cask.cdap.api.data.schema.Schema;
+
 public class IgniteCacheWritable implements IgniteWritable {
 
+	private StructuredRecord record;
+	private Schema schema;
+	
+	private List<String> values;
+	private org.apache.ignite.binary.BinaryObject object;
+	
+	public IgniteCacheWritable(StructuredRecord record) {
+		
+		this.record = record;
+		
+		Schema schema = record.getSchema();
+		this.schema =  (schema.isNullable()) ? schema.getNonNullable() : schema;
+		
+	}
+
+	@Override
+	public void write(IgniteContext context, String cacheName, String cacheMode) throws Exception {
+		/*
+		 * We have to check whether the respective cache exists
+		 * as it is not assured that the schema is explicitly
+		 * available in the plugin initialization phase
+		 */
+		if (!context.cacheExists(cacheName))
+			context.createCache(cacheName, cacheMode, schema);
+
+		/* Build binary object */
+		toBinaryObject(context, cacheName);
+		String key = getKey();
+
+		/*
+		 * Retrieve cache and write structured record
+		 * to the Apache Ignite cache
+		 */
+		ClientCache<String, org.apache.ignite.binary.BinaryObject> cache = context.getClient().cache(cacheName);
+		cache.put(key, object);
+
+	}
+
+	private String getKey() throws Exception {
+
+		String serialized = Strings.join(values, "|");
+		return MessageDigest.getInstance("MD5").digest(serialized.getBytes()).toString();
+		
+	}
+	
+	private void toBinaryObject(IgniteContext context, String cacheName) {
+	    
+		values = new ArrayList<>();
+		
+		BinaryObjectBuilder builder = context.getClient().binary().builder(cacheName);
+		for (Schema.Field field : schema.getFields()) {
+			
+			String fieldName = field.getName();
+			Object value = record.get(fieldName);			
+			/*
+			 * BYTES are represented as ByteBuffer and this equivalent
+			 * with the definition of the cache internal schema;
+			 * 
+			 *  also in this case nothing has to be dones
+			 */
+			builder.setField(fieldName, value);
+			values.add(value.toString());
+			
+		}
+		
+		object = builder.build();
+
+	}
+	
 }

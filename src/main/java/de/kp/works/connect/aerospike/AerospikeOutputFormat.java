@@ -53,7 +53,7 @@ public class AerospikeOutputFormat<K extends AerospikeWritable, V> extends Outpu
 	public RecordWriter<K, V> getRecordWriter(TaskAttemptContext context) throws IOException, InterruptedException {
 		/*
 		 * The configuration has been provided by the 
-		 * Influx Output Format Provider
+		 * Aerospike Output Format Provider
 		 */
 		Configuration conf = context.getConfiguration();
 		

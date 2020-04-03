@@ -30,6 +30,8 @@ import co.cask.cdap.api.data.batch.Output;
 import co.cask.cdap.api.data.batch.OutputFormatProvider;
 import co.cask.cdap.api.data.format.StructuredRecord;
 import co.cask.cdap.api.data.schema.Schema;
+import co.cask.cdap.api.dataset.lib.KeyValue;
+import co.cask.cdap.etl.api.Emitter;
 import co.cask.cdap.etl.api.PipelineConfigurer;
 import co.cask.cdap.etl.api.batch.BatchRuntimeContext;
 import co.cask.cdap.etl.api.batch.BatchSink;
@@ -82,15 +84,21 @@ public class IgniteSink extends BatchSink<StructuredRecord, IgniteCacheWritable,
 		
 	}
 
+	@Override
+	public void transform(StructuredRecord input, Emitter<KeyValue<IgniteCacheWritable, NullWritable>> emitter) throws Exception {
+		emitter.emit(new KeyValue<IgniteCacheWritable, NullWritable>(new IgniteCacheWritable(input), null));
+	}
+
 	private static class IgniteOutputFormatProvider implements OutputFormatProvider {
 
 		private final Map<String, String> conf;
 
 		IgniteOutputFormatProvider(IgniteSinkConfig config) {
 
-			this.conf = new HashMap<>();
+			conf = new HashMap<>();
 			
-			// TODO
+			conf.put(IgniteUtil.IGNITE_CACHE_NAME, config.cacheName);
+			conf.put(IgniteUtil.IGNITE_CACHE_MODE, config.cacheMode);
 			
 		}
 

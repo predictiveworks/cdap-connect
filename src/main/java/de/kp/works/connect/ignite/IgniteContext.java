@@ -87,6 +87,15 @@ public class IgniteContext {
 		
 	}
 
+	public void close() throws Exception {
+		
+		if (ignite == null)
+			throw new Exception("Ignite client is not initiated.");
+		
+		ignite.close();
+		
+	}
+	
 	public Boolean cacheExists(String cacheName) throws Exception {
 		
 		if (ignite == null)
