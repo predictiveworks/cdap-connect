@@ -19,21 +19,29 @@ package de.kp.works.connect.bosch;
  */
 
 import org.apache.spark.streaming.api.java.JavaDStream;
+import org.apache.spark.streaming.ws.*;
 
 import co.cask.cdap.api.data.format.StructuredRecord;
 import co.cask.cdap.etl.api.streaming.StreamingContext;
 
+import java.util.Properties;
+
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.Function;
-import org.apache.spark.stream.ws.*;
+import org.apache.spark.storage.StorageLevel;
 
 public class ThingStreamUtil {
-
+	
 	static JavaDStream<StructuredRecord> getStructuredRecordJavaDStream(StreamingContext context, ThingConfig config) {
-		return WSStreamUtils.createDirectStream(context.getSparkStreamingContext()).transform(new RecordTransform());
+		
+		Properties properties = null;
+		StorageLevel storageLevel = null;
+		
+		return DittoStreamUtils.createDirectStream(
+				context.getSparkStreamingContext(), properties, storageLevel).transform(new RecordTransform());
 		
 	}
-
+	
 	public static class RecordTransform implements Function<JavaRDD<String>, JavaRDD<StructuredRecord>> {
 
 		private static final long serialVersionUID = -4426828579132235453L;

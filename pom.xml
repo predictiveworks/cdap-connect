@@ -162,6 +162,12 @@
         <version>0.3.0</version>
       </dependency>
 	  
+      <dependency>
+        <groupId>de.kp.works</groupId>
+        <artifactId>works-ditto</artifactId>
+        <version>0.3.0</version>
+      </dependency>
+	  
 	  <!-- Aerospike dependencies -->
 	  <dependency>
 	    <groupId>com.aerospike</groupId>
