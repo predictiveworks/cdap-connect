@@ -18,8 +18,6 @@ package de.kp.works.connect.bosch;
  * 
  */
 
-import java.util.Map;
-
 import org.apache.spark.streaming.api.java.JavaDStream;
 
 import co.cask.cdap.api.annotation.Description;
@@ -58,9 +56,6 @@ public class ThingStreamSource extends StreamingSource<StructuredRecord>{
 		 */
 		StageConfigurer stageConfigurer = pipelineConfigurer.getStageConfigurer();
 		stageConfigurer.setOutputSchema(null);
-
-		Map<String, String> pipelineProperties = config.getPipelineProperties();
-		pipelineConfigurer.setPipelineProperties(pipelineProperties);
 		
 	}
 
