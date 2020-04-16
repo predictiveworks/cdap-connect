@@ -20,10 +20,11 @@ package de.kp.works.connect.bosch;
 
 import org.apache.spark.streaming.api.java.JavaDStream;
 import org.apache.spark.streaming.ws.*;
-
 import co.cask.cdap.api.data.format.StructuredRecord;
 import co.cask.cdap.api.data.schema.Schema;
 import co.cask.cdap.etl.api.streaming.StreamingContext;
+
+import com.google.gson.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,8 @@ import java.util.Properties;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.storage.StorageLevel;
+
+import de.kp.works.ditto.*;
 
 public class ThingStreamUtil {
 
@@ -68,7 +71,7 @@ public class ThingStreamUtil {
 
 				String flag = properties.getProperty(DittoUtils.DITTO_THING_CHANGES());
 				if (flag.equals("true")) {
-					return input.map(new ThingFunction());
+					return input.map(new ThingTransform(properties));
 				}
 
 			}
@@ -77,7 +80,7 @@ public class ThingStreamUtil {
 
 				String flag = properties.getProperty(DittoUtils.DITTO_FEATURES_CHANGES());
 				if (flag.equals("true")) {
-					return input.map(new FeaturesFunction());
+					return input.map(new FeaturesTransform(properties));
 				}
 
 			}
@@ -86,7 +89,7 @@ public class ThingStreamUtil {
 
 				String flag = properties.getProperty(DittoUtils.DITTO_FEATURE_CHANGES());
 				if (flag.equals("true")) {
-					return input.map(new FeatureFunction());
+					return input.map(new FeatureTransform(properties));
 				}
 
 			}
@@ -95,7 +98,7 @@ public class ThingStreamUtil {
 
 				String flag = properties.getProperty(DittoUtils.DITTO_LIVE_MESSAGES());
 				if (flag.equals("true")) {
-					return input.map(new MessageFunction());
+					return input.map(new MessageTransform(properties));
 				}
 
 			}
@@ -106,55 +109,77 @@ public class ThingStreamUtil {
 
 	}
 
-	private static class ThingFunction implements Function<String, StructuredRecord> {
+	public static class MessageTransform implements Function<String, StructuredRecord> {
 
-		private static final long serialVersionUID = -4241854791385529970L;
+		private static final long serialVersionUID = -8859251744707152433L;
+
+		private Properties properties;
+		
+		public MessageTransform(Properties properties) {
+			this.properties = properties;
+		}
 
 		@Override
 		public StructuredRecord call(String in) throws Exception {
-			// TODO
-			return null;
+			
+			JsonObject json = new Gson().fromJson(in, JsonObject.class);
+			
+			Schema schema = buildSchema();
+			StructuredRecord.Builder builder = StructuredRecord.builder(schema);
+
+			List<Schema.Field> fields = schema.getFields();
+			for (Schema.Field field : fields) {
+
+				String fieldName = field.getName();
+				Object fieldValue = null;
+				
+				if (fieldName.equals("timestamp"))
+					fieldValue = json.get(fieldName).getAsLong();
+				
+				else 
+					fieldValue = json.get(fieldName).getAsString();
+				
+				builder.set(fieldName, fieldValue);
+
+			}
+			
+			return builder.build();
+
 		}
-
-	}
-
-	private static class FeaturesFunction implements Function<String, StructuredRecord> {
-
-		private static final long serialVersionUID = -7865686438932012000L;
-
-		@Override
-		public StructuredRecord call(String in) throws Exception {
-			// TODO
-			return null;
+		
+		public Properties getProperties() {
+			return properties;
 		}
-
-	}
-
-	private static class FeatureFunction implements Function<String, StructuredRecord> {
-
-		private static final long serialVersionUID = 8855558414425001019L;
-
-		@Override
-		public StructuredRecord call(String in) throws Exception {
-			// TODO
-			return null;
-		}
-
-	}
-
-	private static class MessageFunction implements Function<String, StructuredRecord> {
-
+		
 		/**
-		 * 
+		 * A message schema is static (in contrast to change schemas)
+		 * and can be predefined
 		 */
-		private static final long serialVersionUID = 1L;
+		private Schema buildSchema() {
 
-		@Override
-		public StructuredRecord call(String in) throws Exception {
-			// TODO
-			return null;
+			List<Schema.Field> schemaFields = new ArrayList<>();
+			
+			Schema.Field timestamp = Schema.Field.of("timestamp", Schema.of(Schema.Type.LONG));
+			schemaFields.add(timestamp);
+			
+			Schema.Field name = Schema.Field.of("name", Schema.of(Schema.Type.STRING));
+			schemaFields.add(name);
+			
+			Schema.Field namespace = Schema.Field.of("namespace", Schema.of(Schema.Type.STRING));
+			schemaFields.add(namespace);
+			
+			Schema.Field subject = Schema.Field.of("subject", Schema.of(Schema.Type.STRING));
+			schemaFields.add(subject);
+			
+			Schema.Field payload = Schema.Field.of("payload", Schema.of(Schema.Type.STRING));
+			schemaFields.add(payload);
+			
+			Schema schema = Schema.recordOf("thingMessage", schemaFields);
+			return schema;
+			
 		}
 
+		
 	}
 
 	private static class EmptyFunction implements Function<String, StructuredRecord> {

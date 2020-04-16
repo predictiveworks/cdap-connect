@@ -25,10 +25,10 @@ import javax.annotation.Nullable;
 import co.cask.cdap.api.annotation.Description;
 import co.cask.cdap.api.annotation.Macro;
 
-import org.apache.directory.api.util.Strings;
-import org.apache.spark.streaming.ws.*;
+import com.google.common.base.Strings;
 
 import de.kp.works.connect.BaseConfig;
+import de.kp.works.ditto.DittoUtils;
 
 public class ThingConfig extends BaseConfig {
 
@@ -98,6 +98,19 @@ public class ThingConfig extends BaseConfig {
 	@Nullable
 	public String trustPassword;
 	
+	/** THING & FEATURE **/
+
+	@Description("The unique identifier of a certain thing. if provided, thing specific subscriptions are restricted to this thing.")
+	@Macro
+	@Nullable
+	public String thingId;
+
+	@Description("The unique identifier of a certain feature. if provided, feature specific subscriptions are restricted to this feature.")
+	@Macro
+	@Nullable
+	public String featureId;
+	
+	
 	/** CHANGE EVENTS **/
       
 	@Description("An indicator to determine whether to listed to changes of all things. Supported values are 'true' and 'false'. Default is 'true'.")
@@ -162,6 +175,14 @@ public class ThingConfig extends BaseConfig {
 
 		props.setProperty(DittoUtils.DITTO_LIVE_MESSAGES(), liveMessages);
 		
+		/* THING & FEATURE */
+		
+		if (!Strings.isNullOrEmpty(thingId))
+			props.setProperty(DittoUtils.DITTO_THING_ID(), thingId);
+		
+		if (!Strings.isNullOrEmpty(featureId))
+			props.setProperty(DittoUtils.DITTO_FEATURE_ID(), featureId);
+		
 		return props;
 
 	}
@@ -169,7 +190,7 @@ public class ThingConfig extends BaseConfig {
 	public void validate() {
 		super.validate();
 		
-		if (Strings.isNotEmpty(endpoint))
+		if (Strings.isNullOrEmpty(endpoint))
 			throw new IllegalArgumentException(
 					String.format("[%s] The Thing service endpoint must not be empty.", this.getClass().getName()));
 		
