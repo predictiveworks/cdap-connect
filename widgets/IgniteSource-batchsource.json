@@ -1,0 +1,172 @@
+{
+"metadata": {"spec-version": "1.5"},
+
+"display-name": "Ignite Source",
+ "configuration-groups": [
+    {
+      "label": "Connection",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "Reference Name",
+          "name": "referenceName"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Ignite Host",
+          "name": "host"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Ignite Port",
+          "name": "port"
+        }
+      ]
+    },
+    {
+      "label": "Data Configuration",
+      "properties": [
+       {
+          "widget-type": "textbox",
+          "label": "Cache Name",
+          "name": "cacheName"
+       },
+       {
+          "widget-type": "textbox",
+          "label": "Field Names",
+          "name": "fieldNames"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Partitions",
+          "name": "partitions",
+          "widget-attributes": {
+            "default": "1"
+          }
+
+        }
+      ]
+    },
+    {
+      "label": "Basic Authentication",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "User Name",
+          "name": "user"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Password",
+          "name": "password"
+        }
+      ]
+    },
+    {
+      "label": "Connection Security",
+      "properties": [
+         {
+          "widget-type": "textbox",
+          "label": "Transport Security",
+          "name": "sslMode",
+          "widget-attributes": {
+            "values": [
+              "false",
+              "true"
+            ],
+            "default": "true"
+          }
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Verify Certificates",
+          "name": "sslVerify",
+          "widget-attributes": {
+            "values": [
+              "false",
+              "true"
+            ],
+            "default": "true"
+          }
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Keystore Location",
+          "name": "sslKeyStorePath"
+        },
+        {
+          "widget-type": "select",
+          "label": "Keystore Type",
+          "name": "sslKeyStoreType",
+          "widget-attributes": {
+            "values": [
+              "JKS",
+              "JCEKS",
+              "PKCS12"
+            ],
+            "default": "JKS"
+          }
+        },
+        {
+          "widget-type": "password",
+          "label": "Keystore Password",
+          "name": "sslKeyStorePass"
+        },
+        {
+          "widget-type": "select",
+          "label": "Keystore Algorithm",
+          "name": "sslKeyStoreAlgo",
+          "widget-attributes": {
+            "values": [
+              "SunX509"
+            ],
+            "default": "SunX509"
+
+          }
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Truststore Location",
+          "name": "sslTrustStorePath"
+        },
+        {
+          "widget-type": "select",
+          "label": "Truststore Type",
+          "name": "sslTrustStoreType",
+          "widget-attributes": {
+            "values": [
+              "JKS",
+              "JCEKS",
+              "PKCS12"
+            ],
+            "default": "JKS"
+
+          }
+        },
+        {
+          "widget-type": "password",
+          "label": "Truststore Password",
+          "name": "sslTrustStorePass"
+        },
+        {
+          "widget-type": "select",
+          "label": "Truststore Algorithm",
+          "name": "sslTrustStoreAlgo",
+          "widget-attributes": {
+            "values": [
+              "SunX509"
+            ],
+            "default": "SunX509"
+
+          }
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Cipher Suites",
+          "name": "sslCipherSuites"
+        }
+      ]
+    }
+
+  ]
+}

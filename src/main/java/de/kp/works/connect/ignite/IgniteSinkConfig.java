@@ -30,7 +30,7 @@ public class IgniteSinkConfig extends IgniteConfig {
 	private static final long serialVersionUID = 3308508419494049261L;
 
 	@Description("The cache mode used when the provided cache does not exist. Supported values "
-			+ "are 'partitioned' and 'replicated. Default is 'partitioned'.")
+			+ "are 'partitioned' and 'replicated'. Default is 'partitioned'.")
 	@Macro
 	@Nullable
 	public String cacheMode;
