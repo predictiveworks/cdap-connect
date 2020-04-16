@@ -1,0 +1,155 @@
+{
+"metadata": {"spec-version": "1.5"},
+
+"display-name": "Thing Stream Source",
+ "configuration-groups": [
+    {
+      "label": "Connection",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "Reference Name",
+          "name": "referenceName"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Endpoint",
+          "name": "endpoint"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Proxy Host",
+          "name": "proxyHost"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Proxy Port",
+          "name": "proxyPort"
+        }
+      ]
+    },
+    {
+      "label": "Thing & Features",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "Thing ID",
+          "name": "thingId"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Feature ID",
+          "name": "featureId"
+        }
+      ]
+    },
+    {
+      "label": "Notifications",
+      "properties": [
+        {
+          "widget-type": "select",
+          "label": "Thing Changes",
+          "name": "thingChanges",
+          "widget-attributes": {
+            "values": [
+              "false",
+              "true"
+            ],
+            "default": "true"
+          }
+        },
+        {
+          "widget-type": "select",
+          "label": "Features Changes",
+          "name": "featuresChanges",
+          "widget-attributes": {
+            "values": [
+              "false",
+              "true"
+            ],
+            "default": "false"
+          }
+        },
+        {
+          "widget-type": "select",
+          "label": "Feature Changes",
+          "name": "featureChanges",
+          "widget-attributes": {
+            "values": [
+              "false",
+              "true"
+            ],
+            "default": "false"
+          }
+        },
+        {
+          "widget-type": "select",
+          "label": "Live Messages",
+          "name": "liveMessages",
+          "widget-attributes": {
+            "values": [
+              "false",
+              "true"
+            ],
+            "default": "false"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Basic Authentication",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "User Name",
+          "name": "user"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Password",
+          "name": "password"
+        }
+      ]
+    },
+    {
+      "label": "OAuth Authentication",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "Client ID",
+          "name": "clientId"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Client Secret",
+          "name": "clientSecret"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Token Endpoint",
+          "name": "tokenEndpoint"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Scopes",
+          "name": "scopes"
+        }
+      ]
+    },
+    {
+      "label": "Truststore",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "Location",
+          "name": "trustLocation"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Password",
+          "name": "trustPassword"
+        }
+      ]
+    }
+  ]
+}

@@ -194,5 +194,27 @@ public class ThingConfig extends BaseConfig {
 			throw new IllegalArgumentException(
 					String.format("[%s] The Thing service endpoint must not be empty.", this.getClass().getName()));
 		
+		/* The current implementation supports a single notification */
+		int count = 0;
+		if (thingChanges.equals("true"))
+			count += 1;
+		
+		if (featuresChanges.equals("true"))
+			count += 1;
+		
+		if (featureChanges.equals("true"))
+			count += 1;
+		
+		if (liveMessages.equals("true"))
+			count += 1;
+
+		if (count == 0)
+			throw new IllegalArgumentException(
+					String.format("[%s] No thing or feature notification selected.", this.getClass().getName()));
+
+		if (count > 1)
+			throw new IllegalArgumentException(
+					String.format("[%s] Selecting more than one notification is not supported.", this.getClass().getName()));
+			
 	}
 }
