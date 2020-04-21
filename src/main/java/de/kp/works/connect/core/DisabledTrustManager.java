@@ -1,4 +1,4 @@
-package de.kp.works.connect;
+package de.kp.works.connect.core;
 /*
  * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
  *

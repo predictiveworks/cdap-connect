@@ -38,7 +38,7 @@ import javax.net.ssl.TrustManagerFactory;
 import org.apache.ignite.IgniteException;
 import com.google.common.base.Strings;
 
-import de.kp.works.connect.DisabledTrustManager;
+import de.kp.works.connect.core.DisabledTrustManager;
 import de.kp.works.connect.ignite.IgniteUtil;
 /**
  * This is a re-implementation of Apache Ignite's SslContextFactory 

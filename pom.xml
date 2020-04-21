@@ -212,14 +212,6 @@
         <artifactId>orientdb-graphdb</artifactId>
         <version>${orient.version}</version>
       </dependency>
-      
-      <!-- ThingsBoard Dependencies-->
-      
-      <dependency>
-        <groupId>org.thingsboard.common</groupId>
-        <artifactId>data</artifactId>
-        <version>${thingsboard.version}</version>
-      </dependency>
 	  
 	</dependencies>
    

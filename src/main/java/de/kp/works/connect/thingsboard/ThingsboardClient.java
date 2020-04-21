@@ -21,9 +21,9 @@ package de.kp.works.connect.thingsboard;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
@@ -37,13 +37,15 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.thingsboard.server.common.data.asset.Asset;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import co.cask.cdap.api.data.format.StructuredRecord;
 import co.cask.cdap.api.data.schema.Schema;
@@ -54,11 +56,14 @@ public class ThingsboardClient {
 
 	private final ThingsboardConfig config;
 
-	private Map<String, Asset> assetMap;
+	private Map<String, JsonObject> assetMap;
 
 	private CloseableHttpClient httpClient;
 	private RequestConfig httpConfig;
-
+	/*
+	 * The JWT token is retrieved via the login request, that replaces
+	 * user name & password by an access token for subsequent requests
+	 */
 	private String token;
 	private int timeout = 30;
 
@@ -88,8 +93,8 @@ public class ThingsboardClient {
 			return;
 		}
 
-		Asset asset = getOrCreateAsset(assetName, assetType);		
-		UUID assetId = asset.getId().getId();
+		JsonObject jsonAsset = getOrCreateAsset(assetName, assetType);		
+		String assetId = jsonAsset.get("id").getAsJsonObject().get("id").getAsString();
 
 		List<Map<String, Object>> data = getData(record);
 
@@ -100,7 +105,7 @@ public class ThingsboardClient {
 			 * Endpoint to pass telemetry data to Thingsboard server
 			 */
 			String endpoint = this.config.getEndpoint()
-					+ String.format("/api/plugins/telemetry/ASSET/%s/timeseries/values", assetId.toString());
+					+ String.format("/api/plugins/telemetry/ASSET/%s/timeseries/values", assetId);
 			
 			HttpPost post = new HttpPost(endpoint);
 			post.setHeader("Content-Type", "application/json; charset=UTF-8");
@@ -179,29 +184,34 @@ public class ThingsboardClient {
 		return data;
 		
 	}
-	
+	/*
+	 * curl -X POST 
+	 * 
+	 * --header 'Content-Type: application/json' 
+	 * --header 'Accept: application/json' 
+	 * -d '{"username":"tenant@thingsboard.org", "password":"tenant"}' 
+	 * 'http://THINGSBOARD_URL/api/auth/login'
+	 *
+	 */
 	private void login() throws Exception {
 
 		try {
-
+			/*
+			 * Build Http client to retrieve access token from login endpoint
+			 */
 			this.httpClient = HttpClientBuilder.create().setDefaultRequestConfig(httpConfig).build();
 
 			String endpoint = this.config.getEndpoint() + "/api/auth/login";
 			HttpPost post = new HttpPost(endpoint);
 
 			post.setHeader("Content-Type", "application/json; charset=UTF-8");
-			post.setHeader("X-Authorization", "Bearer " + token);
+			post.setHeader("Accept", "application/json");
 
-			Map<String, String> credentials = new HashMap<String, String>();
-			credentials.put("username", this.config.user);
-			credentials.put("password", this.config.password);
+			JsonObject credentials = new JsonObject();
+			credentials.addProperty("username", this.config.user);
+			credentials.addProperty("password", this.config.password);
 
-			ObjectMapper mapper = new ObjectMapper();
-
-			ObjectReader reader = mapper.readerFor(JsonNode.class);
-			ObjectWriter writer = mapper.writerFor(Map.class);
-
-			post.setEntity(new ByteArrayEntity(writer.writeValueAsBytes(credentials)));
+			post.setEntity(new ByteArrayEntity(credentials.toString().getBytes("UTF-8")));
 			CloseableHttpResponse response = httpClient.execute(post);
 
 			try {
@@ -211,9 +221,11 @@ public class ThingsboardClient {
 
 					String body = EntityUtils.toString(entity);
 					EntityUtils.consume(entity);
-
-					JsonNode node = reader.readValue(body);
-					this.token = node.get("token").asText();
+					/*
+					 * {"token":"$YOUR_JWT_TOKEN", "refreshToken":"$YOUR_JWT_REFRESH_TOKEN"}
+					 */
+					JsonObject node = new JsonParser().parse(body).getAsJsonObject();
+					this.token = node.get("token").getAsString();
 
 				} else
 					throw new Exception("Thingsboard server returns empty response");
@@ -260,17 +272,17 @@ public class ThingsboardClient {
 					String body = EntityUtils.toString(entity);
 					EntityUtils.consume(entity);
 
-					ObjectMapper mapper = new ObjectMapper();
-					ObjectReader reader = mapper.readerFor(JsonNode.class);
-
-					JsonNode node = reader.readValue(body);
-					JsonNode data = node.findValues("data").get(0);
-
-					reader = mapper.readerFor(new TypeReference<List<Asset>>() {
-					});
-
-					List<Asset> assets = reader.readValue(data);
-					assets.stream().forEach(a -> assetMap.put(a.getName(), a));
+					JsonObject result = new JsonParser().parse(body).getAsJsonObject();
+					JsonArray assets = result.get("data").getAsJsonArray();
+					
+					Iterator<JsonElement> iter = assets.iterator();
+					while (iter.hasNext()) {
+						
+						JsonObject jsonAsset = iter.next().getAsJsonObject();
+						String name = jsonAsset.get("name").getAsString();
+						
+						assetMap.put(name, jsonAsset);
+					}
 
 				} else
 					throw new Exception("Thingsboard server returns empty response");
@@ -290,27 +302,48 @@ public class ThingsboardClient {
 
 	}
 
-	private Asset getOrCreateAsset(String assetName, String assetType) throws Exception {
-		Asset asset = assetMap.get(assetName);
+	private JsonObject getOrCreateAsset(String assetName, String assetType) throws Exception {
+		
+		JsonObject asset = assetMap.get(assetName);
 		if (asset == null) {
 			asset = createAsset(assetName, assetType);
 			assetMap.put(assetName, asset);
 		}
 		return asset;
 	}
+	/*
+	 * This method is used to represent a ThingsBoard
+	 * [Asset] as a JsonObject to avoid unneccessary
+	 * dependencies
+	 */
+	private JsonObject buildJsonAsset(String assetName, String assetType) {
+		
+		JsonObject jAsset = new JsonObject();
+		
+		jAsset.add("id", JsonNull.INSTANCE);
+		jAsset.addProperty("createdTime", 0);
+		
+		jAsset.add("additionalInfo", JsonNull.INSTANCE);
+		jAsset.add("tenantId", JsonNull.INSTANCE);
+		
+		jAsset.add("customerId", JsonNull.INSTANCE);
+		
+		jAsset.addProperty("name", assetName);
+		jAsset.addProperty("type", assetType);
 
-	private Asset createAsset(String assetName, String assetType) throws Exception {
+		return jAsset;
+		
+	}
+	
+	private JsonObject createAsset(String assetName, String assetType) throws Exception {
 
-		Asset responseAsset = null;
+		JsonObject responseAsset = null;
 
 		try {
 
 			this.httpClient = HttpClientBuilder.create().setDefaultRequestConfig(httpConfig).build();
 
-			Asset sendAsset = new Asset();
-
-			sendAsset.setName(assetName);
-			sendAsset.setType(assetType);
+			JsonObject sendAsset = buildJsonAsset(assetName, assetType);
 
 			/* Set header */
 			String endpoint = this.config.getAssetEndpoint();
@@ -320,10 +353,7 @@ public class ThingsboardClient {
 			post.setHeader("X-Authorization", "Bearer " + token);
 
 			/* Set asset */
-			ObjectMapper mapper = new ObjectMapper();
-			ObjectWriter writer = mapper.writerFor(Asset.class);
-
-			post.setEntity(new ByteArrayEntity(writer.writeValueAsBytes(sendAsset)));
+			post.setEntity(new ByteArrayEntity(sendAsset.toString().getBytes("UTF-8")));
 			CloseableHttpResponse response = httpClient.execute(post);
 
 			try {
@@ -334,8 +364,7 @@ public class ThingsboardClient {
 					String body = EntityUtils.toString(entity);
 					EntityUtils.consume(entity);
 
-					ObjectReader reader = mapper.readerFor(Asset.class);
-					responseAsset = reader.readValue(body);
+				    responseAsset = new JsonParser().parse(body).getAsJsonObject();
 
 				} else
 					throw new Exception("Thingsboard server returns empty response");
