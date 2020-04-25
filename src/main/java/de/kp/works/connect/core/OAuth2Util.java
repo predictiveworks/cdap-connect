@@ -56,7 +56,7 @@ public class OAuth2Util {
 		CloseableHttpResponse response = httpclient.execute(httppost);
 		String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
 
-		JsonElement jsonElement = JSONUtil.toJsonObject(responseString).get("access_token");
+		JsonElement jsonElement = JsonUtil.toJsonObject(responseString).get("access_token");
 		return jsonElement.getAsString();
 		
 	}

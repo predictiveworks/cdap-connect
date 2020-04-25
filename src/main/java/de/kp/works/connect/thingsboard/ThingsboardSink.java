@@ -39,13 +39,13 @@ import co.cask.cdap.etl.api.batch.BatchSinkContext;
 @Description("Batch sink plugin to send messages to a Thingsboard server.")
 public class ThingsboardSink extends BatchSink<StructuredRecord, Void, Void> {
 
-	private final ThingsboardConfig config;
-	private ThingsboardClient client;
+	private final ThingsSinkConfig config;
+	private ThingsClient client;
 
-	public ThingsboardSink(ThingsboardConfig config) {
+	public ThingsboardSink(ThingsSinkConfig config) {
 
 		this.config = config;
-		this.client = new ThingsboardClient(config);
+		this.client = new ThingsClient(config);
 
 	}
 

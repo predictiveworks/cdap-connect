@@ -23,10 +23,9 @@ import com.google.common.base.Strings;
 import co.cask.cdap.api.annotation.Description;
 import co.cask.cdap.api.annotation.Macro;
 import co.cask.cdap.api.annotation.Name;
-import co.cask.cdap.api.plugin.PluginConfig;
-import co.cask.hydrator.common.Constants;
+import de.kp.works.connect.BaseConfig;
 
-public class ThingsboardConfig extends PluginConfig {
+public class ThingsSinkConfig extends BaseConfig {
 
 	private static final long serialVersionUID = 1401383241435144467L;
 
@@ -42,10 +41,6 @@ public class ThingsboardConfig extends PluginConfig {
 	public static final String ASSET_TYPE = "assetType";
 
 	public static final String ASSET_FEATURES = "assetFeatures";
-
-	@Name(Constants.Reference.REFERENCE_NAME)
-	@Description(Constants.Reference.REFERENCE_NAME_DESCRIPTION)
-	public String referenceName;
 
 	@Name(HOST)
 	@Description("The host of the Thingsboard server.")
@@ -88,7 +83,7 @@ public class ThingsboardConfig extends PluginConfig {
 	@Macro
 	public String assetFeatures;
 
-	public ThingsboardConfig() {
+	public ThingsSinkConfig() {
 		assetLimit = "1000";
 	}
 	/**
@@ -105,11 +100,7 @@ public class ThingsboardConfig extends PluginConfig {
 	}
 
 	public void validate() {
-		
-		if (Strings.isNullOrEmpty(referenceName)) {
-			throw new IllegalArgumentException(
-					String.format("[%s] The reference name must not be empty.", this.getClass().getName()));
-		}
+		super.validate();
 		
 		/** CONNECTION **/
 
@@ -118,7 +109,7 @@ public class ThingsboardConfig extends PluginConfig {
 					String.format("[%s] The host of the Thingsboard server must not be empty.", this.getClass().getName()));
 		}
 		
-		if (Strings.isNullOrEmpty(host)) {
+		if (Strings.isNullOrEmpty(port)) {
 			throw new IllegalArgumentException(
 					String.format("[%s] The port of the Thingsboard server must not be empty.", this.getClass().getName()));
 		}

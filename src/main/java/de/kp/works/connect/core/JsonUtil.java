@@ -27,10 +27,14 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 
-public class JSONUtil {
+public class JsonUtil {
 	
   private static final JsonParser parser = new JsonParser();
 
+  public static JsonElement toJsonElement(String text) {
+	  return parser.parse(text);
+  }
+  
   public static JsonObject toJsonObject(String text) {
     return parser.parse(text).getAsJsonObject();
   }

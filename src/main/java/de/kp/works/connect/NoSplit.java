@@ -1,4 +1,4 @@
-package de.kp.works.connect.http;
+package de.kp.works.connect;
 /*
  * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -26,8 +26,8 @@ import java.io.DataOutput;
 /**
  * A no-op split.
  */
-public class HttpNoSplit extends InputSplit implements org.apache.hadoop.mapred.InputSplit {
-  public HttpNoSplit() {
+public class NoSplit extends InputSplit implements org.apache.hadoop.mapred.InputSplit {
+  public NoSplit() {
   }
 
   @Override

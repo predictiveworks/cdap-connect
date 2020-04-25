@@ -43,7 +43,8 @@
       <widgets.dir>widgets</widgets.dir>
 
 	  <aerospike.version>4.4.9</aerospike.version>
-    	  <bouncycastle.version>1.52</bouncycastle.version>
+ 	  <awaitility.version>3.1.6</awaitility.version>
+      <bouncycastle.version>1.52</bouncycastle.version>
       <cdap.version>5.1.1</cdap.version>    
       <hadoop.version>2.8.0</hadoop.version>   
 	  <ignite.version>2.7.6</ignite.version>       
@@ -51,7 +52,6 @@
       <kafka.version>0.10.0.1</kafka.version>
 	  <orient.version>3.0.26</orient.version>      
       <spark.version>2.1.3</spark.version>   
-      <thingsboard.version>2.2.1-SNAPSHOT</thingsboard.version>
 
 	</properties>
 
@@ -169,11 +169,23 @@
       </dependency>
 	  
 	  <!-- Aerospike dependencies -->
+	  
 	  <dependency>
 	    <groupId>com.aerospike</groupId>
 		<artifactId>aerospike-client</artifactId>
 		<version>${aerospike.version}</version>
 	  </dependency>	  
+
+	  <!-- Awaitility dependencies 
+	  
+	  This library is e.g. used to control access to Http endpoints
+	  -->
+	  
+    	  <dependency>
+        <groupId>org.awaitility</groupId>
+        <artifactId>awaitility</artifactId>
+        <version>${awaitility.version}</version>
+      </dependency>
 	  
       <!--  Bouncycastle dependencies -->  
       
