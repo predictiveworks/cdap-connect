@@ -27,7 +27,7 @@ import java.util.stream.Stream;
 
 import com.google.common.base.Strings;
 
-import de.kp.works.connect.http.core.EnumWithValue;
+import de.kp.works.connect.http.EnumWithValue;
 
 public class ConfigUtil {
 

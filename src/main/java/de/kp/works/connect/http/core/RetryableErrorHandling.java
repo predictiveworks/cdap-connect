@@ -18,6 +18,9 @@ package de.kp.works.connect.http.core;
  * 
  */
 
+import de.kp.works.connect.http.EnumWithValue;
+import de.kp.works.connect.http.ErrorHandling;
+
 /**
  * Indicates error handling strategy which will be used to handle unexpected
  * http status codes.
