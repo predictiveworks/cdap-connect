@@ -131,6 +131,10 @@ public class KafkaConfig extends BaseConfig implements Serializable {
 
 	}
 
+	public String getBrokers() {
+		return brokers;
+	}
+	
 	/**
 	 * @return broker host to broker port mapping.
 	 */

@@ -1,5 +1,4 @@
 package de.kp.works.connect.kafka;
-
 /*
  * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -25,14 +24,10 @@ import co.cask.cdap.api.annotation.Description;
 import co.cask.cdap.api.annotation.Name;
 import co.cask.cdap.api.annotation.Plugin;
 import co.cask.cdap.api.data.format.StructuredRecord;
-import co.cask.cdap.api.dataset.DatasetProperties;
 import co.cask.cdap.etl.api.PipelineConfigurer;
 import co.cask.cdap.etl.api.StageConfigurer;
 import co.cask.cdap.etl.api.streaming.StreamingContext;
 import co.cask.cdap.etl.api.streaming.StreamingSource;
-import co.cask.hydrator.common.Constants;
-import co.cask.hydrator.common.IdUtils;
-import de.kp.works.connect.KafkaStreamConfig;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,15 +41,15 @@ import java.util.Map;
  * Kafka Streaming source.
  */
 @Plugin(type = StreamingSource.PLUGIN_TYPE)
-@Name("KafkaSTStream")
+@Name("KafkaStreamSource")
 @Description("An Apache Kafka streaming source that supports real-time events that refer to a single topic.")
 public class KafkaStreamSource extends StreamingSource<StructuredRecord> {
 
 	private static final long serialVersionUID = -1344898376371260838L;
-	private final KafkaStreamConfig conf;
+	private final KafkaConfig config;
 	
-	public KafkaStreamSource(KafkaStreamConfig conf) {
-		this.conf = conf;
+	public KafkaStreamSource(KafkaConfig conf) {
+		this.config = conf;
 		
 	}
 
@@ -62,7 +57,7 @@ public class KafkaStreamSource extends StreamingSource<StructuredRecord> {
 	public void configurePipeline(PipelineConfigurer pipelineConfigurer) throws IllegalArgumentException {
 		super.configurePipeline(pipelineConfigurer);
 
-		conf.validate();
+		config.validate();
 		/*
 		 * __KUP__
 		 * 
@@ -72,12 +67,12 @@ public class KafkaStreamSource extends StreamingSource<StructuredRecord> {
 		StageConfigurer stageConfigurer = pipelineConfigurer.getStageConfigurer();
 		stageConfigurer.setOutputSchema(null);
 		
-		if (conf.getMaxRatePerPartition() != null && conf.getMaxRatePerPartition() > 0) {
+		if (config.getMaxRatePerPartition() != null && config.getMaxRatePerPartition() > 0) {
 
 			Map<String, String> pipelineProperties = new HashMap<>();
 
 			pipelineProperties.put("spark.streaming.kafka.maxRatePerPartition",
-					conf.getMaxRatePerPartition().toString());
+					config.getMaxRatePerPartition().toString());
 			pipelineConfigurer.setPipelineProperties(pipelineProperties);
 
 		}
@@ -85,10 +80,7 @@ public class KafkaStreamSource extends StreamingSource<StructuredRecord> {
 
 	@Override
 	public JavaDStream<StructuredRecord> getStream(StreamingContext context) throws Exception {
-		
-		context.registerLineage(conf.referenceName);
-		return KafkaStreamUtil.getStructuredRecordJavaDStream(context, conf);
-		
+		return KafkaStreamUtil.getStructuredRecordJavaDStream(context, config);		
 	}
 	
 }

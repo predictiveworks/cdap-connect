@@ -20,6 +20,16 @@
           }
         },
         {
+          "widget-type": "keyvalue",
+          "label": "Kafka Consumer Properties",
+          "name": "kafkaProperties",
+          "widget-attributes": {
+            "showDelimiter": "false",
+            "key-placeholder": "Kafka consumer property",
+            "value-placeholder": "Kafka consumer property value"
+          }
+        },
+        {
           "widget-type": "textbox",
           "label": "Kafka Topic",
           "name": "topic"
@@ -34,12 +44,12 @@
         },
         {
           "widget-type": "textbox",
-          "label": "Default Initial Offset",
+          "label": "Initial Offset",
           "name": "defaultInitialOffset"
         },
         {
           "widget-type": "keyvalue",
-          "label": "Initial Partition Offsets",
+          "label": "Partition Offsets",
           "name": "initialPartitionOffsets",
           "widget-attributes": {
             "showDelimiter": "false",
@@ -59,16 +69,6 @@
           "widget-attributes": {
             "default": "1000"
           }
-        },
-        {
-          "widget-type": "keyvalue",
-          "label": "Additional Kafka Consumer Properties",
-          "name": "kafkaProperties",
-          "widget-attributes": {
-            "showDelimiter": "false",
-            "key-placeholder": "Kafka consumer property",
-            "value-placeholder": "Kafka consumer property value"
-          }
         }
       ]
     },
@@ -77,8 +77,8 @@
       "properties": [
         {
           "widget-type": "select",
-          "label": "Format",
-          "name": "format",
+          "label": "Message Format",
+          "name": "messageformat",
           "widget-attributes": {
             "values": [
               "generic"

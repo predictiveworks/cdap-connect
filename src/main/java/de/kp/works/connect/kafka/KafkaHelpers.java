@@ -20,20 +20,30 @@ package de.kp.works.connect.kafka;
  */
 
 import com.google.common.base.Strings;
+
+import kafka.api.OffsetRequest;
+
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.common.TopicPartition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import javax.annotation.Nullable;
 
 /**
  * Utility class for Kafka operations
  */
 public final class KafkaHelpers {
+	
 	private static final Logger LOG = LoggerFactory.getLogger(KafkaHelpers.class);
 	public static final String SASL_JAAS_CONFIG = "sasl.jaas.config";
 	public static final String PRINCIPAL = "principal";
@@ -43,6 +53,46 @@ public final class KafkaHelpers {
 	private KafkaHelpers() {
 	}
 
+	public static <K, V> void validateOffsets(Map<TopicPartition, Long> offsets, Consumer<K, V> consumer) {
+
+		List<TopicPartition> earliestOffsetRequest = new ArrayList<>();
+		List<TopicPartition> latestOffsetRequest = new ArrayList<>();
+
+		for (Map.Entry<TopicPartition, Long> entry : offsets.entrySet()) {
+			
+			TopicPartition topicAndPartition = entry.getKey();
+			Long offset = entry.getValue();
+			
+			if (offset == OffsetRequest.EarliestTime()) {
+				earliestOffsetRequest.add(topicAndPartition);
+			
+			} else if (offset == OffsetRequest.LatestTime()) {
+				latestOffsetRequest.add(topicAndPartition);
+			}
+		
+		}
+
+		Set<TopicPartition> allOffsetRequest = Sets
+				.newHashSet(Iterables.concat(earliestOffsetRequest, latestOffsetRequest));
+		
+		Map<TopicPartition, Long> offsetsFound = new HashMap<>();
+		
+		offsetsFound.putAll(KafkaHelpers.getEarliestOffsets(consumer, earliestOffsetRequest));
+		offsetsFound.putAll(KafkaHelpers.getLatestOffsets(consumer, latestOffsetRequest));
+
+		for (TopicPartition topicAndPartition : allOffsetRequest) {
+			offsets.put(topicAndPartition, offsetsFound.get(topicAndPartition));
+		}
+
+		Set<TopicPartition> missingOffsets = Sets.difference(allOffsetRequest, offsetsFound.keySet());
+		if (!missingOffsets.isEmpty()) {
+			
+			throw new IllegalStateException(String.format(
+					"Could not find offsets for %s. Please check all brokers were included in the broker list.",
+					missingOffsets));
+		}
+		
+	}
 	/**
 	 * Fetch the latest offsets for the given topic-partitions
 	 *

@@ -20,18 +20,12 @@ package de.kp.works.connect.kafka;
  */
 
 import java.util.Arrays;
-import com.google.common.base.Joiner;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 import co.cask.cdap.api.data.format.StructuredRecord;
 import co.cask.cdap.api.data.schema.Schema;
 import co.cask.cdap.api.spark.sql.DataFrames;
 import co.cask.cdap.etl.api.streaming.StreamingContext;
-import de.kp.works.connect.KafkaStreamConfig;
-import kafka.api.OffsetRequest;
 
 import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.PartitionInfo;
@@ -64,83 +58,27 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import de.kp.works.connect.EmptyFunction;
+
 final class KafkaStreamUtil {
 	private static final Logger LOG = LoggerFactory.getLogger(KafkaStreamUtil.class);
 
-	static JavaDStream<StructuredRecord> getStructuredRecordJavaDStream(StreamingContext context, KafkaStreamConfig config) {
+	static JavaDStream<StructuredRecord> getStructuredRecordJavaDStream(StreamingContext context, KafkaConfig config) {
 
-		Map<String, Object> kafkaParams = new HashMap<>();
-		kafkaParams.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, config.getBrokers());
-
-		/* Spark saves the offsets in checkpoints, no need for Kafka to save them */
-		kafkaParams.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
-		
-		kafkaParams.put("key.deserializer", ByteArrayDeserializer.class.getCanonicalName());
-		kafkaParams.put("value.deserializer", ByteArrayDeserializer.class.getCanonicalName());
-		
-		KafkaHelpers.setupKerberosLogin(kafkaParams, config.getPrincipal(), config.getKeytabLocation());
-		/*
-		 * Create a unique string for the group.id using the pipeline name and the topic;
-		 * group.id is a Kafka consumer property that uniquely identifies the group of 
-		 * consumer processes to which this consumer belongs.
-		 */
-		kafkaParams.put("group.id", Joiner.on("-").join(context.getPipelineName().length(), config.getTopic().length(),
-				context.getPipelineName(), config.getTopic()));
-
-		kafkaParams.putAll(config.getKafkaProperties());
-
-		Properties properties = new Properties();
-		properties.putAll(kafkaParams);
-		/*
-		 * The default session.timeout.ms = 30000 (30s) and the fetch.max.wait.ms = 500 (0.5s);
-		 * KafkaConsumer checks whether smaller than session timeout or fetch timeout; in this
-		 * case an exception is thrown.
-		 */
-		int requestTimeout = 30 * 1000 + 1000;
-		if (config.getKafkaProperties().containsKey(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG)) {
-			requestTimeout = Math.max(requestTimeout,
-					Integer.valueOf(config.getKafkaProperties().get(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG) + 1000));
-		}
-		properties.put(ConsumerConfig.REQUEST_TIMEOUT_MS_CONFIG, requestTimeout);
-		
-		properties.put(ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, "org.apache.kafka.clients.consumer.RoundRobinAssignor");
+		Map<String, Object> kafkaParams =  KafkaParams.buildParams(config, context.getPipelineName());
+		Properties properties = KafkaParams.buildProperties(config, kafkaParams);
 		
 		try (Consumer<byte[], byte[]> consumer = new KafkaConsumer<>(properties, new ByteArrayDeserializer(),
 				new ByteArrayDeserializer())) {
-
+			/*
+			 * KafkaUtils doesn't understand -1 and -2 as smallest offset and 
+			 * latest offset. So we have to replace them with the actual smallest 
+			 * and latest.
+			 */
 			Map<TopicPartition, Long> offsets = config
 					.getInitialPartitionOffsets(getPartitions(consumer, config));
 
-			// KafkaUtils doesn't understand -1 and -2 as smallest offset and latest offset.
-			// so we have to replace them with the actual smallest and latest
-			List<TopicPartition> earliestOffsetRequest = new ArrayList<>();
-			List<TopicPartition> latestOffsetRequest = new ArrayList<>();
-			for (Map.Entry<TopicPartition, Long> entry : offsets.entrySet()) {
-				TopicPartition topicAndPartition = entry.getKey();
-				Long offset = entry.getValue();
-				if (offset == OffsetRequest.EarliestTime()) {
-					earliestOffsetRequest.add(topicAndPartition);
-				} else if (offset == OffsetRequest.LatestTime()) {
-					latestOffsetRequest.add(topicAndPartition);
-				}
-			}
-
-			Set<TopicPartition> allOffsetRequest = Sets
-					.newHashSet(Iterables.concat(earliestOffsetRequest, latestOffsetRequest));
-			Map<TopicPartition, Long> offsetsFound = new HashMap<>();
-			offsetsFound.putAll(KafkaHelpers.getEarliestOffsets(consumer, earliestOffsetRequest));
-			offsetsFound.putAll(KafkaHelpers.getLatestOffsets(consumer, latestOffsetRequest));
-
-			for (TopicPartition topicAndPartition : allOffsetRequest) {
-				offsets.put(topicAndPartition, offsetsFound.get(topicAndPartition));
-			}
-
-			Set<TopicPartition> missingOffsets = Sets.difference(allOffsetRequest, offsetsFound.keySet());
-			if (!missingOffsets.isEmpty()) {
-				throw new IllegalStateException(String.format(
-						"Could not find offsets for %s. Please check all brokers were included in the broker list.",
-						missingOffsets));
-			}
+			KafkaHelpers.validateOffsets(offsets, consumer);
 			LOG.info("Using initial offsets {}", offsets);
 			
 			return KafkaUtils.createDirectStream(context.getSparkStreamingContext(),
@@ -173,7 +111,7 @@ final class KafkaStreamUtil {
 
 		private static final long serialVersionUID = 8255192804608655854L;
 		
-		private final KafkaStreamConfig config;
+		private final KafkaConfig config;
 		/*
 		 * This variable specifies the output schema that has been inferred
 		 * from the incoming JavaRDD batch; note, we determine the data schema
@@ -182,7 +120,7 @@ final class KafkaStreamUtil {
 		 */
 		private Schema schema;
 
-		RecordTransform(KafkaStreamConfig config) {
+		RecordTransform(KafkaConfig config) {
 			this.config = config;
 		}
 
@@ -261,7 +199,7 @@ final class KafkaStreamUtil {
 		}
 	}
 
-	private static Set<Integer> getPartitions(Consumer<byte[], byte[]> consumer, KafkaStreamConfig conf) {
+	private static Set<Integer> getPartitions(Consumer<byte[], byte[]> consumer, KafkaConfig conf) {
 		Set<Integer> partitions = conf.getPartitions();
 
 		if (!partitions.isEmpty()) {
@@ -299,10 +237,10 @@ final class KafkaStreamUtil {
 		private static final long serialVersionUID = -6349050933153626269L;
 		private final long ts;
 
-		protected final KafkaStreamConfig config;
+		protected final KafkaConfig config;
 		protected Schema schema;
 
-		BaseFunction(long ts, KafkaStreamConfig conf, Schema schema) {
+		BaseFunction(long ts, KafkaConfig conf, Schema schema) {
 
 			this.ts = ts;
 			this.config = conf;
@@ -358,28 +296,6 @@ final class KafkaStreamUtil {
 
 	/**
 	 * Transforms kafka key and message into a structured record when message format
-	 * is not given. Everything here should be serializable, as Spark Streaming will
-	 * serialize all functions.
-	 */
-	private static class EmptyFunction implements Function<ConsumerRecord<byte[], byte[]>, StructuredRecord> {
-
-		private static final long serialVersionUID = -2582275414113323812L;
-
-		@Override
-		public StructuredRecord call(ConsumerRecord<byte[], byte[]> in) throws Exception {
-
-			List<Schema.Field> schemaFields = new ArrayList<>();
-			Schema schema = Schema.recordOf("emptyOutput", schemaFields);
-
-			StructuredRecord.Builder builder = StructuredRecord.builder(schema);
-			return builder.build();
-			
-		}
-
-	}
-
-	/**
-	 * Transforms kafka key and message into a structured record when message format
 	 * and schema are given. Everything here should be serializable, as Spark
 	 * Streaming will serialize all functions.
 	 */
@@ -387,7 +303,7 @@ final class KafkaStreamUtil {
 		
 		private static final long serialVersionUID = 3641946374069347123L;
 		
-		FormatFunction(long ts, KafkaStreamConfig config, Schema schema) {
+		FormatFunction(long ts, KafkaConfig config, Schema schema) {
 			super(ts, config, schema);
 		}
 
@@ -405,7 +321,6 @@ final class KafkaStreamUtil {
 		 */
 		@Override
 		protected StructuredRecord transformRecord(StructuredRecord input, String format, Set<String> excludeField) {
-			// TODO
 			return input;
 		}
 		
