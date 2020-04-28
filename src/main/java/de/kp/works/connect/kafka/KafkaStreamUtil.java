@@ -27,6 +27,7 @@ import co.cask.cdap.api.data.format.StructuredRecord;
 import co.cask.cdap.api.data.schema.Schema;
 import co.cask.cdap.api.spark.sql.DataFrames;
 import co.cask.cdap.etl.api.streaming.StreamingContext;
+import de.kp.works.connect.KafkaStreamConfig;
 import kafka.api.OffsetRequest;
 
 import org.apache.kafka.clients.consumer.Consumer;

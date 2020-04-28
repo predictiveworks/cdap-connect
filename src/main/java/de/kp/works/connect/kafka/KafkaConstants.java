@@ -26,28 +26,32 @@ public class KafkaConstants {
 	public static final String KAFKA_CONSUMER_PROPS = "Specifies additional Kafka consumer properties to set in form of a key-value list. "
 			+ "For example: key1:value1, key2:value2 etc.";
 
-	public static final String KAFKA_FORMAT = "Optional application level format of the Kafka events. If no format is provided, generic "
-			+ "inference of the data schema is provided and no application specific processing is done.";
+	public static final String KAFKA_TOPIC_READ = "The Kafka topic from which messages are read.";
 
+	public static final String KAFKA_TOPIC_PARTITIONS = "The topic partitions to read from. If not specified, all partitions will be read.";
+	
+	public static final String KAFKA_PARTITION_OFFSETS = "The initial offset for each topic partition. If this is not specified, "
+			+ "all partitions will have the same initial offset, which is determined by the 'Initial Offset' property. An offset "
+			+ "of -2 means the smallest offset. An offset of -1 means the latest offset. Offsets are inclusive. If an offset "
+			+ "of 5 is used, the message at offset 5 will be read.";
+
+	public static final String KAFKA_INITIAL_OFFSETS = "The default initial offset for all topic partitions. "
+			+ "An offset of -2 means the smallest offset. An offset of -1 means the latest offset. Defaults to -1. "
+			+ "Offsets are inclusive. If an offset of 5 is used, the message at offset 5 will be read. If you wish "
+			+ "to set different initial offsets for different partitions, use the 'Partition Offsets' property.";
+
+	public static final String KAFKA_MAX_RATE_PER_PARTITION = "Max number of records to read per second per partition. "
+			+ "0 means there is no limit. Defaults to 1000.";
+	
 	public static final String KAFKA_PRINCIPAL = "The Kerberos principal used when Kerberos security is enabled for Kafka.";
 
 	public static final String KAFKA_KEYTAB = "The keytab location for the Kerberos principal when Kerberos security is enabled for Kafka.";
 
-	public static final String KAFKA_PRODUCER_PROPS = "Specifies additional Kafka producer properties to set in form of a key-value list. "
-			+ "For example: key1:value1, key2:value2 etc.";
-
-	public static final String KAFKA_TOPIC_PARTITIONS = "The topic partitions to read from. If not specified, all partitions will be read. "
-			+ "Please provde as a comma-separated list. For example: partition1,partition2 etc.";
-
-	public static final String KAFKA_TOPICS_PARTITIONS = "The partitions for each topic to read from. If not specified, all partitions will be read. "
-			+ "Please provide as a comma-separated list. For example: topic1:partition1,topic1:partition2,topic2:partition3 etc.";
-
-	public static final String KAFKA_TOPIC_READ = "The Kafka topic from which messages are read.";
-
-	public static final String KAFKA_TOPICS_READ = "The Kafka topics from which messages are read. Please provided as a comma-separated list. "
-			+ "For example: topic1,topic2,topic3";
-
-	public static final String KAFKA_TOPIC_WRITE = "The Kafka topic to which messages need to be published. "
-			+ "Note, the topic should already exist. Please the Kafka configuration.";
+	public static final String KAFKA_TIME_FIELD = "Optional name of the field containing the read time of the Kafaka event batch. "
+			+ "If this is not set, a time field names '_timestamp' will be added to output records. "
+			+ "If set, this field must be present in the schema property and must be a long.";
+	
+	public static final String KAFKA_MESSAGE_FORMAT = "Optional application level format of the Kafka events. If no format is provided, generic "
+			+ "inference of the data schema is provided and no application specific processing is done.";
 
 }

@@ -25,10 +25,14 @@ import co.cask.cdap.api.annotation.Description;
 import co.cask.cdap.api.annotation.Name;
 import co.cask.cdap.api.annotation.Plugin;
 import co.cask.cdap.api.data.format.StructuredRecord;
+import co.cask.cdap.api.dataset.DatasetProperties;
 import co.cask.cdap.etl.api.PipelineConfigurer;
 import co.cask.cdap.etl.api.StageConfigurer;
 import co.cask.cdap.etl.api.streaming.StreamingContext;
 import co.cask.cdap.etl.api.streaming.StreamingSource;
+import co.cask.hydrator.common.Constants;
+import co.cask.hydrator.common.IdUtils;
+import de.kp.works.connect.KafkaStreamConfig;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,13 +48,12 @@ import java.util.Map;
 @Plugin(type = StreamingSource.PLUGIN_TYPE)
 @Name("KafkaSTStream")
 @Description("An Apache Kafka streaming source that supports real-time events that refer to a single topic.")
-public class KafkaStreamSource extends StreamRefSource<StructuredRecord> {
+public class KafkaStreamSource extends StreamingSource<StructuredRecord> {
 
 	private static final long serialVersionUID = -1344898376371260838L;
 	private final KafkaStreamConfig conf;
 	
 	public KafkaStreamSource(KafkaStreamConfig conf) {
-		super(conf);
 		this.conf = conf;
 		
 	}
