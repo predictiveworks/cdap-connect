@@ -18,14 +18,41 @@ package de.kp.works.connect.shopify;
  * 
  */
 
-
+import co.cask.cdap.api.annotation.Description;
+import co.cask.cdap.api.annotation.Macro;
 import de.kp.works.connect.BaseConfig;
 
 public class ShopifyConfig extends BaseConfig {
 
 	private static final long serialVersionUID = -4187403344188896623L;
 
+	@Description("Name of the Shopify shop.")
+	@Macro
+	public String shopname;
+
+	@Description("Version of the Shopify API.")
+	@Macro
+	public String version;
+
+	/**
+	 * BASIC AUTHENTICATION
+	 * 
+	 * The ShopifyClient performs basic authentication.
+	 */
+
+	@Description("Username for basic authentication.")
+	@Macro
+	public String username;
+
+	@Description("Password for basic authentication.")
+	@Macro
+	public String password;
+
 	public void validate() {
 		super.validate();
+	}
+
+	public String getEndpoint() {
+		return String.format("https://%s:%s@%s.myshopify.com/admin/api/%s/", username, password, shopname, version);
 	}
 }
