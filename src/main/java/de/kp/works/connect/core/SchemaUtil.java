@@ -215,38 +215,8 @@ public class SchemaUtil implements Serializable {
 			return Schema.of(Schema.Type.NULL);
 
 		else if (feature.isJsonPrimitive()) {
-
 			JsonPrimitive value = feature.getAsJsonPrimitive();
-			if (value.isBoolean())
-				return Schema.of(Schema.Type.BOOLEAN);
-
-			else if (value.isNumber()) {
-				/*
-				 * Gson does not support the derivation of the basic type of [Number]; we
-				 * therefore wrap it as an [Object] with a limited amount of baic data types
-				 */
-				Object number = wrapNumber(value.getAsNumber());
-
-				if (number instanceof BigDecimal)
-					return Schema.of(Schema.Type.DOUBLE);
-
-				else if (number instanceof BigInteger)
-					return Schema.of(Schema.Type.LONG);
-
-				else if (number instanceof Double)
-					return Schema.of(Schema.Type.DOUBLE);
-
-				else if (number instanceof Integer)
-					return Schema.of(Schema.Type.INT);
-
-				else if (number instanceof Long)
-					return Schema.of(Schema.Type.LONG);
-				else
-					throw new IllegalArgumentException(
-							"Supported basic data types: Double, Float, Integer, Long and Short.");
-
-			} else if (value.isString())
-				return Schema.of(Schema.Type.STRING);
+			return primitive2Schema(value);
 
 		}
 
@@ -292,6 +262,44 @@ public class SchemaUtil implements Serializable {
 
 	}
 
+	public static Schema primitive2Schema(JsonPrimitive value) {
+		
+		if (value.isBoolean())
+			return Schema.of(Schema.Type.BOOLEAN);
+
+		else if (value.isNumber()) {
+			/*
+			 * Gson does not support the derivation of the basic type of [Number]; we
+			 * therefore wrap it as an [Object] with a limited amount of baic data types
+			 */
+			Object number = wrapNumber(value.getAsNumber());
+
+			if (number instanceof BigDecimal)
+				return Schema.of(Schema.Type.DOUBLE);
+
+			else if (number instanceof BigInteger)
+				return Schema.of(Schema.Type.LONG);
+
+			else if (number instanceof Double)
+				return Schema.of(Schema.Type.DOUBLE);
+
+			else if (number instanceof Integer)
+				return Schema.of(Schema.Type.INT);
+
+			else if (number instanceof Long)
+				return Schema.of(Schema.Type.LONG);
+			else
+				throw new IllegalArgumentException(
+						"Supported basic data types: Double, Float, Integer, Long and Short.");
+
+		} else if (value.isString())
+			return Schema.of(Schema.Type.STRING);
+		
+		else
+			return null;
+	
+	}
+	
 	private static Object wrapNumber(Number n) {
 
 		Object number;

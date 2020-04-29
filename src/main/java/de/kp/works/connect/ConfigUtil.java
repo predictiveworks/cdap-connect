@@ -27,7 +27,7 @@ import java.util.stream.Stream;
 
 import com.google.common.base.Strings;
 
-import de.kp.works.connect.http.EnumWithValue;
+import de.kp.works.connect.http.core.ValuedEnum;
 
 public class ConfigUtil {
 
@@ -46,7 +46,7 @@ public class ConfigUtil {
 		}
 	}
 
-	public static <T extends EnumWithValue> T getEnumValueByString(Class<T> enumClass, String stringValue,
+	public static <T extends ValuedEnum> T getEnumValueByString(Class<T> enumClass, String stringValue,
 			String propertyName) {
 
 		return Stream.of(enumClass.getEnumConstants())
