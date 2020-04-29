@@ -39,7 +39,7 @@ public class ShopifyInputFormatProvider implements InputFormatProvider {
 
 	@Override
 	public String getInputFormatClassName() {
-		return WebhoseInputFormat.class.getName();
+		return ShopifyInputFormat.class.getName();
 	}
 
 	@Override
