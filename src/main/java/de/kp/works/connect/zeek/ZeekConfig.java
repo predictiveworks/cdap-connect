@@ -18,13 +18,28 @@ package de.kp.works.connect.zeek;
  * 
  */
 
+import java.util.stream.Stream;
+
+import co.cask.cdap.api.annotation.Description;
+import co.cask.cdap.api.annotation.Macro;
 import de.kp.works.connect.kafka.KafkaConfig;
 
 public class ZeekConfig extends KafkaConfig{
 
 	private static final long serialVersionUID = 4354990467713480141L;
 
+	@Description("The message format of the supported Zeek event log.")
+	@Macro
+	private String messageFormat;
+	
 	public MessageFormat getMessageFormat() {
-		return null;
+		
+		Class<MessageFormat> enumClazz = MessageFormat.class;
+
+		return Stream.of(enumClazz.getEnumConstants())
+				.filter(keyType -> keyType.getValue().equalsIgnoreCase(messageFormat)).findAny()
+				.orElseThrow(() -> new IllegalArgumentException(
+						String.format("Unsupported value for 'format': '%s'", messageFormat)));
+
 	}
 }

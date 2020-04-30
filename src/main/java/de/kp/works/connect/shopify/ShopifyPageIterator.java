@@ -21,6 +21,7 @@ package de.kp.works.connect.shopify;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,16 +33,35 @@ import de.kp.works.connect.http.page.HttpPage;
 
 public class ShopifyPageIterator implements Iterator<HttpPage>, Closeable {
 	
-	private static final Pattern nextPattern = Pattern.compile("<(.+)>; rel=next");
-
+	private final ShopifyConfig config;
+	private final ShopifyClient client;
+	
+	private HttpResponse response;
+	/*
+	 * URL management 
+	 */
+	private String nextPageUrl;
+	/*
+	 * PAGE Management
+	 */
+	private boolean currentPageReturned = true;
+	private HttpPage page;
+	
 	/*
 	 * Sample of a response header link:
 	 * 
 	 * 	Link: "<https://{shop}.myshopify.com/admin/api/{version}/products.json?page_info={page_info}&limit={limit}>; rel={next}, 
 	 * <https://{shop}.myshopify.com/admin/api/{version}/products.json?page_info={page_info}&limit={limit}>; rel={previous}"
 	 */
+	private static final Pattern nextPattern = Pattern.compile("<(.+)>; rel=next");
 	
 	public ShopifyPageIterator(ShopifyConfig config) {
+		
+		this.config = config;
+		this.client = new ShopifyClient();		
+		// TODO
+		this.nextPageUrl = null;
+		
 	}
 
 	/*
@@ -50,7 +70,7 @@ public class ShopifyPageIterator implements Iterator<HttpPage>, Closeable {
 	 * results, and a response header returns links to the next page and the
 	 *  previous page of results (if applicable). 
 	 */
-	public String getNextPageUrl(HttpResponse response, HttpPage page) {
+	private String getNextPageUrl(HttpResponse response) {
 		
 		Header link = response.getFirstHeader("Link");
 		
@@ -70,19 +90,89 @@ public class ShopifyPageIterator implements Iterator<HttpPage>, Closeable {
 		return null;
 		
 	}
+
+	private boolean hasNextPage() {
+
+		try {
+			/*
+			 * This flag indicates that the request (see next())
+			 * has received a HttpPage and we have to run for
+			 * the next page
+			 */
+			if (currentPageReturned) {
+				
+				page = getNextPage();
+				currentPageReturned = false;
+			
+			}
+			/* check hasNext() to stop on first empty page. */
+			return page != null && page.hasNext();
+		
+		} catch (Exception e) {
+			throw new IllegalStateException("Failed to the load page", e);
+		}
+		
+	}
+
+	private HttpPage getNextPage() {
+		/*
+		 * This guard works because nextPageUrl has been initialized
+		 * (see above) within the constructor
+		 */
+		if (nextPageUrl == null)
+			return null;
+
+		try {
+
+			if (response != null) 
+				response.close();
+
+			response = new HttpResponse(client.executeHTTP(nextPageUrl));
+
+			if (response.getStatusCode() != 200)
+				throw new Exception("Fetching JSON records from Shopify ADMIN endpoint failed.");
+			
+		} catch (Exception e) {
+			throw new IllegalStateException("Failed to the load page", e);
+		}
+
+		HttpPage page = new ShopifyPage(config, response);
+		nextPageUrl = getNextPageUrl(response);
+
+		return page;
+		
+	}
 	
 	@Override
 	public HttpPage next() {
-		return null;
+
+		if (!hasNextPage()) {
+			throw new NoSuchElementException("No more pages to load.");
+		}
+
+		currentPageReturned = true;
+		return page;
+		
 	}
 
 	@Override
 	public boolean hasNext() {
-		return false;
+		return hasNextPage();
 	}
 
 	@Override
 	public void close() throws IOException {
+		
+		try {
+			if (client != null) {
+				client.close();
+			}
+		} finally {
+			if (response != null) {
+				response.close();
+			}
+		}
+		
 	}
 	
 }

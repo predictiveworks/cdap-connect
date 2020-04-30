@@ -32,7 +32,10 @@ public class ShopifyInputFormatProvider implements InputFormatProvider {
 	private static final Gson gson = new GsonBuilder().create();
 
 	private final Map<String, String> conf;
-
+	/*
+	 * Exposes InputFormat for Shopify and associated
+	 * Configuration 
+	 */
 	ShopifyInputFormatProvider(ShopifyConfig config) {
 		this.conf = new ImmutableMap.Builder<String, String>().put(PROPERTY_CONFIG_JSON, gson.toJson(config)).build();
 	}

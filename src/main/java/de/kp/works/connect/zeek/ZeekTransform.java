@@ -29,7 +29,7 @@ import co.cask.cdap.api.data.format.StructuredRecord;
 import de.kp.works.connect.EmptyFunction;
 /*
  * [ZeekTransform] is the main class for transforming
- * Apache Kafka messages originating from Zeek network
+ * Apache Kafka messages originating from osquery endpoint
  * monitor 
  */
 public class ZeekTransform implements Function2<JavaRDD<ConsumerRecord<byte[], byte[]>>, Time, JavaRDD<StructuredRecord>> {

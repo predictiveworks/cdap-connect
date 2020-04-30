@@ -26,7 +26,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import co.cask.cdap.api.data.format.StructuredRecord;
-import co.cask.cdap.api.data.schema.Schema;
 
 public class LogTransform implements Function<ConsumerRecord<byte[], byte[]>, StructuredRecord> {
 
@@ -35,8 +34,6 @@ public class LogTransform implements Function<ConsumerRecord<byte[], byte[]>, St
 	protected final ZeekConfig config;	
 	@SuppressWarnings("unused")
 	private final long batchTime;
-	
-	protected Schema schema;
 
 	public LogTransform(ZeekConfig config, Long batchTime) {
 		this.config = config;
@@ -55,7 +52,7 @@ public class LogTransform implements Function<ConsumerRecord<byte[], byte[]>, St
 		JsonObject jsonObject = jsonElement.getAsJsonObject();
 		StructuredRecord record = null;
 		
-		MessageFormat format = config.getFormat();
+		MessageFormat format = config.getMessageFormat();
 		switch (format) {
 		case CAPTURE_LOSS:
 			record = ZeekUtil.fromCaptureLoss(jsonObject);

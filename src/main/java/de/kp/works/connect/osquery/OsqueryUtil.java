@@ -166,14 +166,14 @@ public class OsqueryUtil {
 
 	}
 
-	public static StructuredRecord toRecord(byte[] event) throws Exception {
+	public static StructuredRecord toRecord(byte[] event, Schema schema) throws Exception {
 
 		String json = new String(event, "UTF-8");
-		return toRecord(json);
+		return toRecord(json, schema);
 
 	}
 
-	public static StructuredRecord toRecord(String event) throws Exception {
+	public static StructuredRecord toRecord(String event, Schema schema) throws Exception {
 
 		JsonElement jsonElement = new JsonParser().parse(event);
 		if (!jsonElement.isJsonObject())
@@ -229,9 +229,7 @@ public class OsqueryUtil {
 		}
 
 		/* Retrieve structured record */
-		Schema schema = getSchema(eventObject);
 		String json = jsonObject.toString();
-
 		return StructuredRecordStringConverter.fromJsonString(json, schema);
 
 	}
