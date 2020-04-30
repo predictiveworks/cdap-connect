@@ -1,4 +1,4 @@
-package de.kp.works.connect.crate;
+package de.kp.works.connect.redshift;
 /*
  * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -18,12 +18,6 @@ package de.kp.works.connect.crate;
  * 
  */
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+public class RedshiftConnect {
 
-public interface CrateWritable {
-
-	public PreparedStatement write(Connection conn, PreparedStatement stmt) throws SQLException;
-	
 }

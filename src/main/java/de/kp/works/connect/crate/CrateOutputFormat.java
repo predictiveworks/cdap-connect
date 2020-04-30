@@ -40,12 +40,15 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Throwables;
 
-public class CrateOutputFormat<K extends CrateWritable, V> extends OutputFormat<K, V> {
+import de.kp.works.connect.jdbc.JdbcDriverShim;
+import de.kp.works.connect.jdbc.JdbcWritable;
+
+public class CrateOutputFormat<K extends JdbcWritable, V> extends OutputFormat<K, V> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CrateOutputFormat.class);
 
 	private Driver driver;
-	private JDBCDriverShim driverShim;
+	private JdbcDriverShim driverShim;
 	
 	@Override
 	public void checkOutputSpecs(JobContext context) throws IOException, InterruptedException {
@@ -89,7 +92,7 @@ public class CrateOutputFormat<K extends CrateWritable, V> extends OutputFormat<
 
 					}
 
-					driverShim = new JDBCDriverShim(driver);
+					driverShim = new JdbcDriverShim(driver);
 					DriverManager.registerDriver(driverShim);
 					LOG.debug("[CrateOutputFormat] Registered JDBC driver via shim {}. Actual Driver {}.", driverShim, driver);
 				}

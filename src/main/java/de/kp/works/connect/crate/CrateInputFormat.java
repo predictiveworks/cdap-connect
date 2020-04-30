@@ -35,15 +35,18 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Throwables;
 
+import de.kp.works.connect.jdbc.JdbcRecord;
+import de.kp.works.connect.jdbc.JdbcDriverShim;
+
 import org.apache.hadoop.conf.Configurable;
 import org.apache.hadoop.conf.Configuration;
 
-public class CrateInputFormat<T extends CrateRecord> extends DBInputFormat<T> implements Configurable {
+public class CrateInputFormat<T extends JdbcRecord> extends DBInputFormat<T> implements Configurable {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CrateInputFormat.class);
 
 	private Driver driver;
-	private JDBCDriverShim driverShim;
+	private JdbcDriverShim driverShim;
 
 	@Override
 	/*
@@ -74,7 +77,7 @@ public class CrateInputFormat<T extends CrateRecord> extends DBInputFormat<T> im
 
 					}
 
-					driverShim = new JDBCDriverShim(driver);
+					driverShim = new JdbcDriverShim(driver);
 					DriverManager.registerDriver(driverShim);
 					LOG.debug("[CrateInputFormat] Registered JDBC driver via shim {}. Actual Driver {}.", driverShim, driver);
 				}

@@ -47,6 +47,7 @@ import co.cask.cdap.etl.api.PipelineConfigurer;
 import co.cask.cdap.etl.api.batch.BatchRuntimeContext;
 import co.cask.cdap.etl.api.batch.BatchSink;
 import co.cask.cdap.etl.api.batch.BatchSinkContext;
+import de.kp.works.connect.jdbc.JdbcDriverShim;
 
 /*
  * __KUP__
@@ -117,7 +118,7 @@ public class CrateSink extends BatchSink<StructuredRecord, CrateSqlWritable, Nul
 
 		Class<? extends Driver> driverClass = context.loadPluginClass(JDBC_PLUGIN_ID);
 
-		JDBCDriverShim driverShim = new JDBCDriverShim(driverClass.newInstance());
+		JdbcDriverShim driverShim = new JdbcDriverShim(driverClass.newInstance());
 		DriverManager.registerDriver(driverShim);
 
 		/* Create (if not exists) database table */

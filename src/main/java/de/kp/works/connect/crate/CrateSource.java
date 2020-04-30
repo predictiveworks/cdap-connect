@@ -50,12 +50,14 @@ import co.cask.cdap.etl.api.batch.BatchRuntimeContext;
 import co.cask.cdap.etl.api.batch.BatchSource;
 import co.cask.cdap.etl.api.batch.BatchSourceContext;
 import co.cask.hydrator.common.SourceInputFormatProvider;
+import de.kp.works.connect.jdbc.JdbcRecord;
+import de.kp.works.connect.jdbc.JdbcDriverShim;
 
 
 @Plugin(type = "batchsource")
 @Name("CrateSource")
 @Description("A batch source to read structured records from the Crate IoT scale database.")
-public class CrateSource extends BatchSource<LongWritable, CrateRecord, StructuredRecord> {
+public class CrateSource extends BatchSource<LongWritable, JdbcRecord, StructuredRecord> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CrateSource.class);
 	
@@ -97,7 +99,7 @@ public class CrateSource extends BatchSource<LongWritable, CrateRecord, Structur
 			driverClass = pipelineConfigurer.usePluginClass(JDBC_PLUGIN_TYPE, JDBC_PLUGIN_NAME,
 					JDBC_PLUGIN_ID, PluginProperties.builder().build());
 
-			JDBCDriverShim driverShim = new JDBCDriverShim(driverClass.newInstance());
+			JdbcDriverShim driverShim = new JdbcDriverShim(driverClass.newInstance());
 			DriverManager.registerDriver(driverShim);
 
 			Schema schema = getSchema();
@@ -131,13 +133,13 @@ public class CrateSource extends BatchSource<LongWritable, CrateRecord, Structur
 
 		hadoopCfg.setInt(MRJobConfig.NUM_MAPS, 1);
 		
-		CrateInputFormat.setInput(hadoopCfg, CrateRecord.class, cfg.getInputCountQuery(), cfg.getInputQuery());
+		CrateInputFormat.setInput(hadoopCfg, JdbcRecord.class, cfg.getInputCountQuery(), cfg.getInputQuery());
 		context.setInput(Input.of(cfg.referenceName, new SourceInputFormatProvider(CrateInputFormat.class, hadoopCfg)));
 
 	}
 
 	@Override
-	public void transform(KeyValue<LongWritable, CrateRecord> input, Emitter<StructuredRecord> emitter) throws Exception {
+	public void transform(KeyValue<LongWritable, JdbcRecord> input, Emitter<StructuredRecord> emitter) throws Exception {
 		
 		StructuredRecord record = input.getValue().getRecord();
 		emitter.emit(record);

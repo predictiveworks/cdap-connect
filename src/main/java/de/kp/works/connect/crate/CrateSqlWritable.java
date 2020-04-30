@@ -43,8 +43,9 @@ import com.clearspring.analytics.util.Lists;
 
 import co.cask.cdap.api.data.format.StructuredRecord;
 import co.cask.cdap.api.data.schema.Schema;
+import de.kp.works.connect.jdbc.JdbcWritable;
 
-public class CrateSqlWritable implements Writable, CrateWritable, Configurable {
+public class CrateSqlWritable implements Writable, JdbcWritable, Configurable {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CrateSqlWritable.class);
 

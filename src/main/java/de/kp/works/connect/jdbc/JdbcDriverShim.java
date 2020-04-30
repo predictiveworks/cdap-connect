@@ -1,4 +1,4 @@
-package de.kp.works.connect.crate;
+package de.kp.works.connect.jdbc;
 /*
  * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -47,11 +47,11 @@ import java.util.logging.Logger;
  * that we loaded dynamically.
  * 
  */
-public class JDBCDriverShim implements Driver {
+public class JdbcDriverShim implements Driver {
 
   private final Driver delegate;
 
-  public JDBCDriverShim(Driver delegate) {
+  public JdbcDriverShim(Driver delegate) {
     this.delegate = delegate;
   }
 

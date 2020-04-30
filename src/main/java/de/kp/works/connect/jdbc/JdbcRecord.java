@@ -1,4 +1,4 @@
-package de.kp.works.connect.crate;
+package de.kp.works.connect.jdbc;
 /*
  * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -20,6 +20,7 @@ package de.kp.works.connect.crate;
 
 import co.cask.cdap.api.data.format.StructuredRecord;
 import co.cask.cdap.api.data.schema.Schema;
+
 import org.apache.hadoop.conf.Configurable;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Writable;
@@ -43,39 +44,45 @@ import java.sql.Types;
 import java.util.List;
 import javax.annotation.Nullable;
 
-public class CrateRecord implements Writable, DBWritable, Configurable {
+public class JdbcRecord implements Writable, DBWritable, Configurable {
 
 	private StructuredRecord record;
 	private Configuration conf;
 
-	public CrateRecord(Configuration config) {
+	public JdbcRecord(Configuration config) {
 		this.conf = config;
 	}
 
 	/**
 	 * Used in map-reduce. Do not remove.
 	 */
-	public CrateRecord() {
+	public JdbcRecord() {
 	}
 
 	public void readFields(DataInput in) throws IOException {
-		throw new IOException("[Crate Record] Method 'write' from DataOutput is not implemented");
+		throw new IOException(
+				String.format("[%s] Method 'write' from DataOutput is not implemented", this.getClass().getName()));
 	}
 
 	public void readFields(ResultSet resultSet) throws SQLException {
 
 		ResultSetMetaData metadata = resultSet.getMetaData();
 
-		List<Schema.Field> schemaFields = CrateUtils.getSchemaFields(resultSet);
-		Schema schema = Schema.recordOf("crateSchema", schemaFields);
+		List<Schema.Field> schemaFields = JdbcUtils.getSchemaFields(resultSet);
+		Schema schema = Schema.recordOf("jdbcSchema", schemaFields);
 
 		StructuredRecord.Builder recordBuilder = StructuredRecord.builder(schema);
 		for (int i = 0; i < schemaFields.size(); i++) {
+
 			Schema.Field field = schemaFields.get(i);
+
 			int sqlColumnType = metadata.getColumnType(i + 1);
 			recordBuilder.set(field.getName(), transformValue(sqlColumnType, resultSet.getObject(field.getName())));
+
 		}
+
 		record = recordBuilder.build();
+
 	}
 
 	public StructuredRecord getRecord() {
@@ -83,16 +90,20 @@ public class CrateRecord implements Writable, DBWritable, Configurable {
 	}
 
 	public void write(DataOutput out) throws IOException {
-		throw new IOException("[Crate Record] Method 'write' from DataOutput is not implemented");
+		throw new IOException(
+				String.format("[%s] Method 'write' from DataOutput is not implemented", this.getClass().getName()));
 	}
 
 	public void write(PreparedStatement stmt) throws SQLException {
-		throw new SQLException("[Crate Record] Method 'write' from PreparedStatement is not implemented");
+		throw new SQLException(String.format("[%s] Method 'write' from PreparedStatement is not implemented",
+				this.getClass().getName()));
 	}
 
 	@Nullable
 	private Object transformValue(int sqlColumnType, Object original) throws SQLException {
+
 		if (original != null) {
+
 			switch (sqlColumnType) {
 			case Types.SMALLINT:
 			case Types.TINYINT:

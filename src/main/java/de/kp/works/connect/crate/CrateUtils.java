@@ -19,50 +19,23 @@ package de.kp.works.connect.crate;
  */
 
 import co.cask.cdap.api.data.schema.Schema;
-import co.cask.cdap.api.data.schema.UnsupportedTypeException;
+import de.kp.works.connect.jdbc.JdbcUtils;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import java.sql.Driver;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Types;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CrateUtils {
+public class CrateUtils extends JdbcUtils {
 
+	private static final long serialVersionUID = -8111877341898323808L;
+	
 	private static final Logger LOG = LoggerFactory.getLogger(CrateUtils.class);
-
-	public static List<Schema.Field> getSchemaFields(ResultSet resultSet) throws SQLException {
-
-		List<Schema.Field> schemaFields = Lists.newArrayList();
-		ResultSetMetaData metadata = resultSet.getMetaData();
-
-		for (int i = 1; i <= metadata.getColumnCount(); i++) {
-
-			String columnName = metadata.getColumnName(i);
-			int columnSqlType = metadata.getColumnType(i);
-
-			Schema columnSchema = Schema.of(getType(columnSqlType));
-
-			if (ResultSetMetaData.columnNullable == metadata.isNullable(i)) {
-				columnSchema = Schema.nullableOf(columnSchema);
-			}
-
-			Schema.Field field = Schema.Field.of(columnName, columnSchema);
-			schemaFields.add(field);
-
-		}
-
-		return schemaFields;
-
-	}
 
 	public static Schema.Type getNonNullableType(Schema.Field field) {
 
@@ -176,79 +149,6 @@ public class CrateUtils {
 		return null;
 		
 	}	
-	
-	private static Schema.Type getType(int sqlType) throws SQLException {
-		/* 
-		 * Type.STRING covers the following SQL types:
-		 * 
-		 *  VARCHAR,
-		 *  CHAR,
-		 *  CLOB,
-		 *  LONGNVARCHAR,
-		 *  LONGVARCHAR,
-		 *  NCHAR,
-		 *  NCLOB,
-		 *  NVARCHAR 
-		 */
-		Schema.Type type = Schema.Type.STRING;
-		switch (sqlType) {
-		case Types.NULL:
-			type = Schema.Type.NULL;
-			break;
-
-		case Types.BOOLEAN:
-		case Types.BIT:
-			type = Schema.Type.BOOLEAN;
-			break;
-
-		case Types.TINYINT:
-		case Types.SMALLINT:
-		case Types.INTEGER:
-			type = Schema.Type.INT;
-			break;
-
-		case Types.BIGINT:
-			type = Schema.Type.LONG;
-			break;
-
-		case Types.REAL:
-		case Types.FLOAT:
-			type = Schema.Type.FLOAT;
-			break;
-
-		case Types.NUMERIC:
-		case Types.DECIMAL:
-		case Types.DOUBLE:
-			type = Schema.Type.DOUBLE;
-			break;
-
-		case Types.DATE:
-		case Types.TIME:
-		case Types.TIMESTAMP:
-			type = Schema.Type.LONG;
-			break;
-
-		case Types.BINARY:
-		case Types.VARBINARY:
-		case Types.LONGVARBINARY:
-		case Types.BLOB:
-			type = Schema.Type.BYTES;
-			break;
-
-		case Types.ARRAY:
-		case Types.DATALINK:
-		case Types.DISTINCT:
-		case Types.JAVA_OBJECT:
-		case Types.OTHER:
-		case Types.REF:
-		case Types.ROWID:
-		case Types.SQLXML:
-		case Types.STRUCT:
-			throw new SQLException(new UnsupportedTypeException("[CrateUtils] Unsupported SQL Type: " + sqlType));
-		}
-
-		return type;
-	}
 
 	/**
 	 * De-register all SQL drivers that are associated with the class
