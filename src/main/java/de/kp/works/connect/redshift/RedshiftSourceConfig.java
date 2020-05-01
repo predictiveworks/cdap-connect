@@ -20,36 +20,19 @@ package de.kp.works.connect.redshift;
 
 import java.util.Locale;
 
-import javax.annotation.Nullable;
-
 import com.google.common.base.Strings;
 
 import co.cask.cdap.api.annotation.Description;
 import co.cask.cdap.api.annotation.Macro;
-import de.kp.works.connect.jdbc.JdbcConfig;
+import de.kp.works.connect.jdbc.JdbcSourceConfig;
 
-public class RedshiftConfig extends JdbcConfig {
+public class RedshiftSourceConfig extends JdbcSourceConfig {
 
 	private static final long serialVersionUID = 6631946981577765660L;
 
-	@Description("Name of the Redshift database to import data from.")
+	@Description("Name of the Jdbc database to import data from.")
 	@Macro
 	public String database;
-	
-	/*
-	 * Either tableName or inputQuery must be provided to
-	 * retrieve data from the redshift
-	 */
-	@Description("Name of the Redshift table to import data from.")
-	@Nullable
-	@Macro
-	public String tableName;
-
-	@Description("The SQL select statement to import data from the Redshift database. "
-			+ "For example: select * from <your table name>'.")
-	@Nullable
-	@Macro
-	public String inputQuery;
 	
 	public void validate() {
 		super.validate();

@@ -18,16 +18,10 @@ package de.kp.works.connect.crate;
  * 
  */
 
-import javax.annotation.Nullable;
-
-import com.google.common.base.Strings;
-
 import co.cask.cdap.api.annotation.Description;
-import co.cask.cdap.api.annotation.Macro;
 import co.cask.cdap.api.annotation.Name;
 import co.cask.cdap.api.annotation.Plugin;
 import de.kp.works.connect.jdbc.JdbcSource;
-
 
 @Plugin(type = "batchsource")
 @Name("CrateSource")
@@ -42,10 +36,10 @@ public class CrateSource extends JdbcSource {
 	private static final String JDBC_PLUGIN_TYPE = "jdbc";
 	private static final String JDBC_PLUGIN_NAME = "crate";
 
-	private final CrateSourceConfig cfg;
+	private final CrateSourceConfig config;
 
 	public CrateSource(CrateSourceConfig crateConfig) {
-		this.cfg = crateConfig;
+		this.config = crateConfig;
 	}
 
 	@Override
@@ -70,110 +64,37 @@ public class CrateSource extends JdbcSource {
 	
 	@Override
 	protected String getEndpoint() {
-		return cfg.getEndpoint();
+		return config.getEndpoint();
 	};
 
 	@Override
 	protected String getUser() {
-		return cfg.user;
+		return config.user;
 	}
 
 	@Override
 	protected String getPassword() {
-		return cfg.password;
+		return config.password;
 	};
 
 	@Override
 	protected String getCountQuery() {
-		return cfg.getInputCountQuery();
+		return config.getCountQuery();
 	};
 
 	@Override
 	protected String getInputQuery() {
-		return cfg.getInputQuery();
+		return config.getInputQuery();
 	};
 
 	@Override
 	protected String getReferenceName() {
-		return cfg.referenceName;
+		return config.referenceName;
 	};
 	
 	@Override
 	protected void validate() {
-		cfg.validate();
-	}
-
-	public static class CrateSourceConfig extends CrateConfig {
-
-		private static final long serialVersionUID = -282545235226670018L;
-
-		/*
-		 * The name of the Crate database table to read data from.
-		 */
-		public static final String TABLE_NAME = "tableName";
-		/*
-		 * The input query defines the custom query to read data from a Crate database;
-		 * the input query must be provided by the user
-		 */
-		public static final String INPUT_QUERY = "inputQuery";
-		/*
-		 * The CrateSource is made for users with restricted data engineering skills and
-		 * therefore does not support the following more advanced paramaters that are
-		 * useful in a big data environment:
-		 * 
-		 * bounding query
-		 * 
-		 * The bounding query is used to determine the amount of data and to separate
-		 * them into roughly equivalent shards.
-		 * 
-		 * split by field
-		 * 
-		 * The split by field represents a numeric column that is used to separate the
-		 * rows into equivalent shards.
-		 * 
-		 * 
-		 */
-		@Description("Name of the Crate table to import data from.")
-		@Nullable
-		@Macro
-		public String tableName;
-
-		@Name(INPUT_QUERY)
-		@Description("The SQL select statement to import data from the Crate database. "
-				+ "For example: select * from <your table name>'.")
-		@Nullable
-		@Macro
-		public String inputQuery;
-
-		public CrateSourceConfig() {
-			super();
-		}
-
-		public String getInputCountQuery() {
-			
-			String countQuery = String.format("select count(*) from (%s) as crate", getInputQuery());
-			return countQuery;
-
-		}
-		
-		public String getInputQuery() {
-
-			if (Strings.isNullOrEmpty(inputQuery))
-				return String.format("select * from %s", tableName);
-
-			return inputQuery;
-
-		}
-
-		public void validate() {
-
-			if (Strings.isNullOrEmpty(tableName) && Strings.isNullOrEmpty(inputQuery))
-				throw new IllegalArgumentException(
-						"Either table name or query can be empty, however both parameters are empty. "
-								+ "This connector is not able to import data from the Crate database.");
-
-		}
-
+		config.validate();
 	}
 
 }

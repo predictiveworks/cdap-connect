@@ -19,14 +19,13 @@ package de.kp.works.connect.crate;
  */
 
 import java.util.Locale;
+import de.kp.works.connect.jdbc.JdbcSourceConfig;
 
-import de.kp.works.connect.jdbc.JdbcConfig;
+public class CrateSourceConfig extends JdbcSourceConfig {
 
-public class CrateConfig extends JdbcConfig {
+	private static final long serialVersionUID = -677138326667975706L;
 
-	private static final long serialVersionUID = -406793834902076982L;
-
-	public CrateConfig() {
+	public CrateSourceConfig() {
 	}
 	
 	public void validate() {

@@ -22,6 +22,7 @@ import java.sql.Driver;
 import java.sql.DriverManager;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.hadoop.io.NullWritable;
@@ -46,6 +47,7 @@ import co.cask.cdap.etl.api.PipelineConfigurer;
 import co.cask.cdap.etl.api.batch.BatchRuntimeContext;
 import co.cask.cdap.etl.api.batch.BatchSink;
 import co.cask.cdap.etl.api.batch.BatchSinkContext;
+import de.kp.works.connect.jdbc.JdbcConfig;
 import de.kp.works.connect.jdbc.JdbcDriverShim;
 
 /*
@@ -148,7 +150,7 @@ public class CrateSink extends BatchSink<StructuredRecord, CrateSqlWritable, Nul
 		emitter.emit(new KeyValue<CrateSqlWritable, NullWritable>(new CrateSqlWritable(connect, input), null));
 	}
 
-	public static class CrateSinkConfig extends CrateConfig {
+	public static class CrateSinkConfig extends JdbcConfig {
 
 		private static final long serialVersionUID = 5345965522745690011L;
 
@@ -167,6 +169,10 @@ public class CrateSink extends BatchSink<StructuredRecord, CrateSqlWritable, Nul
 
 		public CrateSinkConfig() {
 			super();
+		}
+		
+		public String getEndpoint() {
+			return String.format(Locale.ENGLISH, "jdbc:crate://%s:%s/", host, port);
 		}
 
 	}

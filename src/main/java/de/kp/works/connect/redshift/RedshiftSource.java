@@ -56,9 +56,9 @@ public class RedshiftSource extends BatchSource<NullWritable, JdbcRecord, Struct
 	protected static final String JDBC_PLUGIN_TYPE = "jdbc";
 	protected static final String JDBC_PLUGIN_NAME = "redshift";
 
-	protected RedshiftConfig config;
+	protected RedshiftSourceConfig config;
 	
-	public RedshiftSource(RedshiftConfig config) {
+	public RedshiftSource(RedshiftSourceConfig config) {
 		this.config = config;
 	}
 	
