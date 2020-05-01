@@ -46,21 +46,30 @@
  	  <awaitility.version>3.1.6</awaitility.version>
       <bouncycastle.version>1.52</bouncycastle.version>
       <cdap.version>5.1.1</cdap.version>    
+      <crate.version>2.2.0</crate.version>
       <hadoop.version>2.8.0</hadoop.version>   
 	  <ignite.version>2.7.6</ignite.version>       
       <influx.version>2.17</influx.version>
       <kafka.version>0.10.0.1</kafka.version>
 	  <orient.version>3.0.26</orient.version>      
-	  <redshift-jdbc.version>1.2.1.1001</redshift-jdbc.version>
+	  <redshift-jdbc.version>1.2.41.1065</redshift-jdbc.version>
       <spark.version>2.1.3</spark.version>   
 
 	</properties>
 	
 	<repositories>
+
+  	  <repository>
+  	    <id>crate-jdbc</id>
+  	    <name>crate-jdbc</name>
+  	    <url>http://repo.spring.io/plugins-release</url>
+  	  </repository>
+
       <repository>
         <id>redshift</id>
-        <url>http://redshift-maven-repository.s3-website-us-east-1.amazonaws.com/release</url>
-      </repository>	
+        <url>https://s3.amazonaws.com/redshift-maven-repository/release</url>
+      </repository>
+      		
 	</repositories>
 	
 	<!-- 
@@ -203,6 +212,14 @@
         <version>${bouncycastle.version}</version>
       </dependency>
     
+    	  <!--  Crate DB dependencies -->
+        
+      <dependency>
+        <groupId>io.crate</groupId>
+        <artifactId>crate-jdbc</artifactId>
+        <version>${crate.version}</version>      
+      </dependency>
+    
 	  <!-- Apache Ignite dependencies -->
 
 	  <dependency>
@@ -343,12 +360,27 @@
                   if (!cfgFile.exists()) {
                     cfgFile.createNewFile();
                   }
-
+                  
                   var parents = project.getProperty("app.parents").split(",");
                   var config = {
                     "parents": [ ],
+                    "plugins": [
+                    	  // The Crate DB JDBC driver configuration
+                      {
+                        "name": "crate",
+                        "type": "jdbc",
+                        "className": "io.crate.client.jdbc.CrateDriver"
+                      },
+                      // The Amazon Redshift JDBC driver configuration
+                      {
+                        "name": "redshift",
+                        "type": "jdbc",
+                        "className": "com.amazon.redshift.jdbc42.Driver"
+                      },
+                   ],
                     "properties": {}
                   }
+                  
                   for (i = 0; i < parents.length; i+=2) {
                     // because name1[lo,hi],name2[lo,hi] gets split into "name1[lo", "hi]", "name2[lo", "hi]"
                     // so we have to combine them again

@@ -1,4 +1,4 @@
-package de.kp.works.connect.crate;
+package de.kp.works.connect.jdbc;
 /*
  * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -35,22 +35,25 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Throwables;
 
-import de.kp.works.connect.jdbc.JdbcRecord;
-import de.kp.works.connect.jdbc.JdbcDriverShim;
-
 import org.apache.hadoop.conf.Configurable;
 import org.apache.hadoop.conf.Configuration;
 
-public class CrateInputFormat<T extends JdbcRecord> extends DBInputFormat<T> implements Configurable {
+public class JdbcInputFormat<T extends JdbcRecord> extends DBInputFormat<T> implements Configurable {
 
-	private static final Logger LOG = LoggerFactory.getLogger(CrateInputFormat.class);
+	private static final Logger LOG = LoggerFactory.getLogger(JdbcInputFormat.class);
 
 	private Driver driver;
 	private JdbcDriverShim driverShim;
 
+	private static String URL_PROPERTY = DBConfiguration.URL_PROPERTY;
+	private static String DRIVER_CLASS_PROPERTY = DBConfiguration.DRIVER_CLASS_PROPERTY;
+
+	private static String USERNAME_PROPERTY = DBConfiguration.USERNAME_PROPERTY;
+	private static String PASSWORD_PROPERTY = DBConfiguration.PASSWORD_PROPERTY;
+
 	@Override
 	/*
-	 * This is an internal method to retrieve the Crate database connection from the
+	 * This is an internal method to retrieve the JDBC database connection from the
 	 * provided configuration
 	 */
 	public Connection getConnection() {
@@ -60,8 +63,9 @@ public class CrateInputFormat<T extends JdbcRecord> extends DBInputFormat<T> imp
 		Connection connection;
 		try {
 
-			String url = conf.get(DBConfiguration.URL_PROPERTY);
+			String url = conf.get(URL_PROPERTY);
 			try {
+				
 				DriverManager.getDriver(url);
 
 			} catch (SQLException e) {
@@ -69,26 +73,34 @@ public class CrateInputFormat<T extends JdbcRecord> extends DBInputFormat<T> imp
 				if (driverShim == null) {
 
 					if (driver == null) {
+
 						ClassLoader classLoader = conf.getClassLoader();
 						@SuppressWarnings("unchecked")
 						Class<? extends Driver> driverClass = (Class<? extends Driver>) classLoader
-								.loadClass(conf.get(DBConfiguration.DRIVER_CLASS_PROPERTY));
+								.loadClass(conf.get(DRIVER_CLASS_PROPERTY));
 						driver = driverClass.newInstance();
 
 					}
 
 					driverShim = new JdbcDriverShim(driver);
 					DriverManager.registerDriver(driverShim);
-					LOG.debug("[CrateInputFormat] Registered JDBC driver via shim {}. Actual Driver {}.", driverShim, driver);
+
+					String message = String.format("[%s] Registered JDBC driver via shim %s. Actual Driver %s.",
+							JdbcInputFormat.class.getName(), driverShim, driver);
+					LOG.debug(message);
+
 				}
 			}
 
-			if (conf.get(DBConfiguration.USERNAME_PROPERTY) == null) {
+			String username = conf.get(USERNAME_PROPERTY);
+			String password = conf.get(PASSWORD_PROPERTY);
+
+			if (username == null || password == null) {
 				connection = DriverManager.getConnection(url);
 
 			} else {
-				connection = DriverManager.getConnection(url, conf.get(DBConfiguration.USERNAME_PROPERTY),
-						conf.get(DBConfiguration.PASSWORD_PROPERTY));
+				connection = DriverManager.getConnection(url, username, password);
+			
 			}
 
 			connection.setAutoCommit(false);
@@ -102,15 +114,15 @@ public class CrateInputFormat<T extends JdbcRecord> extends DBInputFormat<T> imp
 	}
 
 	/*
-	 * Versions > HDP-2.3.4 started using createConnection 
-	 * instead of getConnection
+	 * Versions > HDP-2.3.4 started using createConnection instead of getConnection
 	 */
 	public Connection createConnection() {
 		return getConnection();
 	}
 
 	@Override
-	protected RecordReader<LongWritable, T> createDBRecordReader(DBInputSplit split, Configuration conf) throws IOException {
+	protected RecordReader<LongWritable, T> createDBRecordReader(DBInputSplit split, Configuration conf)
+			throws IOException {
 		final RecordReader<LongWritable, T> dbRecordReader = super.createDBRecordReader(split, conf);
 
 		return new RecordReader<LongWritable, T>() {
@@ -162,20 +174,19 @@ public class CrateInputFormat<T extends JdbcRecord> extends DBInputFormat<T> imp
 		}
 	}
 
-	public static void setInput(Configuration hadoopConf, Class<? extends DBWritable> inputClass, String countQuery, String inputQuery) {
+	public static void setInput(Configuration hadoopConf, Class<? extends DBWritable> inputClass, String countQuery,
+			String inputQuery) {
 
 		DBConfiguration dbConf = new DBConfiguration(hadoopConf);
-
 		dbConf.setInputClass(inputClass);
 		/*
-		 * [CrateSource] is based on the 'older' DBInputFormat which computes
-		 * the splits from a count query; this approach requires the provisioning
-		 * of a count query
+		 * JDBC based sources are based on the 'older' DBInputFormat 
+		 * which computes the splits from a count query; 
+		 * 
+		 * this approach requires the provisioning of a count query
 		 */
 		dbConf.setInputCountQuery(countQuery);
 		dbConf.setInputQuery(inputQuery);
-		
-		
-		
+
 	}
 }

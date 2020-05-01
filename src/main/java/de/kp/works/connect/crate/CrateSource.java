@@ -18,20 +18,7 @@ package de.kp.works.connect.crate;
  * 
  */
 
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
-
 import javax.annotation.Nullable;
-
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.mapreduce.MRJobConfig;
-import org.apache.hadoop.mapreduce.lib.db.DBConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
@@ -39,28 +26,15 @@ import co.cask.cdap.api.annotation.Description;
 import co.cask.cdap.api.annotation.Macro;
 import co.cask.cdap.api.annotation.Name;
 import co.cask.cdap.api.annotation.Plugin;
-import co.cask.cdap.api.data.batch.Input;
-import co.cask.cdap.api.data.format.StructuredRecord;
-import co.cask.cdap.api.data.schema.Schema;
-import co.cask.cdap.api.dataset.lib.KeyValue;
-import co.cask.cdap.api.plugin.PluginProperties;
-import co.cask.cdap.etl.api.Emitter;
-import co.cask.cdap.etl.api.PipelineConfigurer;
-import co.cask.cdap.etl.api.batch.BatchRuntimeContext;
-import co.cask.cdap.etl.api.batch.BatchSource;
-import co.cask.cdap.etl.api.batch.BatchSourceContext;
-import co.cask.hydrator.common.SourceInputFormatProvider;
-import de.kp.works.connect.jdbc.JdbcRecord;
-import de.kp.works.connect.jdbc.JdbcDriverShim;
+import de.kp.works.connect.jdbc.JdbcSource;
 
 
 @Plugin(type = "batchsource")
 @Name("CrateSource")
 @Description("A batch source to read structured records from the Crate IoT scale database.")
-public class CrateSource extends BatchSource<LongWritable, JdbcRecord, StructuredRecord> {
-
-	private static final Logger LOG = LoggerFactory.getLogger(CrateSource.class);
+public class CrateSource extends JdbcSource {
 	
+	private static final String JDBC_DRIVER_NAME = "io.crate.client.jdbc.CrateDriver";
 	private static final String JDBC_PLUGIN_ID = "source.jdbc.crate";
 	/*
 	 * 'type' and 'name' must match the provided JSON specification
@@ -69,120 +43,64 @@ public class CrateSource extends BatchSource<LongWritable, JdbcRecord, Structure
 	private static final String JDBC_PLUGIN_NAME = "crate";
 
 	private final CrateSourceConfig cfg;
-	private final CrateConnect connect;
-	
-	private Class<? extends Driver> driverClass;
 
 	public CrateSource(CrateSourceConfig crateConfig) {
-
 		this.cfg = crateConfig;
-		this.connect = new CrateConnect().setHost(cfg.host).setPort(cfg.port).setUser(cfg.user)
-				.setPassword(cfg.password);
-
 	}
 
 	@Override
-	public void initialize(BatchRuntimeContext context) throws Exception {
-		super.initialize(context);
-	    driverClass = context.loadPluginClass(JDBC_PLUGIN_ID);
-		
+	protected String getJdbcPluginID() {
+		return JDBC_PLUGIN_ID;
+	}
+
+	@Override
+	protected String getJdbcPluginName() {
+		return JDBC_PLUGIN_NAME;
+	}
+
+	@Override
+	protected String getJdbcPluginType() {
+		return JDBC_PLUGIN_TYPE;
 	}
 	
 	@Override
-	public void configurePipeline(PipelineConfigurer pipelineConfigurer) {
-		super.configurePipeline(pipelineConfigurer);
+	protected String getJdbcDriverName() {
+		return JDBC_DRIVER_NAME;
+	}
+	
+	@Override
+	protected String getEndpoint() {
+		return cfg.getEndpoint();
+	};
 
-		cfg.validate();
-
-		try {
-
-			driverClass = pipelineConfigurer.usePluginClass(JDBC_PLUGIN_TYPE, JDBC_PLUGIN_NAME,
-					JDBC_PLUGIN_ID, PluginProperties.builder().build());
-
-			JdbcDriverShim driverShim = new JdbcDriverShim(driverClass.newInstance());
-			DriverManager.registerDriver(driverShim);
-
-			Schema schema = getSchema();
-			pipelineConfigurer.getStageConfigurer().setOutputSchema(schema);
-
-		} catch (Exception e) {
-			LOG.error(String.format("Configuring CrateSource failed with: %s." , e.getLocalizedMessage()));
-
-		}
-
+	@Override
+	protected String getUser() {
+		return cfg.user;
 	}
 
 	@Override
-	public void prepareRun(BatchSourceContext context) throws Exception {
-
-		cfg.validate();
-		connect.setInputQuery(cfg.getInputQuery());
-		LOG.debug("inputQuery = {}; connectionString = {}", cfg.getInputQuery(), cfg.getConnectionString());
-
-		Configuration hadoopCfg = new Configuration();
-		hadoopCfg.clear();
-
-		if (cfg.user == null && cfg.password == null) {
-			DBConfiguration.configureDB(hadoopCfg, cfg.getDriverName(), cfg.getConnectionString());
-
-		} else {
-			DBConfiguration.configureDB(hadoopCfg, cfg.getDriverName(), cfg.getConnectionString(), cfg.user,
-					cfg.password);
-
-		}
-
-		hadoopCfg.setInt(MRJobConfig.NUM_MAPS, 1);
-		
-		CrateInputFormat.setInput(hadoopCfg, JdbcRecord.class, cfg.getInputCountQuery(), cfg.getInputQuery());
-		context.setInput(Input.of(cfg.referenceName, new SourceInputFormatProvider(CrateInputFormat.class, hadoopCfg)));
-
-	}
+	protected String getPassword() {
+		return cfg.password;
+	};
 
 	@Override
-	public void transform(KeyValue<LongWritable, JdbcRecord> input, Emitter<StructuredRecord> emitter) throws Exception {
-		
-		StructuredRecord record = input.getValue().getRecord();
-		emitter.emit(record);
-		
-	}
-	/**
-	 * The record schema this stage provide for subsequent analytics
-	 * stages depends on the SQL query defined by the user, e.g. because
-	 * grouping and aggregation is used.
-	 * 
-	 * Therefore the query, stripped by potential CONDITION clauses, is
-	 * used to retrieve a singel database row, as this result provides
-	 * metadata for schema inference. 
-	 */
-	public Schema getSchema() throws Exception {
+	protected String getCountQuery() {
+		return cfg.getInputCountQuery();
+	};
 
-		Connection conn = null;
-		Statement stmt = null;
+	@Override
+	protected String getInputQuery() {
+		return cfg.getInputQuery();
+	};
 
-		Schema schema = null;
-
-		try {
-
-			conn = connect.getConnection();
-			stmt = conn.createStatement();
-
-			stmt.setMaxRows(1);
-
-			ResultSet resultSet = stmt.executeQuery(connect.getInputQuery());
-			schema = Schema.recordOf("crateSchema", CrateUtils.getSchemaFields(resultSet));
-
-		} catch (Exception e) {
-			LOG.error("Schema retrieval with query = {} failed: {}", connect.getInputQuery(), e.getMessage());
-
-		} finally {
-
-			if (stmt != null) stmt.close();
-			if (conn != null) conn.close();
-
-		}
-
-		return schema;
-
+	@Override
+	protected String getReferenceName() {
+		return cfg.referenceName;
+	};
+	
+	@Override
+	protected void validate() {
+		cfg.validate();
 	}
 
 	public static class CrateSourceConfig extends CrateConfig {
@@ -215,7 +133,6 @@ public class CrateSource extends BatchSource<LongWritable, JdbcRecord, Structure
 		 * 
 		 * 
 		 */
-		@Name(TABLE_NAME)
 		@Description("Name of the Crate table to import data from.")
 		@Nullable
 		@Macro
@@ -226,15 +143,10 @@ public class CrateSource extends BatchSource<LongWritable, JdbcRecord, Structure
 				+ "For example: select * from <your table name>'.")
 		@Nullable
 		@Macro
-		String inputQuery;
+		public String inputQuery;
 
-		public CrateSourceConfig(String referenceName, String host, String port, @Nullable String user,
-				@Nullable String password, @Nullable String tableName, @Nullable String inputQuery) {
-			super(referenceName, host, port, user, password);
-
-			this.tableName = tableName;
-			this.inputQuery = inputQuery;
-
+		public CrateSourceConfig() {
+			super();
 		}
 
 		public String getInputCountQuery() {

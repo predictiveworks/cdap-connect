@@ -18,43 +18,23 @@ package de.kp.works.connect.crate;
  * 
  */
 
-import javax.annotation.Nullable;
+import java.util.Locale;
 
-import com.google.common.base.Strings;
+import de.kp.works.connect.jdbc.JdbcConfig;
 
-public class CrateConfig extends ConnectionConfig {
+public class CrateConfig extends JdbcConfig {
 
 	private static final long serialVersionUID = -406793834902076982L;
 
-	public CrateConfig(String referenceName, String host, String port, @Nullable String user,
-			@Nullable String password) {
-		super(host, port, user, password);
-
-		this.referenceName = referenceName;
-
+	public CrateConfig() {
 	}
-
-	protected String cleanQuery(@Nullable String query) {
-		
-		if (!Strings.isNullOrEmpty(query))
-			return query;
-		
-		/* 
-		 * Remove trailing whitespaces and semicolon  
-		 */
-		int position = query.length() - 1;
-		char current = query.charAt(position);
-
-		while (position > 0 && current == ';' || Character.isWhitespace(current)) {
-			position--;
-			current = query.charAt(position);
-		}
-
-		if (position == 0) {
-			return "";
-		}
-		
-		return query.substring(0, position + 1);
 	
+	public void validate() {
+		super.validate();
 	}
+	
+	public String getEndpoint() {
+		return String.format(Locale.ENGLISH, "jdbc:crate://%s:%s/", host, port);
+	}
+	
 }

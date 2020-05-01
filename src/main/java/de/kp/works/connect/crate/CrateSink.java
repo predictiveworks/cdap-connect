@@ -23,7 +23,6 @@ import java.sql.DriverManager;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.Nullable;
 
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.lib.db.DBConfiguration;
@@ -114,7 +113,7 @@ public class CrateSink extends BatchSink<StructuredRecord, CrateSqlWritable, Nul
 	public void prepareRun(BatchSinkContext context) throws Exception {
 
 		LOG.debug("tableName = {}; primaryKey = {}; connectionString = {}", cfg.tableName, cfg.primaryKey,
-				cfg.getConnectionString());
+				cfg.getEndpoint());
 
 		Class<? extends Driver> driverClass = context.loadPluginClass(JDBC_PLUGIN_ID);
 
@@ -166,13 +165,8 @@ public class CrateSink extends BatchSink<StructuredRecord, CrateSqlWritable, Nul
 		@Macro
 		public String primaryKey;
 
-		public CrateSinkConfig(String referenceName, String host, String port, @Nullable String user,
-				@Nullable String password, String tableName, String primaryKey) {
-			super(referenceName, host, port, user, password);
-
-			this.tableName = tableName;
-			this.primaryKey = primaryKey;
-
+		public CrateSinkConfig() {
+			super();
 		}
 
 	}
@@ -193,7 +187,7 @@ public class CrateSink extends BatchSink<StructuredRecord, CrateSqlWritable, Nul
 			 * CONECTION PROPERTIES
 			 */
 			conf.put(DBConfiguration.DRIVER_CLASS_PROPERTY, driverClass.getName());
-			conf.put(DBConfiguration.URL_PROPERTY, crateConfig.getConnectionString());
+			conf.put(DBConfiguration.URL_PROPERTY, crateConfig.getEndpoint());
 
 			if (crateConfig.user != null) {
 				conf.put(DBConfiguration.USERNAME_PROPERTY, crateConfig.user);
