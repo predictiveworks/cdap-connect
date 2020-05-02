@@ -18,13 +18,34 @@ package de.kp.works.connect.webhose;
  * 
  */
 
+import java.util.stream.Stream;
+
+import co.cask.cdap.api.annotation.Description;
+import co.cask.cdap.api.annotation.Macro;
 import de.kp.works.connect.BaseConfig;
 
 public class WebhoseConfig extends BaseConfig {
 
 	private static final long serialVersionUID = 1314113942758850774L;
 
+	@Description("The message format of the Webhose data feed. This determines the Webhose "
+			+ "API to be selected for data retrieval.")
+	@Macro
+	private String messageFormat;
+
 	public void validate() {
 		super.validate();
 	}
+	
+	public WebhoseFormat getMessageFormat() {
+		
+		Class<WebhoseFormat> enumClazz = WebhoseFormat.class;
+
+		return Stream.of(enumClazz.getEnumConstants())
+				.filter(keyType -> keyType.getValue().equalsIgnoreCase(messageFormat)).findAny()
+				.orElseThrow(() -> new IllegalArgumentException(
+						String.format("Unsupported value for 'format': '%s'", messageFormat)));
+
+	}
+	
 }

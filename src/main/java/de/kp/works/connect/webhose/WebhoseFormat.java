@@ -18,32 +18,34 @@ package de.kp.works.connect.webhose;
  * 
  */
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.util.Iterator;
+public enum WebhoseFormat {
 
-import de.kp.works.connect.http.page.HttpPage;
-
-public class WebhosePageIterator implements Iterator<HttpPage>, Closeable {
-	/*
-	 * Wehose provides the next url as part of the result
-	 * of the JSON response
+	/* Dark Web Data Feeds at Scale: Prevent 
+	 * Cyber Threats
 	 */
-	public WebhosePageIterator(WebhoseConfig config) {
-	}
-
-	@Override
-	public HttpPage next() {
-		return null;
-	}
-
-	@Override
-	public boolean hasNext() {
-		return false;
-	}
-
-	@Override
-	public void close() throws IOException {
-	}
+	CYBER("cyber"),
+	/* Structured reviews data from hundreds 
+	 * of review sites.
+	 */
+	REVIEW("review"),
+	/* Sstructured posts data from news articles, 
+	 * blog posts and online discussions.
+	 */
+	WEB("web");
 	
+	private final String value;
+
+	WebhoseFormat(String value) {
+		this.value = value;
+	}
+
+	public String getValue() {
+		return value;
+	}
+
+	@Override
+	public String toString() {
+		return this.getValue();
+	}
+
 }
