@@ -1,4 +1,4 @@
-package de.kp.works.connect.redshift;
+package de.kp.works.connect.panoply;
 /*
  * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -19,6 +19,7 @@ package de.kp.works.connect.redshift;
  */
 
 import java.sql.Driver;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,11 +27,13 @@ import co.cask.cdap.api.annotation.Description;
 import co.cask.cdap.api.annotation.Name;
 import co.cask.cdap.api.annotation.Plugin;
 import de.kp.works.connect.jdbc.JdbcSource;
+import de.kp.works.connect.redshift.RedshiftSource;
+import de.kp.works.connect.redshift.RedshiftSourceConfig;
 
 @Plugin(type = "batchsource")
-@Name("RedshiftSource")
-@Description("A batch source to read structured records from an Amazon Redshift database.")
-public class RedshiftSource extends JdbcSource {
+@Name("PanoplySource")
+@Description("A batch source to read structured records from a Panoply data warehouse.")
+public class PanoplySource extends JdbcSource {
 
 	protected static final Logger LOG = LoggerFactory.getLogger(RedshiftSource.class);
 	
@@ -47,7 +50,7 @@ public class RedshiftSource extends JdbcSource {
 
 	protected RedshiftSourceConfig config;
 	
-	public RedshiftSource(RedshiftSourceConfig config) {
+	public PanoplySource(RedshiftSourceConfig config) {
 		this.config = config;
 	}
 
