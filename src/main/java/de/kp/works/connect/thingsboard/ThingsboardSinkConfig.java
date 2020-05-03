@@ -25,7 +25,7 @@ import co.cask.cdap.api.annotation.Macro;
 import co.cask.cdap.api.annotation.Name;
 import de.kp.works.connect.BaseConfig;
 
-public class ThingsSinkConfig extends BaseConfig {
+public class ThingsboardSinkConfig extends BaseConfig {
 
 	private static final long serialVersionUID = 1401383241435144467L;
 
@@ -83,7 +83,7 @@ public class ThingsSinkConfig extends BaseConfig {
 	@Macro
 	public String assetFeatures;
 
-	public ThingsSinkConfig() {
+	public ThingsboardSinkConfig() {
 		assetLimit = "1000";
 	}
 	/**

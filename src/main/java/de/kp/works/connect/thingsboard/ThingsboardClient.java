@@ -50,11 +50,11 @@ import com.google.gson.JsonParser;
 import co.cask.cdap.api.data.format.StructuredRecord;
 import co.cask.cdap.api.data.schema.Schema;
 
-public class ThingsClient {
+public class ThingsboardClient {
 
-	private static final Logger log = LoggerFactory.getLogger(ThingsClient.class);
+	private static final Logger log = LoggerFactory.getLogger(ThingsboardClient.class);
 
-	private final ThingsSinkConfig config;
+	private final ThingsboardSinkConfig config;
 
 	private Map<String, JsonObject> assetMap;
 
@@ -67,7 +67,7 @@ public class ThingsClient {
 	private String token;
 	private int timeout = 30;
 
-	public ThingsClient(ThingsSinkConfig config) {
+	public ThingsboardClient(ThingsboardSinkConfig config) {
 
 		this.config = config;
 

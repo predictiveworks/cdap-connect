@@ -36,10 +36,10 @@ import co.cask.cdap.format.StructuredRecordStringConverter;
 import de.kp.works.connect.EmptyFunction;
 import de.kp.works.connect.core.SchemaUtil;
 
-public class ThingsTransform implements Function2<JavaRDD<ConsumerRecord<byte[], byte[]>>, Time, JavaRDD<StructuredRecord>> {
+public class ThingsboardTransform implements Function2<JavaRDD<ConsumerRecord<byte[], byte[]>>, Time, JavaRDD<StructuredRecord>> {
 
 	private static final long serialVersionUID = 2636262566451373259L;
-	private ThingsSourceConfig config;
+	private ThingsboardSourceConfig config;
 	/*
 	 * This variable specifies the output schema that has been inferred
 	 * from the incoming JavaRDD batch; note, we determine the data schema
@@ -48,7 +48,7 @@ public class ThingsTransform implements Function2<JavaRDD<ConsumerRecord<byte[],
 	 */
 	private Schema schema;
 	
-	public ThingsTransform(ThingsSourceConfig config) {
+	public ThingsboardTransform(ThingsboardSourceConfig config) {
 		this.config = config;
 	}
 	
@@ -95,13 +95,13 @@ public class ThingsTransform implements Function2<JavaRDD<ConsumerRecord<byte[],
 
 		private static final long serialVersionUID = 2383360793734551671L;
 
-		protected final ThingsSourceConfig config;	
+		protected final ThingsboardSourceConfig config;	
 		@SuppressWarnings("unused")
 		private final long batchTime;
 		
 		protected Schema schema;
 
-		public RecordTransform(ThingsSourceConfig config, Long batchTime, Schema schema) {
+		public RecordTransform(ThingsboardSourceConfig config, Long batchTime, Schema schema) {
 			this.config = config;
 			this.batchTime = batchTime;
 			
