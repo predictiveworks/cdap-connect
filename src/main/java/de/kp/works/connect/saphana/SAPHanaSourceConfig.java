@@ -27,7 +27,7 @@ public class SAPHanaSourceConfig extends JdbcSourceConfig {
 	private static final long serialVersionUID = 773492290391412814L;
 
 	public String getEndpoint() {
-		return String.format(Locale.ENGLISH, "jdbc:sap://%s:%s", host, port);
+		return String.format(Locale.ENGLISH, "jdbc:sap://%s:%s/", host, port);
 	}
 
 }

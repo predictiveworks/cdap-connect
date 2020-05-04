@@ -1,4 +1,4 @@
-package de.kp.works.connect.redshift;
+package de.kp.works.connect.snowflake;
 /*
  * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -28,28 +28,29 @@ import co.cask.cdap.api.annotation.Description;
 import co.cask.cdap.api.annotation.Name;
 import co.cask.cdap.api.annotation.Plugin;
 import de.kp.works.connect.jdbc.JdbcSource;
+import joptsimple.internal.Strings;
 
 @Plugin(type = "batchsource")
-@Name("RedshiftSource")
-@Description("A batch source to read structured records from an Amazon Redshift database.")
-public class RedshiftSource extends JdbcSource {
+@Name("SnowflakeSource")
+@Description("A batch source to read structured records from a Snowflake database.")
+public class SnowflakeSource extends JdbcSource {
 
-	protected static final Logger LOG = LoggerFactory.getLogger(RedshiftSource.class);
+	protected static final Logger LOG = LoggerFactory.getLogger(SnowflakeSource.class);
 	
-	protected static final String JDBC_DRIVER_NAME = "com.amazon.redshift.jdbc42.Driver";
+	protected static final String JDBC_DRIVER_NAME = "com.snowflake.client.jdbc.SnowflakeDriver";
 
-	protected static final String JDBC_PLUGIN_ID = "source.jdbc.redshift";
+	protected static final String JDBC_PLUGIN_ID = "source.jdbc.snowflake";
 	protected Class<? extends Driver> driverClass;
 	
 	/*
 	 * 'type' and 'name' must match the provided JSON specification
 	 */
 	protected static final String JDBC_PLUGIN_TYPE = "jdbc";
-	protected static final String JDBC_PLUGIN_NAME = "redshift";
+	protected static final String JDBC_PLUGIN_NAME = "snowflake";
 
-	protected RedshiftSourceConfig config;
+	protected SnowflakeSourceConfig config;
 	
-	public RedshiftSource(RedshiftSourceConfig config) {
+	public SnowflakeSource(SnowflakeSourceConfig config) {
 		this.config = config;
 	}
 
@@ -83,11 +84,17 @@ public class RedshiftSource extends JdbcSource {
 		
 		Properties properties = new Properties();
 		
-		if (config.user == null || config.password == null)
-			return properties;
-		
 		properties.put("user", config.user);
 		properties.put("password", config.password);
+		
+		properties.put("account", config.account);
+		properties.put("db", config.database);
+		
+		if (Strings.isNullOrEmpty(config.schema))
+			 properties.put("schema", "");
+		
+		else
+			properties.put("schema", config.schema);
 		
 		return properties;
 		
@@ -113,4 +120,15 @@ public class RedshiftSource extends JdbcSource {
 		config.validate();
 	}
 
+
+	/*
+	 *     // build connection properties
+	    Properties properties = new Properties();
+	    properties.put("user", "");     // replace "" with your username
+	    properties.put("password", ""); // replace "" with your password
+	    properties.put("account", "");  // replace "" with your account name
+	    properties.put("db", "");       // replace "" with target database name
+	    properties.put("schema", "");   // replace "" with target schema name
+	    //properties.put("tracing", "on");
+	*/
 }

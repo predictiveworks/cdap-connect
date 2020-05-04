@@ -24,13 +24,16 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Properties;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.mapred.lib.db.DBConfiguration;
 import org.apache.hadoop.mapreduce.MRJobConfig;
-import org.apache.hadoop.mapreduce.lib.db.DBConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.gson.Gson;
 
 import co.cask.cdap.api.data.batch.Input;
 import co.cask.cdap.api.data.format.StructuredRecord;
@@ -60,9 +63,7 @@ public abstract class JdbcSource extends BatchSource<LongWritable, JdbcRecord, S
 	
 	protected abstract String getEndpoint();
 
-	protected abstract String getUser();
-
-	protected abstract String getPassword();
+	protected abstract Properties getProperties();
 
 	protected abstract String getCountQuery();
 
@@ -76,19 +77,10 @@ public abstract class JdbcSource extends BatchSource<LongWritable, JdbcRecord, S
 
 		Connection connection;		
 		
-		String user = getUser();
-		String password = getPassword();
-		
+		Properties properties = getProperties();
 		String endpoint = getEndpoint();
-		
-		if (user == null || password == null) {
-			connection = DriverManager.getConnection(endpoint);
 
-		} else {
-			connection = DriverManager.getConnection(endpoint, user, password);
-
-		}
-
+		connection = DriverManager.getConnection(endpoint, properties);
 		return connection;
 
 	}
@@ -179,34 +171,26 @@ public abstract class JdbcSource extends BatchSource<LongWritable, JdbcRecord, S
 		validate();
 		
 		String endpoint = getEndpoint();
-		
-		String user = getUser();
-		String password = getPassword();
-
 		String driverName = getJdbcDriverName();
 		
-		Configuration hadoopCfg = new Configuration();
-		hadoopCfg.clear();
+		Configuration conf = new Configuration();
+		conf.clear();
 
+		conf.set(DBConfiguration.DRIVER_CLASS_PROPERTY, driverName);
+		conf.set(DBConfiguration.URL_PROPERTY, endpoint);
 		
-		if (user == null && password == null) {
-			DBConfiguration.configureDB(hadoopCfg, driverName, endpoint);
+		String properties = new Gson().toJson(getProperties());
+		conf.set("jdbc.properties", properties);
 
-		} else {
-			DBConfiguration.configureDB(hadoopCfg, driverName, endpoint, user,
-					password);
-
-		}
-
-		hadoopCfg.setInt(MRJobConfig.NUM_MAPS, 1);
+		conf.setInt(MRJobConfig.NUM_MAPS, 1);
 		
 		String countQuery = getCountQuery();
 		String inputQuery = getInputQuery();
 		
 		String referenceName = getReferenceName();
 		
-		JdbcInputFormat.setInput(hadoopCfg, JdbcRecord.class, countQuery, inputQuery);
-		context.setInput(Input.of(referenceName, new SourceInputFormatProvider(JdbcInputFormat.class, hadoopCfg)));
+		JdbcInputFormat.setInput(conf, JdbcRecord.class, countQuery, inputQuery);
+		context.setInput(Input.of(referenceName, new SourceInputFormatProvider(JdbcInputFormat.class, conf)));
 
 	}
 

@@ -19,6 +19,7 @@ package de.kp.works.connect.saphana;
  */
 
 import java.sql.Driver;
+import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,14 +79,19 @@ public class SAPHanaSource extends JdbcSource {
 	};
 
 	@Override
-	protected String getUser() {
-		return config.user;
+	protected Properties getProperties() {
+		
+		Properties properties = new Properties();
+		
+		if (config.user == null || config.password == null)
+			return properties;
+		
+		properties.put("user", config.user);
+		properties.put("password", config.password);
+		
+		return properties;
+		
 	}
-
-	@Override
-	protected String getPassword() {
-		return config.password;
-	};
 
 	@Override
 	protected String getCountQuery() {

@@ -18,6 +18,8 @@ package de.kp.works.connect.crate;
  * 
  */
 
+import java.util.Properties;
+
 import co.cask.cdap.api.annotation.Description;
 import co.cask.cdap.api.annotation.Name;
 import co.cask.cdap.api.annotation.Plugin;
@@ -68,14 +70,19 @@ public class CrateSource extends JdbcSource {
 	};
 
 	@Override
-	protected String getUser() {
-		return config.user;
+	protected Properties getProperties() {
+		
+		Properties properties = new Properties();
+		
+		if (config.user == null || config.password == null)
+			return properties;
+		
+		properties.put("user", config.user);
+		properties.put("password", config.password);
+		
+		return properties;
+		
 	}
-
-	@Override
-	protected String getPassword() {
-		return config.password;
-	};
 
 	@Override
 	protected String getCountQuery() {

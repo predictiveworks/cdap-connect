@@ -23,6 +23,8 @@ import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
+
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.RecordReader;
@@ -34,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Throwables;
+import com.google.gson.Gson;
 
 import org.apache.hadoop.conf.Configurable;
 import org.apache.hadoop.conf.Configuration;
@@ -41,15 +44,13 @@ import org.apache.hadoop.conf.Configuration;
 public class JdbcInputFormat<T extends JdbcRecord> extends DBInputFormat<T> implements Configurable {
 
 	private static final Logger LOG = LoggerFactory.getLogger(JdbcInputFormat.class);
-
+	private static Gson GSON = new Gson();
+	
 	private Driver driver;
 	private JdbcDriverShim driverShim;
 
 	private static String URL_PROPERTY = DBConfiguration.URL_PROPERTY;
 	private static String DRIVER_CLASS_PROPERTY = DBConfiguration.DRIVER_CLASS_PROPERTY;
-
-	private static String USERNAME_PROPERTY = DBConfiguration.USERNAME_PROPERTY;
-	private static String PASSWORD_PROPERTY = DBConfiguration.PASSWORD_PROPERTY;
 
 	@Override
 	/*
@@ -91,18 +92,11 @@ public class JdbcInputFormat<T extends JdbcRecord> extends DBInputFormat<T> impl
 
 				}
 			}
-
-			String username = conf.get(USERNAME_PROPERTY);
-			String password = conf.get(PASSWORD_PROPERTY);
-
-			if (username == null || password == null) {
-				connection = DriverManager.getConnection(url);
-
-			} else {
-				connection = DriverManager.getConnection(url, username, password);
 			
-			}
-
+			String json = conf.get("jdbc.properties");
+			Properties properties = GSON.fromJson(json, Properties.class);
+				
+			connection = DriverManager.getConnection(url, properties);
 			connection.setAutoCommit(false);
 
 		} catch (Exception e) {
