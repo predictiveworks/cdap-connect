@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.lib.db.DBConfiguration;
@@ -32,6 +33,8 @@ import org.slf4j.LoggerFactory;
 
 import com.clearspring.analytics.util.Lists;
 import com.google.common.base.Joiner;
+import com.google.gson.Gson;
+
 import co.cask.cdap.api.annotation.Description;
 import co.cask.cdap.api.annotation.Macro;
 import co.cask.cdap.api.annotation.Name;
@@ -41,14 +44,11 @@ import co.cask.cdap.api.data.batch.OutputFormatProvider;
 import co.cask.cdap.api.data.format.StructuredRecord;
 import co.cask.cdap.api.data.schema.Schema;
 import co.cask.cdap.api.dataset.lib.KeyValue;
-import co.cask.cdap.api.plugin.PluginProperties;
 import co.cask.cdap.etl.api.Emitter;
-import co.cask.cdap.etl.api.PipelineConfigurer;
-import co.cask.cdap.etl.api.batch.BatchRuntimeContext;
-import co.cask.cdap.etl.api.batch.BatchSink;
 import co.cask.cdap.etl.api.batch.BatchSinkContext;
 import de.kp.works.connect.jdbc.JdbcConfig;
 import de.kp.works.connect.jdbc.JdbcDriverShim;
+import de.kp.works.connect.jdbc.JdbcSink;
 
 /*
  * __KUP__
@@ -63,10 +63,11 @@ import de.kp.works.connect.jdbc.JdbcDriverShim;
 @Plugin(type = "batchsink")
 @Name("CrateSink")
 @Description("A batch sink to write structured records to Crate IoT scale database.")
-public class CrateSink extends BatchSink<StructuredRecord, CrateSqlWritable, NullWritable> {
+public class CrateSink extends JdbcSink<CrateWritable> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CrateSink.class);
 
+	private static final String JDBC_DRIVER_NAME = "io.crate.client.jdbc.CrateDriver";
 	private static final String JDBC_PLUGIN_ID = "sink.jdbc.crate";
 	/*
 	 * 'type' and 'name' must match the provided JSON specification
@@ -86,29 +87,23 @@ public class CrateSink extends BatchSink<StructuredRecord, CrateSqlWritable, Nul
 	}
 
 	@Override
-	public void initialize(BatchRuntimeContext context) throws Exception {
-		super.initialize(context);
+	protected String getJdbcPluginID() {
+		return JDBC_PLUGIN_ID;
 	}
 
 	@Override
-	public void configurePipeline(PipelineConfigurer pipelineConfigurer) {
-		super.configurePipeline(pipelineConfigurer);
-		/*
-		 * Validate that the JDBC plugin class is available; it is loaded
-		 * in 'initialize' and should be available here
-		 */
-		try {
+	protected String getJdbcPluginName() {
+		return JDBC_PLUGIN_NAME;
+	}
 
-			Class<? extends Driver> jdbcDriverClass = pipelineConfigurer.usePluginClass(JDBC_PLUGIN_TYPE, JDBC_PLUGIN_NAME, JDBC_PLUGIN_ID,
-					PluginProperties.builder().build());
-
-			if (jdbcDriverClass == null) 
-				throw new IllegalArgumentException(String.format("Unable to load JDBC Driver class for plugin name '%s'.", JDBC_PLUGIN_ID));
-
-		} catch (Exception e) {
-			throw new IllegalArgumentException(String.format("Unable to load JDBC Driver class for plugin name '%s' with: %s.", JDBC_PLUGIN_ID, e.getLocalizedMessage()));
-		}
-
+	@Override
+	protected String getJdbcPluginType() {
+		return JDBC_PLUGIN_TYPE;
+	}
+	
+	@Override
+	protected String getJdbcDriverName() {
+		return JDBC_DRIVER_NAME;
 	}
 
 	@Override
@@ -146,8 +141,8 @@ public class CrateSink extends BatchSink<StructuredRecord, CrateSqlWritable, Nul
 	}
 
 	@Override
-	public void transform(StructuredRecord input, Emitter<KeyValue<CrateSqlWritable, NullWritable>> emitter) throws Exception {
-		emitter.emit(new KeyValue<CrateSqlWritable, NullWritable>(new CrateSqlWritable(connect, input), null));
+	public void transform(StructuredRecord input, Emitter<KeyValue<NullWritable, CrateWritable>> emitter) throws Exception {
+		emitter.emit(new KeyValue<NullWritable, CrateWritable>(null, new CrateWritable(connect, input)));
 	}
 
 	public static class CrateSinkConfig extends JdbcConfig {
@@ -175,6 +170,20 @@ public class CrateSink extends BatchSink<StructuredRecord, CrateSqlWritable, Nul
 			return String.format(Locale.ENGLISH, "jdbc:crate://%s:%s/", host, port);
 		}
 
+		public Properties getProps() {
+			
+			Properties properties = new Properties();
+			
+			if (user == null || password == null)
+				return properties;
+			
+			properties.put("user", user);
+			properties.put("password", password);
+			
+			return properties;
+			
+		}
+
 	}
 
 	/**
@@ -194,14 +203,10 @@ public class CrateSink extends BatchSink<StructuredRecord, CrateSqlWritable, Nul
 			 */
 			conf.put(DBConfiguration.DRIVER_CLASS_PROPERTY, driverClass.getName());
 			conf.put(DBConfiguration.URL_PROPERTY, crateConfig.getEndpoint());
+			
+			String properties = new Gson().toJson(crateConfig.getProps());
+			conf.put("jdbc.properties", properties);
 
-			if (crateConfig.user != null) {
-				conf.put(DBConfiguration.USERNAME_PROPERTY, crateConfig.user);
-			}
-
-			if (crateConfig.password != null) {
-				conf.put(DBConfiguration.PASSWORD_PROPERTY, crateConfig.password);
-			}
 			/*
 			 * TABLE PROPERTIES
 			 * 

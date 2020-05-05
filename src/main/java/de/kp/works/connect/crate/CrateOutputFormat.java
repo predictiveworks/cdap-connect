@@ -20,101 +20,23 @@ package de.kp.works.connect.crate;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.mapreduce.JobContext;
-import org.apache.hadoop.mapreduce.OutputCommitter;
-import org.apache.hadoop.mapreduce.OutputFormat;
 import org.apache.hadoop.mapreduce.RecordWriter;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.hadoop.mapreduce.lib.db.DBConfiguration;
-import org.apache.hadoop.mapreduce.lib.output.FileOutputCommitter;
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Throwables;
+import de.kp.works.connect.jdbc.JdbcOutputFormat;
 
-import de.kp.works.connect.jdbc.JdbcDriverShim;
-import de.kp.works.connect.jdbc.JdbcWritable;
-
-public class CrateOutputFormat<K extends JdbcWritable, V> extends OutputFormat<K, V> {
+public class CrateOutputFormat<K, V extends CrateWritable> extends JdbcOutputFormat<K, V> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CrateOutputFormat.class);
-
-	private Driver driver;
-	private JdbcDriverShim driverShim;
-	
-	@Override
-	public void checkOutputSpecs(JobContext context) throws IOException, InterruptedException {
-		/*
-		 * The current implementation does not need any output checks
-		 */
-	}
-
-	@Override
-	public OutputCommitter getOutputCommitter(TaskAttemptContext context) throws IOException, InterruptedException {
-		/*
-		 * This implementation of the output committer is a copy of the respective
-		 * method in DBOutputFormat
-		 */
-		return new FileOutputCommitter(FileOutputFormat.getOutputPath(context), context);
-	}
-
-	/*
-	 * This is an internal method to retrieve the Crate database connection from the
-	 * provided configuration
-	 */
-	public Connection getConnection(Configuration conf) {
-
-		Connection connection;
-		try {
-
-			String url = conf.get(DBConfiguration.URL_PROPERTY);
-			try {
-				DriverManager.getDriver(url);
-
-			} catch (SQLException e) {
-
-				if (driverShim == null) {
-
-					if (driver == null) {
-						ClassLoader classLoader = conf.getClassLoader();
-						@SuppressWarnings("unchecked")
-						Class<? extends Driver> driverClass = (Class<? extends Driver>) classLoader
-								.loadClass(conf.get(DBConfiguration.DRIVER_CLASS_PROPERTY));
-						driver = driverClass.newInstance();
-
-					}
-
-					driverShim = new JdbcDriverShim(driver);
-					DriverManager.registerDriver(driverShim);
-					LOG.debug("[CrateOutputFormat] Registered JDBC driver via shim {}. Actual Driver {}.", driverShim, driver);
-				}
-			}
-
-			if (conf.get(DBConfiguration.USERNAME_PROPERTY) == null) {
-				connection = DriverManager.getConnection(url);
-
-			} else {
-				connection = DriverManager.getConnection(url, conf.get(DBConfiguration.USERNAME_PROPERTY),
-						conf.get(DBConfiguration.PASSWORD_PROPERTY));
-			}
-
-			connection.setAutoCommit(false);
-
-		} catch (Exception e) {
-			throw Throwables.propagate(e);
-		}
-
-		return connection;
-
-	}
 
 	public String insertQuery(String table, String primaryKey, String[] fieldNames) {
 
@@ -265,7 +187,7 @@ public class CrateOutputFormat<K extends JdbcWritable, V> extends OutputFormat<K
 				 * There may be the necessity to create the output table dynamically,
 				 * i.e. from the schema of the provided records
 				 */
-				statement = key.write(connection, statement);
+				statement = value.write(connection, statement);
 				statement.addBatch();
 
 				emptyData = false;

@@ -18,24 +18,12 @@ package de.kp.works.connect.crate;
  * 
  */
 
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.sql.Types;
 import java.util.List;
 
 import javax.annotation.Nullable;
-import javax.sql.rowset.serial.SerialBlob;
-
-import org.apache.hadoop.conf.Configurable;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.io.Writable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,16 +33,14 @@ import co.cask.cdap.api.data.format.StructuredRecord;
 import co.cask.cdap.api.data.schema.Schema;
 import de.kp.works.connect.jdbc.JdbcWritable;
 
-public class CrateSqlWritable implements Writable, JdbcWritable, Configurable {
+public class CrateWritable extends JdbcWritable {
 
-	private static final Logger LOG = LoggerFactory.getLogger(CrateSqlWritable.class);
+	private static final Logger LOG = LoggerFactory.getLogger(CrateWritable.class);
 
 	private StructuredRecord record;
 	private CrateConnect connect;
 
-	private Configuration conf;
-
-	public CrateSqlWritable(CrateConnect connect, StructuredRecord record) {
+	public CrateWritable(CrateConnect connect, StructuredRecord record) {
 		this.connect = connect;
 		this.record = record;
 	}
@@ -62,17 +48,7 @@ public class CrateSqlWritable implements Writable, JdbcWritable, Configurable {
 	/**
 	 * Used in map-reduce. Do not remove.
 	 */
-	public CrateSqlWritable() {
-	}
-
-	@Override
-	public Configuration getConf() {
-		return conf;
-	}
-
-	@Override
-	public void setConf(Configuration config) {
-		this.conf = config;
+	public CrateWritable() {
 	}
 
 	@Override
@@ -170,62 +146,6 @@ public class CrateSqlWritable implements Writable, JdbcWritable, Configurable {
 		default:
 			throw new SQLException(String.format("[CrateSqlWritable] Unsupported datatype: %s with value: %s.", fieldType, fieldValue));
 		}
-	}
-
-	private void writeBytes(PreparedStatement stmt, int fieldIndex, int sqlIndex, Object fieldValue, int[] columnTypes)
-			throws SQLException {
-		byte[] byteValue = (byte[]) fieldValue;
-		int parameterType = columnTypes[fieldIndex];
-		if (Types.BLOB == parameterType) {
-			stmt.setBlob(sqlIndex, new SerialBlob(byteValue));
-			return;
-		}
-		/* handles BINARY, VARBINARY and LOGVARBINARY */
-		stmt.setBytes(sqlIndex, (byte[]) fieldValue);
-	}
-
-	private void writeInt(PreparedStatement stmt, int fieldIndex, int sqlIndex, Object fieldValue, int[] columnTypes)
-			throws SQLException {
-
-		Integer intValue = (Integer) fieldValue;
-		int parameterType = columnTypes[fieldIndex];
-
-		if (Types.TINYINT == parameterType || Types.SMALLINT == parameterType) {
-			stmt.setShort(sqlIndex, intValue.shortValue());
-			return;
-		}
-
-		stmt.setInt(sqlIndex, intValue);
-
-	}
-
-	private void writeLong(PreparedStatement stmt, int fieldIndex, int sqlIndex, Object fieldValue, int[] columnTypes)
-			throws SQLException {
-		Long longValue = (Long) fieldValue;
-		switch (columnTypes[fieldIndex]) {
-		case Types.DATE:
-			stmt.setDate(sqlIndex, new Date(longValue));
-			break;
-		case Types.TIME:
-			stmt.setTime(sqlIndex, new Time(longValue));
-			break;
-		case Types.TIMESTAMP:
-			stmt.setTimestamp(sqlIndex, new Timestamp(longValue));
-			break;
-		default:
-			stmt.setLong(sqlIndex, longValue);
-			break;
-		}
-	}
-
-	@Override
-	public void readFields(DataInput input) throws IOException {
-		throw new IOException("[CrateSqlWritable] Method 'readFields' from DataInput is not implemented");
-	}
-
-	@Override
-	public void write(DataOutput output) throws IOException {
-		throw new IOException("[CrateSqlWritable] Method 'write' from DataOutput is not implemented");
 	}
 
 }

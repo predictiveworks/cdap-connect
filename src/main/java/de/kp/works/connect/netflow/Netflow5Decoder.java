@@ -57,7 +57,7 @@ public class Netflow5Decoder {
 
 	private int readIndex = 0;
 	private List<Netflow5Message> result = new LinkedList<>();
-	
+
 	public Netflow5Decoder(NetflowMode mode) {
 		this.mode = mode;
 	}
@@ -124,144 +124,140 @@ public class Netflow5Decoder {
 		}
 
 		/***** MESSAGES *****/
-		
-	    while (readIndex < count) {
 
-	        Netflow5Message message = new Netflow5Message();
-	        message.setCount(count);
+		while (readIndex < count) {
 
-	        message.setSeconds(seconds);
-	        message.setNanos(nanos);
-	        
-	        /* 0 */
-	        int srcaddr = (int)buffer.readUnsignedInt();
-	        /* 4 */
-	        int dstaddr = (int)buffer.readUnsignedInt();
-	        /* 8 */
-	        int nexthop = (int)buffer.readUnsignedInt();
-	        /* 12 */
-	        message.setSnmpInput(buffer.readUnsignedShort());
-	        /* 14 */
-	        message.setSnmpOutput(buffer.readUnsignedShort());
+			Netflow5Message message = new Netflow5Message();
+			message.setCount(count);
 
-	        message.setPacketId(packetId.toString());
-	        message.setPacketLength(packetLength);
-	        
-	        message.setUptime(uptime);
-	        message.setTimestamp(timestamp);
+			message.setSeconds(seconds);
+			message.setNanos(nanos);
 
-	        message.setEngineId((int)engineId);
-	        message.setEngineType((int)engineType);
-	        
-	        message.setFlowSeq(flowSequence);
-	        
-	        message.setSamplingRaw(sampling);
-	        message.setSamplingInt(samplingInterval);
-	        message.setSamplingMode(samplingMode);
+			/* 0 */
+			int srcaddr = (int) buffer.readUnsignedInt();
+			/* 4 */
+			int dstaddr = (int) buffer.readUnsignedInt();
+			/* 8 */
+			int nexthop = (int) buffer.readUnsignedInt();
+			/* 12 */
+			message.setSnmpInput(buffer.readUnsignedShort());
+			/* 14 */
+			message.setSnmpOutput(buffer.readUnsignedShort());
 
-	        message.setSender((sender == null) ? "unknown" : sender.getAddress().toString());
-	        message.setReaderId((readerId == null) ? "unknown" : readerId);	        
+			message.setPacketId(packetId.toString());
+			message.setPacketLength(packetLength);
 
-	        /* 16 */
-	        long packets = buffer.readUnsignedInt();
-	        /* 20 */
-	        long octets = buffer.readUnsignedInt();
-	        /* 24 */
-	        long first = buffer.readUnsignedInt();
-	        message.setFirstRaw(first);
+			message.setUptime(uptime);
+			message.setTimestamp(timestamp);
 
-	        if (first > 0) {
-	          message.setFirst(timestamp - uptime + first);
-	          
-	        } else {
-	          message.setFirst(0L);
+			message.setEngineId((int) engineId);
+			message.setEngineType((int) engineType);
 
-	        }
+			message.setFlowSeq(flowSequence);
 
-	        /* 28 */
-	        long last = buffer.readUnsignedInt();
-	        message.setLastRaw(last);
-	        
-	        if (last > 0) {
-	          message.setLast(timestamp - uptime + last);
-	        
-	        } else {
-	          message.setLast(0L);
-	        
-	        }
-	        
-	        message.setId(UUIDUtil.timeBased().toString());
-	        
-	        message.setSrcAddr(srcaddr);
-	        message.setDstAddr(dstaddr);
-	        
-	        message.setNextHop(nexthop);
-	        
-	        message.setSrcAddrAsIP(ipV4ToString(srcaddr));
-	        message.setDstAddrAsIP(ipV4ToString(dstaddr));
-	        message.setNextHopAsIP(ipV4ToString(nexthop));
-	        
-	        /* 32 */
-	        message.setSrcPort(buffer.readUnsignedShort());
-	        
-	        /* 34 */
-	        message.setDstPort(buffer.readUnsignedShort());
+			message.setSamplingRaw(sampling);
+			message.setSamplingInt(samplingInterval);
+			message.setSamplingMode(samplingMode);
 
-	        /* 36 is "pad1" (unused zero bytes) */
-	        buffer.readByte();
+			message.setSender((sender == null) ? "unknown" : sender.getAddress().toString());
+			message.setReaderId((readerId == null) ? "unknown" : readerId);
 
-	        /* 37 */
-	        message.setTcpFlags((int)buffer.readUnsignedByte());
-	        
-	        /* 38 */
-	        message.setProto((int)buffer.readUnsignedByte());
-	        
-	        /* 39 */
-	        message.setTos((int)buffer.readUnsignedByte());
-	        
-	        /* 40 */
-	        message.setSrcAs((int)buffer.readUnsignedShort());
-	        
-	        /* 42 */
-	        message.setDstAs((int)buffer.readUnsignedShort());
-	        
-	        /* 44 */
-	        message.setSrcMask((int)buffer.readUnsignedByte());
-	        
-	        /* 45 */
-	        message.setDstMask((int)buffer.readUnsignedByte());
-	        
-	        message.setPackets(packets);
-	        message.setDOctets(octets);
+			/* 16 */
+			long packets = buffer.readUnsignedInt();
+			/* 20 */
+			long octets = buffer.readUnsignedInt();
+			/* 24 */
+			long first = buffer.readUnsignedInt();
+			message.setFirstRaw(first);
 
-	        /* 46-47 is "pad2" (unused zero bytes) */
-	        buffer.skipBytes(2);
-	        result.add(message);
-	        
-	        readIndex++;	        
+			if (first > 0) {
+				message.setFirst(timestamp - uptime + first);
 
-	    }
-	    
-	    /* 
-	     * If we reached this point without any further Signal errors, 
-	     * we have finished consuming
-	     */
-	    List<Netflow5Message> output = new LinkedList<>(result);
-	    resetState();
+			} else {
+				message.setFirst(0L);
 
-	    return output;
-	    
+			}
+
+			/* 28 */
+			long last = buffer.readUnsignedInt();
+			message.setLastRaw(last);
+
+			if (last > 0) {
+				message.setLast(timestamp - uptime + last);
+
+			} else {
+				message.setLast(0L);
+
+			}
+
+			message.setId(UUIDUtil.timeBased().toString());
+
+			message.setSrcAddr(srcaddr);
+			message.setDstAddr(dstaddr);
+
+			message.setNextHop(nexthop);
+
+			message.setSrcAddrAsIP(ipV4ToString(srcaddr));
+			message.setDstAddrAsIP(ipV4ToString(dstaddr));
+			message.setNextHopAsIP(ipV4ToString(nexthop));
+
+			/* 32 */
+			message.setSrcPort(buffer.readUnsignedShort());
+
+			/* 34 */
+			message.setDstPort(buffer.readUnsignedShort());
+
+			/* 36 is "pad1" (unused zero bytes) */
+			buffer.readByte();
+
+			/* 37 */
+			message.setTcpFlags((int) buffer.readUnsignedByte());
+
+			/* 38 */
+			message.setProto((int) buffer.readUnsignedByte());
+
+			/* 39 */
+			message.setTos((int) buffer.readUnsignedByte());
+
+			/* 40 */
+			message.setSrcAs((int) buffer.readUnsignedShort());
+
+			/* 42 */
+			message.setDstAs((int) buffer.readUnsignedShort());
+
+			/* 44 */
+			message.setSrcMask((int) buffer.readUnsignedByte());
+
+			/* 45 */
+			message.setDstMask((int) buffer.readUnsignedByte());
+
+			message.setPackets(packets);
+			message.setDOctets(octets);
+
+			/* 46-47 is "pad2" (unused zero bytes) */
+			buffer.skipBytes(2);
+			result.add(message);
+
+			readIndex++;
+
+		}
+
+		/*
+		 * If we reached this point without any further Signal errors, we have finished
+		 * consuming
+		 */
+		List<Netflow5Message> output = new LinkedList<>(result);
+		resetState();
+
+		return output;
+
 	}
-	
-	  public static String ipV4ToString(int ip) {
-		    return String.format("%d.%d.%d.%d",
-		      (ip >> 24 & 0xff),
-		      (ip >> 16 & 0xff),
-		      (ip >> 8 & 0xff),
-		      (ip & 0xff));
-		  }
 
-	public void resetState() {
+	private static String ipV4ToString(int ip) {
+		return String.format("%d.%d.%d.%d", (ip >> 24 & 0xff), (ip >> 16 & 0xff), (ip >> 8 & 0xff), (ip & 0xff));
+	}
+
+	private void resetState() {
 
 		readHeader = false;
 		count = 0;
@@ -280,6 +276,8 @@ public class Netflow5Decoder {
 		readerId = null;
 		readIndex = 0;
 
+		result.clear();
+		
 	}
 
 }
