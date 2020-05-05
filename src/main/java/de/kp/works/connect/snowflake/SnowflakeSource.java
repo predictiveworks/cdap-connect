@@ -89,6 +89,8 @@ public class SnowflakeSource extends JdbcSource {
 		
 		properties.put("account", config.account);
 		properties.put("db", config.database);
+
+		properties.put("warehouse", config.warehouse);
 		
 		if (Strings.isNullOrEmpty(config.schema))
 			 properties.put("schema", "");

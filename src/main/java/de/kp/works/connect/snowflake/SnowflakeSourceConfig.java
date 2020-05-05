@@ -30,11 +30,15 @@ public class SnowflakeSourceConfig extends JdbcSourceConfig {
 
 	private static final long serialVersionUID = -8763612701899671095L;
 
+	@Description("Name of the Snowflake data warehouse to import data from.")
+	@Macro
+	public String warehouse;
+
 	@Description("Name of the Jdbc database to import data from.")
 	@Macro
 	public String database;
 
-	@Description("Name of the Jdbc database to import data from.")
+	@Description("Name of the Snowflake account.")
 	@Macro
 	public String account;
 
@@ -55,6 +59,11 @@ public class SnowflakeSourceConfig extends JdbcSourceConfig {
 		if (Strings.isNullOrEmpty(password)) {
 			throw new IllegalArgumentException(
 					String.format("[%s] The password must not be empty.", this.getClass().getName()));
+		}
+		
+		if (Strings.isNullOrEmpty(warehouse)) {
+			throw new IllegalArgumentException(
+					String.format("[%s] The warehouse name must not be empty.", this.getClass().getName()));
 		}
 		
 		if (Strings.isNullOrEmpty(database)) {
