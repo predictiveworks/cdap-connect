@@ -1,4 +1,4 @@
-package de.kp.works.connect.netflow;
+package de.kp.works.connect.netflow.v5;
 /*
  * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -23,6 +23,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
+import de.kp.works.connect.netflow.NetflowMode;
+import de.kp.works.connect.netflow.UUIDUtil;
 import io.netty.buffer.ByteBuf;
 
 public class Netflow5Decoder {

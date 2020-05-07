@@ -25,6 +25,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.kp.works.connect.netflow.v5.Netflow5Decoder;
+import de.kp.works.connect.netflow.v9.Netflow9Decoder;
+import de.kp.works.connect.netflow.v9.TemplateCacheProvider;
 import io.netty.buffer.ByteBuf;
 
 public class NetflowDecoder {
@@ -32,6 +35,7 @@ public class NetflowDecoder {
 	protected static final Logger LOG = LoggerFactory.getLogger(NetflowDecoder.class);
 
 	private NetflowMode mode;
+	private final TemplateCacheProvider templateCacheProvider;
 
 	private int version = 0;
 	private boolean readVersion = false;
@@ -39,8 +43,15 @@ public class NetflowDecoder {
 	private Netflow5Decoder netflow5Decoder;
 	private Netflow9Decoder netflow9Decoder;
 
-	public NetflowDecoder(NetflowMode mode) {
+	public NetflowDecoder(NetflowMode mode, int maxTemplateCacheSize, int templateCacheTimeoutMs) {
+		this(mode, () -> Netflow9Decoder.buildTemplateCache(maxTemplateCacheSize, templateCacheTimeoutMs));
+	}
+
+	public NetflowDecoder(NetflowMode mode, TemplateCacheProvider templateCacheProvider) {
+		
 		this.mode = mode;
+		this.templateCacheProvider = templateCacheProvider;
+
 	}
 
 	public void decode(ByteBuf buffer, List<NetflowMessage> messages, InetSocketAddress sender,
@@ -83,13 +94,13 @@ public class NetflowDecoder {
 		case 5: {
 			if (netflow5Decoder == null)
 				netflow5Decoder = new Netflow5Decoder(mode);
-			
+
 			results.addAll(netflow5Decoder.parse(version, packetLength, packetLengthCheck, buffer, sender, recipient));
 			break;
 		}
 		case 9: {
 			if (netflow9Decoder == null) {
-				netflow9Decoder = new Netflow9Decoder(mode);
+				netflow9Decoder = new Netflow9Decoder(mode, templateCacheProvider);
 			}
 			results.addAll(netflow9Decoder.parse(version, packetLength, packetLengthCheck, buffer, sender, recipient));
 			break;

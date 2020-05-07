@@ -1,4 +1,4 @@
-package de.kp.works.connect.netflow;
+package de.kp.works.connect.netflow.v5;
 /*
  * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -26,6 +26,7 @@ import com.google.gson.JsonObject;
 import co.cask.cdap.api.data.format.StructuredRecord;
 import co.cask.cdap.api.data.schema.Schema;
 import co.cask.cdap.format.StructuredRecordStringConverter;
+import de.kp.works.connect.netflow.NetflowMessage;
 
 public class Netflow5Message extends NetflowMessage {
 
