@@ -44,7 +44,7 @@ public class JdbcUtils implements Serializable {
 			String columnName = metadata.getColumnName(i);
 			int columnSqlType = metadata.getColumnType(i);
 
-			Schema columnSchema = Schema.of(getType(columnSqlType));
+			Schema columnSchema = Schema.of(getSchemaType(columnSqlType));
 
 			if (ResultSetMetaData.columnNullable == metadata.isNullable(i)) {
 				columnSchema = Schema.nullableOf(columnSchema);
@@ -59,7 +59,7 @@ public class JdbcUtils implements Serializable {
 
 	}
 
-	private static Schema.Type getType(int sqlType) throws SQLException {
+	public static Schema.Type getSchemaType(int sqlType) throws SQLException {
 		/*
 		 * Type.STRING covers the following SQL types:
 		 * 

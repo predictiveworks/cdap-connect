@@ -107,6 +107,25 @@ public class CrateSink extends JdbcSink<CrateWritable> {
 	}
 
 	@Override
+	protected String getEndpoint() {
+		return cfg.getEndpoint();
+	};
+
+	@Override
+	protected Properties getProperties() {
+		return cfg.getProps();
+	};
+
+	@Override
+	protected String getTableName() {
+		return cfg.tableName;
+	};
+	
+	protected String getPrimaryKey() {
+		return cfg.primaryKey;
+	};
+
+	@Override
 	public void prepareRun(BatchSinkContext context) throws Exception {
 
 		LOG.debug("tableName = {}; primaryKey = {}; connectionString = {}", cfg.tableName, cfg.primaryKey,
@@ -136,10 +155,97 @@ public class CrateSink extends JdbcSink<CrateWritable> {
 		 * provided and those, where schema information has to be extracted from the
 		 * structured records
 		 */
-		context.addOutput(Output.of(cfg.referenceName, new CrateOutputFormatProvider(cfg, driverClass, schema)));
+		context.addOutput(Output.of(cfg.referenceName, new CrateOutputFormatProvider(prepareConf(schema))));
 
 	}
 
+	/*
+	 * @Override
+  public void prepareRun(BatchSinkContext context) {
+
+    outputSchema = context.getInputSchema();
+
+    // Load the plugin class to make sure it is available.
+    Class<? extends Driver> driverClass = context.loadPluginClass(getJDBCPluginId());
+    // make sure that the destination table exists and column types are correct
+    try {
+      if (Objects.nonNull(outputSchema)) {
+        validateSchema(driverClass, dbSinkConfig.tableName, outputSchema);
+      } else {
+        outputSchema = inferSchema(driverClass);
+      }
+    } finally {
+      DBUtils.cleanup(driverClass);
+    }
+
+    setColumnsInfo(outputSchema.getFields());
+
+    emitLineage(context, outputSchema.getFields());
+
+    ConnectionConfigAccessor configAccessor = new ConnectionConfigAccessor();
+    configAccessor.setConnectionArguments(dbSinkConfig.getConnectionArguments());
+    configAccessor.setInitQueries(dbSinkConfig.getInitQueries());
+    configAccessor.getConfiguration().set(DBConfiguration.DRIVER_CLASS_PROPERTY, driverClass.getName());
+    configAccessor.getConfiguration().set(DBConfiguration.URL_PROPERTY, connectionString);
+    configAccessor.getConfiguration().set(DBConfiguration.OUTPUT_TABLE_NAME_PROPERTY,
+                                          dbSinkConfig.getEscapedTableName());
+    configAccessor.getConfiguration().set(DBConfiguration.OUTPUT_FIELD_NAMES_PROPERTY, dbColumns);
+    if (dbSinkConfig.user != null) {
+      configAccessor.getConfiguration().set(DBConfiguration.USERNAME_PROPERTY, dbSinkConfig.user);
+    }
+    if (dbSinkConfig.password != null) {
+      configAccessor.getConfiguration().set(DBConfiguration.PASSWORD_PROPERTY, dbSinkConfig.password);
+    }
+
+    if (!Strings.isNullOrEmpty(dbSinkConfig.getTransactionIsolationLevel())) {
+      configAccessor.setTransactionIsolationLevel(dbSinkConfig.getTransactionIsolationLevel());
+    }
+
+    context.addOutput(Output.of(dbSinkConfig.referenceName, new SinkOutputFormatProvider(ETLDBOutputFormat.class,
+      configAccessor.getConfiguration())));
+  }
+	 */
+	
+	private Map<String,String> prepareConf(Schema schema) {
+
+		Map<String, String> conf = new HashMap<>();
+		/*
+		 * CONECTION PROPERTIES
+		 */
+		conf.put(DBConfiguration.DRIVER_CLASS_PROPERTY, getJdbcDriverName());
+		conf.put(DBConfiguration.URL_PROPERTY, getEndpoint());
+		
+		String properties = new Gson().toJson(getProperties());
+		conf.put("jdbc.properties", properties);
+
+		/*
+		 * TABLE PROPERTIES
+		 * 
+		 * The primary key of the table is important, as this [CrateSink] supports
+		 * JDBC's DUPLICATE ON KEY feature to enable proper update requests in case
+		 * of key conflicts.
+		 * 
+		 * The property 'mapreduce.jdbc.primaryKey' is an internal provided property
+		 */
+		conf.put("mapreduce.jdbc.primaryKey", getPrimaryKey());
+		conf.put(DBConfiguration.OUTPUT_TABLE_NAME_PROPERTY, getTableName());
+
+		if (schema != null) {
+
+			List<String> fieldNames = Lists.newArrayList();
+
+			for (Schema.Field field : schema.getFields()) {
+				fieldNames.add(field.getName());
+			}
+
+			conf.put(DBConfiguration.OUTPUT_FIELD_NAMES_PROPERTY, Joiner.on(",").join(fieldNames));
+
+		}
+		
+		return conf;
+		
+	}
+	
 	@Override
 	public void transform(StructuredRecord input, Emitter<KeyValue<NullWritable, CrateWritable>> emitter) throws Exception {
 		emitter.emit(new KeyValue<NullWritable, CrateWritable>(null, new CrateWritable(connect, input)));
@@ -195,42 +301,8 @@ public class CrateSink extends JdbcSink<CrateWritable> {
 
 		private final Map<String, String> conf;
 
-		CrateOutputFormatProvider(CrateSinkConfig crateConfig, Class<? extends Driver> driverClass, Schema schema) {
-
-			this.conf = new HashMap<>();
-			/*
-			 * CONECTION PROPERTIES
-			 */
-			conf.put(DBConfiguration.DRIVER_CLASS_PROPERTY, driverClass.getName());
-			conf.put(DBConfiguration.URL_PROPERTY, crateConfig.getEndpoint());
-			
-			String properties = new Gson().toJson(crateConfig.getProps());
-			conf.put("jdbc.properties", properties);
-
-			/*
-			 * TABLE PROPERTIES
-			 * 
-			 * The primary key of the table is important, as this [CrateSink] supports
-			 * JDBC's DUPLICATE ON KEY feature to enable proper update requests in case
-			 * of key conflicts.
-			 * 
-			 * The property 'mapreduce.jdbc.primaryKey' is an internal provided property
-			 */
-			conf.put("mapreduce.jdbc.primaryKey", crateConfig.primaryKey);
-			conf.put(DBConfiguration.OUTPUT_TABLE_NAME_PROPERTY, crateConfig.tableName);
-
-			if (schema != null) {
-
-				List<String> fieldNames = Lists.newArrayList();
-
-				for (Schema.Field field : schema.getFields()) {
-					fieldNames.add(field.getName());
-				}
-
-				conf.put(DBConfiguration.OUTPUT_FIELD_NAMES_PROPERTY, Joiner.on(",").join(fieldNames));
-
-			}
-
+		CrateOutputFormatProvider(Map<String, String> conf) {
+			this.conf = conf;
 		}
 
 		/**
