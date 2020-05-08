@@ -34,6 +34,8 @@ import de.kp.works.connect.jdbc.JdbcSource;
 @Description("A batch source to read structured records from an Amazon Redshift database.")
 public class RedshiftSource extends JdbcSource {
 
+	// TODO SSL
+	
 	protected static final Logger LOG = LoggerFactory.getLogger(RedshiftSource.class);
 	
 	protected static final String JDBC_DRIVER_NAME = "com.amazon.redshift.jdbc42.Driver";

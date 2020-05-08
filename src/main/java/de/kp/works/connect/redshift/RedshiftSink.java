@@ -1,4 +1,4 @@
-package de.kp.works.connect.crate;
+package de.kp.works.connect.redshift;
 /*
  * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -18,12 +18,12 @@ package de.kp.works.connect.crate;
  * 
  */
 
+import java.sql.Driver;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.lib.db.DBConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,49 +37,37 @@ import co.cask.cdap.api.annotation.Name;
 import co.cask.cdap.api.annotation.Plugin;
 import co.cask.cdap.api.data.batch.Output;
 import co.cask.cdap.api.data.batch.OutputFormatProvider;
-import co.cask.cdap.api.data.format.StructuredRecord;
 import co.cask.cdap.api.data.schema.Schema;
-import co.cask.cdap.api.dataset.lib.KeyValue;
-import co.cask.cdap.etl.api.Emitter;
 import co.cask.cdap.etl.api.batch.BatchSinkContext;
+import de.kp.works.connect.crate.CrateWritable;
 import de.kp.works.connect.jdbc.JdbcSink;
 
-/*
- * __KUP__
- * 
- * This Crate sink connector does not require the previous
- * stages to provide an input schema; if there is no schema
- * available this sink leverages the record schema from the
- * first record and creates a new table with schema compliant
- * fields on the fly.
- */
-
 @Plugin(type = "batchsink")
-@Name("CrateSink")
-@Description("A batch sink to write structured records to Crate IoT scale database.")
-public class CrateSink extends JdbcSink<CrateWritable> {
+@Name("RedshiftSink")
+@Description("A batch sink to write structured records to a Redshift data warehouse database.")
+public class RedshiftSink extends JdbcSink<CrateWritable> {
 
-	private static final Logger LOG = LoggerFactory.getLogger(CrateSink.class);
+	// TODO SSL
 
-	private static final String JDBC_DRIVER_NAME = "io.crate.client.jdbc.CrateDriver";
-	private static final String JDBC_PLUGIN_ID = "sink.jdbc.crate";
+	private static final Logger LOG = LoggerFactory.getLogger(RedshiftSink.class);
+	
+	protected static final String JDBC_DRIVER_NAME = "com.amazon.redshift.jdbc42.Driver";
+
+	protected static final String JDBC_PLUGIN_ID = "sink.jdbc.redshift";
+	protected Class<? extends Driver> driverClass;
+	
 	/*
 	 * 'type' and 'name' must match the provided JSON specification
 	 */
-	private static final String JDBC_PLUGIN_TYPE = "jdbc";
-	private static final String JDBC_PLUGIN_NAME = "crate";
+	protected static final String JDBC_PLUGIN_TYPE = "jdbc";
+	protected static final String JDBC_PLUGIN_NAME = "redshift";
 
-	private final CrateSinkConfig cfg;
-	private final CrateConnect connect;
-
-	public CrateSink(CrateSinkConfig crateConfig) {
-
-		this.cfg = crateConfig;
-		this.connect = new CrateConnect().setHost(cfg.host).setPort(cfg.port).setUser(cfg.user)
-				.setPassword(cfg.password).setTableName(cfg.tableName).setPrimaryKey(cfg.primaryKey);
-
+	private RedshiftSinkConfig config;
+	
+	public RedshiftSink(RedshiftSinkConfig config) {
+		this.config = config;
 	}
-
+	
 	@Override
 	protected String getJdbcPluginID() {
 		return JDBC_PLUGIN_ID;
@@ -94,7 +82,7 @@ public class CrateSink extends JdbcSink<CrateWritable> {
 	protected String getJdbcPluginType() {
 		return JDBC_PLUGIN_TYPE;
 	}
-	
+
 	@Override
 	protected String getJdbcDriverName() {
 		return JDBC_DRIVER_NAME;
@@ -102,46 +90,27 @@ public class CrateSink extends JdbcSink<CrateWritable> {
 
 	@Override
 	protected String getEndpoint() {
-		return cfg.getEndpoint();
-	};
+		return config.getEndpoint();
+	}
 
 	@Override
 	protected Properties getProperties() {
 		
 		Properties properties = new Properties();
 		
-		if (cfg.user == null || cfg.password == null)
+		if (config.user == null || config.password == null)
 			return properties;
 		
-		properties.put("user", cfg.user);
-		properties.put("password", cfg.password);
+		properties.put("user", config.user);
+		properties.put("password", config.password);
 		
 		return properties;
-	};
+		
+	}
 
 	@Override
 	protected String getTableName() {
-		return cfg.tableName;
-	};
-	
-	protected String getPrimaryKey() {
-		return cfg.primaryKey;
-	};
-
-	@Override
-	public void prepareRun(BatchSinkContext context) throws Exception {
-
-		registerJdbcDriver(context);
-
-		Schema schema = getSchema(context);
-		LOG.debug("Input schema defined. Schema = {}", schema);
-		/*
-		 * The output format provider supports use cases where an external schema is
-		 * provided and those, where schema information has to be extracted from the
-		 * structured records
-		 */
-		context.addOutput(Output.of(cfg.referenceName, new CrateOutputFormatProvider(prepareConf(schema))));
-
+		return config.tableName;
 	}
 	
 	private Map<String,String> prepareConf(Schema schema) {
@@ -158,14 +127,7 @@ public class CrateSink extends JdbcSink<CrateWritable> {
 
 		/*
 		 * TABLE PROPERTIES
-		 * 
-		 * The primary key of the table is important, as this [CrateSink] supports
-		 * JDBC's DUPLICATE ON KEY feature to enable proper update requests in case
-		 * of key conflicts.
-		 * 
-		 * The property 'mapreduce.jdbc.primaryKey' is an internal provided property
 		 */
-		conf.put("mapreduce.jdbc.primaryKey", getPrimaryKey());
 		conf.put(DBConfiguration.OUTPUT_TABLE_NAME_PROPERTY, getTableName());
 
 		if (schema != null) {
@@ -181,24 +143,35 @@ public class CrateSink extends JdbcSink<CrateWritable> {
 		}
 		
 		return conf;
-		
-	}
 	
+	}
+
 	@Override
-	public void transform(StructuredRecord input, Emitter<KeyValue<NullWritable, CrateWritable>> emitter) throws Exception {
-		emitter.emit(new KeyValue<NullWritable, CrateWritable>(null, new CrateWritable(connect, input)));
+	public void prepareRun(BatchSinkContext context) throws Exception {
+
+		registerJdbcDriver(context);
+
+		Schema schema = getSchema(context);
+		LOG.debug("Input schema defined. Schema = {}", schema);
+		/*
+		 * The output format provider supports use cases where an external schema is
+		 * provided and those, where schema information has to be extracted from the
+		 * structured records
+		 */
+		context.addOutput(Output.of(config.referenceName, new RedshiftOutputFormatProvider(prepareConf(schema))));
+
 	}
 
 	/**
-	 * The [CrateOutputFormatProvider] supports use cases where the schema is
+	 * The [RedshiftOutputFormatProvider] supports use cases where the schema is
 	 * specified by the previous stage and those, where the schema is not available
 	 * (implicit schema derivation)
 	 */
-	private static class CrateOutputFormatProvider implements OutputFormatProvider {
+	private static class RedshiftOutputFormatProvider implements OutputFormatProvider {
 
 		private final Map<String, String> conf;
 
-		CrateOutputFormatProvider(Map<String, String> conf) {
+		RedshiftOutputFormatProvider(Map<String, String> conf) {
 			this.conf = conf;
 		}
 
@@ -208,7 +181,7 @@ public class CrateSink extends JdbcSink<CrateWritable> {
 		 */
 		@Override
 		public String getOutputFormatClassName() {
-			return CrateOutputFormat.class.getName();
+			return RedshiftOutputFormat.class.getName();
 		}
 
 		@Override
@@ -217,4 +190,5 @@ public class CrateSink extends JdbcSink<CrateWritable> {
 		}
 
 	}
+
 }

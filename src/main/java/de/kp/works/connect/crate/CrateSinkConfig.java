@@ -20,21 +20,39 @@ package de.kp.works.connect.crate;
 
 import java.util.Locale;
 
-import de.kp.works.connect.jdbc.JdbcSourceConfig;
+import com.google.common.base.Strings;
 
-public class CrateSourceConfig extends JdbcSourceConfig {
+import co.cask.cdap.api.annotation.Description;
+import co.cask.cdap.api.annotation.Macro;
+import de.kp.works.connect.jdbc.JdbcConfig;
 
-	private static final long serialVersionUID = -677138326667975706L;
+public class CrateSinkConfig extends JdbcConfig {
 
-	public CrateSourceConfig() {
+	private static final long serialVersionUID = 5345965522745690011L;
+
+	@Description("Name of the Jdbc table to export data to.")
+	@Macro
+	public String tableName;
+
+	@Description("Name of the primary key of the Jdbc table to export data to.")
+	@Macro
+	public String primaryKey;
+
+	public CrateSinkConfig() {
+		super();
 	}
-
-	public void validate() {
-		super.validate();
-	}
-
+	
 	public String getEndpoint() {
 		return String.format(Locale.ENGLISH, "jdbc:crate://%s:%s/", host, port);
 	}
 
+	public void validate() {
+		super.validate();
+
+		if (Strings.isNullOrEmpty(tableName))
+			throw new IllegalArgumentException(
+					"Table name must not be empty. This connector is not able to import data from the Jdbc database.");
+		
+	}
+	
 }

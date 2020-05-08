@@ -1,4 +1,4 @@
-package de.kp.works.connect.crate;
+package de.kp.works.connect.redshift;
 /*
  * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -18,23 +18,29 @@ package de.kp.works.connect.crate;
  * 
  */
 
-import java.util.Locale;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
-import de.kp.works.connect.jdbc.JdbcSourceConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class CrateSourceConfig extends JdbcSourceConfig {
+import de.kp.works.connect.jdbc.JdbcWritable;
 
-	private static final long serialVersionUID = -677138326667975706L;
+public class RedshiftWritable extends JdbcWritable {
 
-	public CrateSourceConfig() {
+	private static final Logger LOG = LoggerFactory.getLogger(RedshiftWritable.class);
+
+	/**
+	 * Used in map-reduce. Do not remove.
+	 */
+	public RedshiftWritable() {
 	}
 
-	public void validate() {
-		super.validate();
-	}
-
-	public String getEndpoint() {
-		return String.format(Locale.ENGLISH, "jdbc:crate://%s:%s/", host, port);
+	@Override
+	public PreparedStatement write(Connection conn, PreparedStatement stmt) throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -28,7 +28,6 @@ import co.cask.cdap.api.annotation.Description;
 import co.cask.cdap.api.annotation.Name;
 import co.cask.cdap.api.annotation.Plugin;
 import de.kp.works.connect.jdbc.JdbcSource;
-import de.kp.works.connect.redshift.RedshiftSource;
 import de.kp.works.connect.redshift.RedshiftSourceConfig;
 
 @Plugin(type = "batchsource")
@@ -36,7 +35,9 @@ import de.kp.works.connect.redshift.RedshiftSourceConfig;
 @Description("A batch source to read structured records from a Panoply data warehouse.")
 public class PanoplySource extends JdbcSource {
 
-	protected static final Logger LOG = LoggerFactory.getLogger(RedshiftSource.class);
+	// TODO SSL
+
+	protected static final Logger LOG = LoggerFactory.getLogger(PanoplySource.class);
 	
 	protected static final String JDBC_DRIVER_NAME = "com.amazon.redshift.jdbc42.Driver";
 

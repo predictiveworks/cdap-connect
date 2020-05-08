@@ -42,6 +42,8 @@ import co.cask.cdap.api.plugin.PluginProperties;
 import co.cask.cdap.etl.api.PipelineConfigurer;
 import co.cask.cdap.etl.api.batch.BatchRuntimeContext;
 import co.cask.cdap.etl.api.batch.BatchSink;
+import co.cask.cdap.etl.api.batch.BatchSinkContext;
+import de.kp.works.connect.crate.CrateSource;
 
 public abstract class JdbcSink<V extends JdbcWritable> extends BatchSink<StructuredRecord, NullWritable, V> {
 
@@ -94,7 +96,45 @@ public abstract class JdbcSink<V extends JdbcWritable> extends BatchSink<Structu
 		}
 
 	}
+	
+	protected void registerJdbcDriver(BatchSinkContext context) throws Exception {
 
+		String jdbcPluginId = getJdbcPluginID();
+		Class<? extends Driver> driverClass = context.loadPluginClass(jdbcPluginId);
+
+		JdbcDriverShim driverShim = new JdbcDriverShim(driverClass.newInstance());
+		DriverManager.registerDriver(driverShim);
+
+	}
+	
+	protected Schema getSchema(BatchSinkContext context) throws Exception {
+
+		Schema schema = context.getInputSchema();
+		if (schema != null) {
+
+			/*
+			 * In case of an existing input schema, we validate whether 
+			 * this schema is compliant with the specified table.
+			 */
+			if (!validateSchema(schema))
+				throw new Exception(String.format("[%s] Provided schema is not compliant with the specified table columns.", CrateSource.class.getName()));
+
+		} else {
+			/*
+			 * This stage does not provide any input schema. We therefore infer the schema 
+			 * from the specified database connection. The respective schema may still be
+			 * null, because the specified table does not exist yet.
+			 * 
+			 * In this case, we dynamically create the table from the provided record schema
+			 * dynamically. For more details, see CrateWritable
+			 */
+			schema = inferSchema();
+		}
+
+		return schema;
+		
+	}
+	
 	protected Boolean validateSchema(Schema inputSchema) throws Exception {
 
 		Connection connection = null;
@@ -106,8 +146,13 @@ public abstract class JdbcSink<V extends JdbcWritable> extends BatchSink<Structu
 
 			/* Check if table already exists */
 			if (!tableExists(connection, getTableName())) {
+				/*
+				 * The specified table does not exist; in this case, 
+				 * validation returns TRUE as the table is dynamically
+				 * created
+				 */
 				connection.close();
-				return false;
+				return true;
 
 			}
 

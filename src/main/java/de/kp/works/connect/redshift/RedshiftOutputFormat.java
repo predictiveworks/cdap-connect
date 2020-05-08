@@ -1,4 +1,4 @@
-package de.kp.works.connect.crate;
+package de.kp.works.connect.redshift;
 /*
  * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -23,6 +23,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.mapreduce.RecordWriter;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
@@ -33,73 +34,30 @@ import org.slf4j.LoggerFactory;
 
 import de.kp.works.connect.jdbc.JdbcOutputFormat;
 
-public class CrateOutputFormat<K, V extends CrateWritable> extends JdbcOutputFormat<K, V> {
+public class RedshiftOutputFormat<K, V extends RedshiftWritable> extends JdbcOutputFormat<K, V> {
 
-	private static final Logger LOG = LoggerFactory.getLogger(CrateOutputFormat.class);
+	private static final Logger LOG = LoggerFactory.getLogger(RedshiftOutputFormat.class);
 
-	public String insertQuery(String table, String primaryKey, String[] fieldNames) {
-
-		StringBuilder sb = new StringBuilder();
-		sb.append("INSERT INTO ").append(table);
-		/*
-		 * Append column block
-		 */
-		sb.append(" (");
-		for (int i = 0; i < fieldNames.length; i++) {
-			sb.append(fieldNames[i]);
-			if (i != fieldNames.length - 1) {
-				sb.append(",");
-			}
-		}
-		sb.append(")");
-		/*
-		 * Append binding block
-		 */
-		sb.append(" VALUES (");
-
-		for (int i = 0; i < fieldNames.length; i++) {
-			sb.append("?");
-			if (i != fieldNames.length - 1) {
-				sb.append(",");
-			}
-		}
-
-		sb.append(")");
-		/*
-		 * Append duplicate block; it is important to note, that the KEY must be
-		 * excluded from this block
-		 */
-		sb.append(" ON DUPLICATE KEY UPDATE ");
-		for (int i = 0; i < fieldNames.length; i++) {
-			if (fieldNames[i].equals(primaryKey))
-				continue;
-			sb.append(fieldNames[i] + "=VALUES(" + fieldNames[i] + ")");
-			if (i != fieldNames.length - 1) {
-				sb.append(",");
-			}
-		}
-		/*
-		 * We have to omit the ';' at the end
-		 */
-		return sb.toString();
-
+	public String insertQuery(String table, String[] fieldNames) {
+		// TODO
+		return null;
 	}
 
-	public class CrateRecordWriter extends RecordWriter<K, V> {
+	public class RedshiftRecordWriter extends RecordWriter<K, V> {
 
 		private Connection connection;
 		private PreparedStatement statement;
 
 		private boolean emptyData = true;
 
-		public CrateRecordWriter() throws SQLException {
+		public RedshiftRecordWriter() throws SQLException {
 		}
 
 		/*
 		 * The prepared statement can empty, if the input schema is not provided in the
 		 * initial phase of this stage
 		 */
-		public CrateRecordWriter(Connection connection, PreparedStatement statement) throws SQLException {
+		public RedshiftRecordWriter(Connection connection, PreparedStatement statement) throws SQLException {
 
 			this.connection = connection;
 			this.statement = statement;
@@ -138,7 +96,7 @@ public class CrateOutputFormat<K, V extends CrateWritable> extends JdbcOutputFor
 				if (!emptyData) {
 
 					if (statement == null)
-						throw new SQLException("[CrateOutputFormat] PreparedStatement is null.");
+						throw new SQLException("[RedshiftOutputFormat] PreparedStatement is null.");
 
 					statement.executeBatch();
 					connection.commit();
@@ -198,19 +156,11 @@ public class CrateOutputFormat<K, V extends CrateWritable> extends JdbcOutputFor
 	@Override
 	public RecordWriter<K, V> getRecordWriter(TaskAttemptContext context) throws IOException, InterruptedException {
 		/*
-		 * The configuration has been provided by the Crate output format provider,
+		 * The configuration has been provided by the Redshift output format provider,
 		 * which uses DBConfiguration properties to specify configuration parameters;
 		 * therefore [DBConfiguration] is used to extract them
 		 */
 		Configuration conf = context.getConfiguration();
-		/*
-		 * The primary key of the table is important, as this [CrateSink] supports
-		 * JDBC's DUPLICATE ON KEY feature to enable proper update requests in case of
-		 * key conflicts.
-		 * 
-		 * The property 'mapreduce.jdbc.primaryKey' is an internal provided property
-		 */
-		String primaryKey = conf.get("mapreduce.jdbc.primaryKey");
 		String tableName = conf.get(DBConfiguration.OUTPUT_TABLE_NAME_PROPERTY);
 
 		/*
@@ -227,9 +177,9 @@ public class CrateOutputFormat<K, V extends CrateWritable> extends JdbcOutputFor
 
 			Connection connection = getConnection(conf);
 			PreparedStatement statement = (fieldNames == null) ? null
-					: connection.prepareStatement(insertQuery(tableName, primaryKey, fieldNames));
+					: connection.prepareStatement(insertQuery(tableName, fieldNames));
 
-			return new CrateRecordWriter(connection, statement);
+			return new RedshiftRecordWriter(connection, statement);
 
 		} catch (Exception ex) {
 			throw new IOException(ex.getMessage());
