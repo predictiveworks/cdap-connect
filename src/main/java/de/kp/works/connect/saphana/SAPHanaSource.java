@@ -18,7 +18,6 @@ package de.kp.works.connect.saphana;
  * 
  */
 
-import java.sql.Driver;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -37,9 +36,7 @@ public class SAPHanaSource extends JdbcSource {
 	protected static final Logger LOG = LoggerFactory.getLogger(SAPHanaSource.class);
 	
 	protected static final String JDBC_DRIVER_NAME = "com.sap.db.jdbc.Driver";
-
 	protected static final String JDBC_PLUGIN_ID = "source.jdbc.saphana";
-	protected Class<? extends Driver> driverClass;
 	
 	/*
 	 * 'type' and 'name' must match the provided JSON specification

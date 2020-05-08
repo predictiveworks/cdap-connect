@@ -1,4 +1,4 @@
-package de.kp.works.connect.redshift;
+package de.kp.works.connect.jdbc;
 /*
  * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -18,35 +18,39 @@ package de.kp.works.connect.redshift;
  * 
  */
 
-import java.util.Locale;
-
 import com.google.common.base.Strings;
 
 import co.cask.cdap.api.annotation.Description;
 import co.cask.cdap.api.annotation.Macro;
-import de.kp.works.connect.jdbc.JdbcSinkConfig;
+import de.kp.works.connect.jdbc.JdbcConfig;
 
-public class RedshiftSinkConfig extends JdbcSinkConfig {
+public class JdbcSinkConfig extends JdbcConfig {
 
-	private static final long serialVersionUID = 7023854483348316577L;
+	private static final long serialVersionUID = 5677211461839972980L;
 
-	@Description("Name of the Jdbc database to import data from.")
+	@Description("Name of the Jdbc table to export data to.")
 	@Macro
-	public String database;
+	public String tableName;
 
-	public String getEndpoint() {
-		return String.format(Locale.ENGLISH, "jdbc:redshift://%s:%s/%s", host, port, database);
+	@Description("Name of the primary key of the Jdbc table to export data to.")
+	@Macro
+	public String primaryKey;
+
+	public JdbcSinkConfig() {
+		super();
 	}
-	
+
 	public void validate() {
 		super.validate();
-		
-		if (Strings.isNullOrEmpty(database)) {
+
+		if (Strings.isNullOrEmpty(tableName))
 			throw new IllegalArgumentException(
-					String.format("[%s] The database name must not be empty.", this.getClass().getName()));
-		}
+					"Table name must not be empty. This connector is not able to write data to the Jdbc database.");
+
+		if (Strings.isNullOrEmpty(primaryKey))
+			throw new IllegalArgumentException(
+					"Primary key must not be empty. This connector is not able to write data to the Jdbc database.");
 		
 	}
-
-
+	
 }

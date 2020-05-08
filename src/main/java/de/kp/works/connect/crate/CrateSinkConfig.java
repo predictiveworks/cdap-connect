@@ -20,13 +20,11 @@ package de.kp.works.connect.crate;
 
 import java.util.Locale;
 
-import com.google.common.base.Strings;
-
 import co.cask.cdap.api.annotation.Description;
 import co.cask.cdap.api.annotation.Macro;
-import de.kp.works.connect.jdbc.JdbcConfig;
+import de.kp.works.connect.jdbc.JdbcSinkConfig;
 
-public class CrateSinkConfig extends JdbcConfig {
+public class CrateSinkConfig extends JdbcSinkConfig {
 
 	private static final long serialVersionUID = 5345965522745690011L;
 
@@ -48,10 +46,6 @@ public class CrateSinkConfig extends JdbcConfig {
 
 	public void validate() {
 		super.validate();
-
-		if (Strings.isNullOrEmpty(tableName))
-			throw new IllegalArgumentException(
-					"Table name must not be empty. This connector is not able to import data from the Jdbc database.");
 		
 	}
 	

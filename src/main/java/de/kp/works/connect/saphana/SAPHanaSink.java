@@ -1,4 +1,4 @@
-package de.kp.works.connect.redshift;
+package de.kp.works.connect.saphana;
 /*
  * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -18,7 +18,6 @@ package de.kp.works.connect.redshift;
  * 
  */
 
-import java.sql.Driver;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,28 +42,26 @@ import de.kp.works.connect.crate.CrateWritable;
 import de.kp.works.connect.jdbc.JdbcSink;
 
 @Plugin(type = "batchsink")
-@Name("RedshiftSink")
-@Description("A batch sink to write structured records to a Redshift data warehouse database.")
-public class RedshiftSink extends JdbcSink<CrateWritable> {
+@Name("SAPHanaSink")
+@Description("A batch sink to write structured records to an SAP Hana database.")
+public class SAPHanaSink extends JdbcSink<CrateWritable> {
 
 	// TODO SSL
 
-	private static final Logger LOG = LoggerFactory.getLogger(RedshiftSink.class);
+	private static final Logger LOG = LoggerFactory.getLogger(SAPHanaSink.class);
 	
-	protected static final String JDBC_DRIVER_NAME = "com.amazon.redshift.jdbc42.Driver";
-
-	protected static final String JDBC_PLUGIN_ID = "sink.jdbc.redshift";
-	protected Class<? extends Driver> driverClass;
+	protected static final String JDBC_DRIVER_NAME = "com.sap.db.jdbc.Driver";
+	protected static final String JDBC_PLUGIN_ID = "sink.jdbc.saphana";
 	
 	/*
 	 * 'type' and 'name' must match the provided JSON specification
 	 */
 	protected static final String JDBC_PLUGIN_TYPE = "jdbc";
-	protected static final String JDBC_PLUGIN_NAME = "redshift";
+	protected static final String JDBC_PLUGIN_NAME = "saphana";
 
-	private RedshiftSinkConfig config;
+	private SAPHanaSinkConfig config;
 	
-	public RedshiftSink(RedshiftSinkConfig config) {
+	public SAPHanaSink(SAPHanaSinkConfig config) {
 		this.config = config;
 	}
 	
@@ -153,7 +150,6 @@ public class RedshiftSink extends JdbcSink<CrateWritable> {
 
 	@Override
 	public void prepareRun(BatchSinkContext context) throws Exception {
-
 		registerJdbcDriver(context);
 
 		Schema schema = getSchema(context);
@@ -163,20 +159,20 @@ public class RedshiftSink extends JdbcSink<CrateWritable> {
 		 * provided and those, where schema information has to be extracted from the
 		 * structured records
 		 */
-		context.addOutput(Output.of(config.referenceName, new RedshiftOutputFormatProvider(prepareConf(schema))));
+		context.addOutput(Output.of(config.referenceName, new SAPHanaOutputFormatProvider(prepareConf(schema))));
 
 	}
 
 	/**
-	 * The [RedshiftOutputFormatProvider] supports use cases where the schema is
+	 * The [SAPHanaOutputFormatProvider] supports use cases where the schema is
 	 * specified by the previous stage and those, where the schema is not available
 	 * (implicit schema derivation)
 	 */
-	private static class RedshiftOutputFormatProvider implements OutputFormatProvider {
+	private static class SAPHanaOutputFormatProvider implements OutputFormatProvider {
 
 		private final Map<String, String> conf;
 
-		RedshiftOutputFormatProvider(Map<String, String> conf) {
+		SAPHanaOutputFormatProvider(Map<String, String> conf) {
 			this.conf = conf;
 		}
 
@@ -186,7 +182,7 @@ public class RedshiftSink extends JdbcSink<CrateWritable> {
 		 */
 		@Override
 		public String getOutputFormatClassName() {
-			return RedshiftOutputFormat.class.getName();
+			return SAPHanaOutputFormat.class.getName();
 		}
 
 		@Override

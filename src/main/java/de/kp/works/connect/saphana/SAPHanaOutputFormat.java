@@ -1,4 +1,4 @@
-package de.kp.works.connect.redshift;
+package de.kp.works.connect.saphana;
 /*
  * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -34,30 +34,69 @@ import org.slf4j.LoggerFactory;
 
 import de.kp.works.connect.jdbc.JdbcOutputFormat;
 
-public class RedshiftOutputFormat<K, V extends RedshiftWritable> extends JdbcOutputFormat<K, V> {
+public class SAPHanaOutputFormat<K, V extends SAPHanaWritable> extends JdbcOutputFormat<K, V> {
 
-	private static final Logger LOG = LoggerFactory.getLogger(RedshiftOutputFormat.class);
+	private static final Logger LOG = LoggerFactory.getLogger(SAPHanaOutputFormat.class);
+	/*
+	 * This method defines an upsert query statement without
+	 * a trailing semicolon
+	 */
+	public String upsertQuery(String table, String primaryKey, String[] fieldNames) {
+		/*
+		 * We need to insert new rows and update existing ones;
+		 * therefore SAP's UPSERT command is used: more details
+		 * 
+		 * https://help.sap.com/viewer/4fe29514fd584807ac9f2a04f6754767/2.0.03/en-US/20fc06a7751910149892c0d09be21a38.html
+		 */
+		StringBuilder sb = new StringBuilder();
+		sb.append("UPSERT ").append(table);
+		/*
+		 * Append column block
+		 */
+		sb.append(" (");
+		for (int i = 0; i < fieldNames.length; i++) {
+			sb.append(fieldNames[i]);
+			if (i != fieldNames.length - 1) {
+				sb.append(",");
+			}
+		}
+		sb.append(")");
+		/*
+		 * Append binding block
+		 */
+		sb.append(" VALUES (");
 
-	public String insertQuery(String table, String primaryKey, String[] fieldNames) {
-		// TODO
-		return null;
+		for (int i = 0; i < fieldNames.length; i++) {
+			sb.append("?");
+			if (i != fieldNames.length - 1) {
+				sb.append(",");
+			}
+		}
+
+		sb.append(")");
+		sb.append(" WITH PRIMARY KEY");
+		/*
+		 * We have to omit the ';' at the end
+		 */
+		return sb.toString();
+
 	}
 
-	public class RedshiftRecordWriter extends RecordWriter<K, V> {
+	public class SAPHanaRecordWriter extends RecordWriter<K, V> {
 
 		private Connection connection;
 		private PreparedStatement statement;
 
 		private boolean emptyData = true;
 
-		public RedshiftRecordWriter() throws SQLException {
+		public SAPHanaRecordWriter() throws SQLException {
 		}
 
 		/*
 		 * The prepared statement can empty, if the input schema is not provided in the
 		 * initial phase of this stage
 		 */
-		public RedshiftRecordWriter(Connection connection, PreparedStatement statement) throws SQLException {
+		public SAPHanaRecordWriter(Connection connection, PreparedStatement statement) throws SQLException {
 
 			this.connection = connection;
 			this.statement = statement;
@@ -96,7 +135,7 @@ public class RedshiftOutputFormat<K, V extends RedshiftWritable> extends JdbcOut
 				if (!emptyData) {
 
 					if (statement == null)
-						throw new SQLException("[RedshiftOutputFormat] PreparedStatement is null.");
+						throw new SQLException("[SAPHanaOutputFormat] PreparedStatement is null.");
 
 					statement.executeBatch();
 					connection.commit();
@@ -156,7 +195,7 @@ public class RedshiftOutputFormat<K, V extends RedshiftWritable> extends JdbcOut
 	@Override
 	public RecordWriter<K, V> getRecordWriter(TaskAttemptContext context) throws IOException, InterruptedException {
 		/*
-		 * The configuration has been provided by the Redshift output format provider,
+		 * The configuration has been provided by the SAP Hana output format provider,
 		 * which uses DBConfiguration properties to specify configuration parameters;
 		 * therefore [DBConfiguration] is used to extract them
 		 */
@@ -179,9 +218,9 @@ public class RedshiftOutputFormat<K, V extends RedshiftWritable> extends JdbcOut
 
 			Connection connection = getConnection(conf);
 			PreparedStatement statement = (fieldNames == null) ? null
-					: connection.prepareStatement(insertQuery(tableName, primaryKey, fieldNames));
+					: connection.prepareStatement(upsertQuery(tableName, primaryKey, fieldNames));
 
-			return new RedshiftRecordWriter(connection, statement);
+			return new SAPHanaRecordWriter(connection, statement);
 
 		} catch (Exception ex) {
 			throw new IOException(ex.getMessage());

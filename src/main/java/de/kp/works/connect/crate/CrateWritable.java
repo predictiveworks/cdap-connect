@@ -78,6 +78,7 @@ public class CrateWritable extends JdbcWritable {
 
 					String insertQuery = connect.insertQuery(fieldNames);
 					stmt = conn.prepareStatement(insertQuery);
+					
 				}
 
 			} catch (Exception e) {
