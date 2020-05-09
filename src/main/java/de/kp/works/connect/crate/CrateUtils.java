@@ -21,7 +21,6 @@ package de.kp.works.connect.crate;
 import co.cask.cdap.api.data.schema.Schema;
 import de.kp.works.connect.jdbc.JdbcUtils;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import java.sql.Driver;
@@ -36,26 +35,6 @@ public class CrateUtils extends JdbcUtils {
 	private static final long serialVersionUID = -8111877341898323808L;
 	
 	private static final Logger LOG = LoggerFactory.getLogger(CrateUtils.class);
-
-	public static Schema.Type getNonNullableType(Schema.Field field) {
-
-		Schema.Type type;
-		if (field.getSchema().isNullable()) {
-			type = field.getSchema().getNonNullable().getType();
-
-		} else {
-			type = field.getSchema().getType();
-
-		}
-
-		Preconditions.checkArgument(type.isSimpleType(),
-				"[CrateUtils] Only simple types are supported (boolean, int, long, float, double, string, bytes) "
-						+ "for writing a database record, but found '%s' as the type for column '%s'. Please "
-						+ "remove this column or transform it to a simple type.",
-				type, field.getName());
-		return type;
-
-	}
 	
 	public static List<String> getColumns(Schema schema) throws Exception {
 		

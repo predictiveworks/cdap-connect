@@ -18,70 +18,23 @@ package de.kp.works.connect.crate;
  * 
  */
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
-import java.util.Locale;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 
-public class CrateConnect {
+import de.kp.works.connect.jdbc.JdbcConnect;
 
-	private static final Logger LOG = LoggerFactory.getLogger(CrateConnect.class);
+public class CrateConnect extends JdbcConnect {
 
-	private String host;
-	private String port;
-	
-	private String user;
-	private String password;
-	
-	private String tableName;
-	private String primaryKey;
+	private static final long serialVersionUID = -5381262653674208518L;
 	
 	private String inputQuery;
-	
-	private int[] columnTypes;
 		
-	public CrateConnect() {
+	public CrateConnect(String endpoint, String tableName, String primaryKey) {
+		this.endpoint = endpoint;
 		
-	}
-
-	public CrateConnect setHost(String host) {
-		this.host = host;
-		return this;
-	}
-
-	public CrateConnect setPort(String port) {
-		this.port = port;
-		return this;
-	}
-
-	public CrateConnect setUser(String user) {
-		this.user = user;
-		return this;
-	}
-
-	public CrateConnect setPassword(String password) {
-		this.password = password;
-		return this;
-	}
-
-	public CrateConnect setTableName(String tableName) {
 		this.tableName = tableName;
-		return this;
-	}
-
-	public CrateConnect setPrimaryKey(String primaryKey) {
 		this.primaryKey = primaryKey;
-		return this;
 	}
 
 	public String getInputQuery() {
@@ -91,78 +44,6 @@ public class CrateConnect {
 	public CrateConnect setInputQuery(String inputQuery) {
 		this.inputQuery = inputQuery;
 		return this;
-	}
-	
-	public Connection getConnection() throws SQLException {
-
-		Connection conn;		
-		if (user == null || password == null) {
-			conn = DriverManager.getConnection(getEndpoint());
-
-		} else {
-			conn = DriverManager.getConnection(getEndpoint(), user, password);
-
-		}
-
-		return conn;
-
-	}
-
-	public int[] getColumnTypes() {
-		return columnTypes;
-	}
-
-	public void loadColumnTypes() throws Exception {
-		loadColumnTypes(tableName);
-	}
-	/**
-	 * The column types are required for each incoming
-	 * record when it is transformed into an insert stmt;
-	 * 
-	 * therefore, we load them right after a new data table
-	 * has been created 
-	 */
-	public void loadColumnTypes(String tableName) throws Exception {
-
-		Connection conn = null;
-		Statement stmt = null;
-
-		int[] columnTypes;
-		
-		try {
-
-			conn = getConnection();
-			stmt = conn.createStatement();
-			/*
-			 * Run a query against the DB table that returns 0 records, but returns valid
-			 * ResultSetMetadata that can be used to optimize write requests to the Crate
-			 * database
-			 */
-			ResultSet rs = stmt.executeQuery(String.format("SELECT * FROM %s WHERE 1 = 0", tableName));
-			ResultSetMetaData rsMetadata = rs.getMetaData();
-
-			int columnCount = rsMetadata.getColumnCount();
-
-			columnTypes = new int[columnCount];
-			for (int i = 0; i < columnCount; i++) {
-				columnTypes[i] = rsMetadata.getColumnType(i + 1);
-			}
-			/*
-			 * Publish the derived column types and make them available for further processing
-			 */
-			this.columnTypes = columnTypes;			
-			LOG.info(String.format("Column definitions found for %s columns." + columnTypes.length));
-			
-		} catch (Exception e) {
-			LOG.error(String.format("Retrieval of column types failed with: %s", e.getLocalizedMessage()));
-
-		} finally {
-
-			if (stmt != null) stmt.close();
-			if (conn != null) conn.close();
-
-		}
-
 	}
 
 	public String insertQuery(String[] fieldNames) {
@@ -228,6 +109,7 @@ public class CrateConnect {
 
 	}
 	
+	@Override
 	public String createQuery(String tableName, String primaryKey, List<String> columns) {
 
 		String coldefs = String.format("%s, PRIMARY KEY(%s)", Joiner.on(",").join(columns), primaryKey);
@@ -249,69 +131,6 @@ public class CrateConnect {
 		
 		return createSql;
 	
-	}
-	
-	public boolean createTable(List<String> columns) {
-		return createTable(tableName, primaryKey, columns);
-	}
-	/**
-	 * This method creates a Crate table with provided name, primary key
-	 * and specified columns, if it does not exit;  
-	 */
-	public boolean createTable(String tableName, String primaryKey, List<String> columns) {
-
-		try {
-
-			String createSql = createQuery(tableName, primaryKey, columns);
-
-			Connection conn = null;
-			Statement stmt = null;
-
-			try {
-
-				conn = getConnection();
-				if (tableExists(conn,tableName) == false) {
-
-					conn.setAutoCommit(false);
-
-					stmt = conn.createStatement();
-					stmt.execute(createSql);
-
-					conn.commit();
-					stmt.close();
-					
-				}
-
-			} catch (Exception e) {
-				LOG.error(String.format("[CrateConnect] The creation of table '%s' failed with: %s", tableName, e.getLocalizedMessage()));
-
-			} finally {
-
-				if (stmt != null) stmt.close();
-				if (conn != null) conn.close();
-
-			}
-
-			return true;
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-
-		}
-	}
-	
-	public Boolean tableExists(Connection conn, String table) throws SQLException {
-		
-	    DatabaseMetaData metadata = conn.getMetaData();
-
-	    ResultSet rs = metadata.getTables(null, null, table, null);
-	    return (rs.next());
-
-	}
-
-	public String getEndpoint() {
-		return String.format(Locale.ENGLISH, "jdbc:crate://%s:%s/", host, port);
 	}
 
 }

@@ -19,9 +19,12 @@ package de.kp.works.connect.jdbc;
  */
 
 import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Types;
 import java.util.List;
 
@@ -33,6 +36,54 @@ import co.cask.cdap.api.data.schema.UnsupportedTypeException;
 public class JdbcUtils implements Serializable {
 
 	private static final long serialVersionUID = 4941026070769773563L;
+
+	public static boolean createTable(Connection conn, String tableName, String createSql) {
+
+		Statement stmt = null;
+		Boolean success = false;
+
+		try {
+
+			if (tableExists(conn, tableName) == false) {
+
+				conn.setAutoCommit(false);
+
+				stmt = conn.createStatement();
+				stmt.execute(createSql);
+
+				conn.commit();
+				stmt.close();
+
+				success = true;
+			}
+
+		} catch (SQLException e) {
+			;
+			
+		} finally {
+
+			if (stmt != null)
+				try {
+					stmt.close();
+
+				} catch (SQLException e) {
+					;
+				}
+
+		}
+
+		return success;
+
+	}
+
+	public static Boolean tableExists(Connection conn, String table) throws SQLException {
+
+		DatabaseMetaData metadata = conn.getMetaData();
+
+		ResultSet rs = metadata.getTables(null, null, table, null);
+		return (rs.next());
+
+	}
 
 	public static List<Schema.Field> getSchemaFields(ResultSet resultSet) throws SQLException {
 

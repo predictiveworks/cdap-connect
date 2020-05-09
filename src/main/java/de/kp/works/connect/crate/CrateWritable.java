@@ -52,9 +52,7 @@ public class CrateWritable extends JdbcWritable {
 	}
 
 	@Override
-	public PreparedStatement write(Connection conn, PreparedStatement statement) throws SQLException {
-
-		PreparedStatement stmt = statement;
+	public PreparedStatement write(Connection conn, PreparedStatement stmt) throws SQLException {
 
 		Schema schema = record.getSchema();
 		List<Schema.Field> fields = schema.getFields();
@@ -64,8 +62,8 @@ public class CrateWritable extends JdbcWritable {
 
 				List<String> columns = CrateUtils.getColumns(schema);
 
-				if (connect.createTable(columns)) {
-					connect.loadColumnTypes();
+				if (connect.createTable(conn, columns)) {
+					connect.loadColumnTypes(conn);
 
 					List<String> fnames = Lists.newArrayList();
 
@@ -95,7 +93,7 @@ public class CrateWritable extends JdbcWritable {
 			Schema.Field field = fields.get(i);
 			String fieldName = field.getName();
 
-			Schema.Type fieldType = CrateUtils.getNonNullableType(field);
+			Schema.Type fieldType = getNonNullableType(field);
 			Object fieldValue = record.get(fieldName);
 
 			writeToCrate(stmt, fieldType, fieldValue, i, columnTypes);
@@ -145,7 +143,7 @@ public class CrateWritable extends JdbcWritable {
 			writeBytes(stmt, fieldIndex, sqlIndex, fieldValue, columnTypes);
 			break;
 		default:
-			throw new SQLException(String.format("[CrateSqlWritable] Unsupported datatype: %s with value: %s.", fieldType, fieldValue));
+			throw new SQLException(String.format("[SAPHanaWritable] Unsupported datatype: %s with value: %s.", fieldType, fieldValue));
 		}
 	}
 

@@ -75,8 +75,7 @@ public class CrateSink extends JdbcSink<CrateWritable> {
 	public CrateSink(CrateSinkConfig crateConfig) {
 
 		this.cfg = crateConfig;
-		this.connect = new CrateConnect().setHost(cfg.host).setPort(cfg.port).setUser(cfg.user)
-				.setPassword(cfg.password).setTableName(cfg.tableName).setPrimaryKey(cfg.primaryKey);
+		this.connect = new CrateConnect(cfg.getEndpoint(), cfg.tableName, cfg.primaryKey);
 
 	}
 
@@ -94,7 +93,7 @@ public class CrateSink extends JdbcSink<CrateWritable> {
 	protected String getJdbcPluginType() {
 		return JDBC_PLUGIN_TYPE;
 	}
-	
+
 	@Override
 	protected String getJdbcDriverName() {
 		return JDBC_DRIVER_NAME;
@@ -107,15 +106,15 @@ public class CrateSink extends JdbcSink<CrateWritable> {
 
 	@Override
 	protected Properties getProperties() {
-		
+
 		Properties properties = new Properties();
-		
+
 		if (cfg.user == null || cfg.password == null)
 			return properties;
-		
+
 		properties.put("user", cfg.user);
 		properties.put("password", cfg.password);
-		
+
 		return properties;
 	};
 
@@ -123,7 +122,7 @@ public class CrateSink extends JdbcSink<CrateWritable> {
 	protected String getTableName() {
 		return cfg.tableName;
 	};
-	
+
 	protected String getPrimaryKey() {
 		return cfg.primaryKey;
 	};
@@ -143,8 +142,8 @@ public class CrateSink extends JdbcSink<CrateWritable> {
 		context.addOutput(Output.of(cfg.referenceName, new CrateOutputFormatProvider(prepareConf(schema))));
 
 	}
-	
-	private Map<String,String> prepareConf(Schema schema) {
+
+	private Map<String, String> prepareConf(Schema schema) {
 
 		Map<String, String> conf = new HashMap<>();
 		/*
@@ -152,7 +151,7 @@ public class CrateSink extends JdbcSink<CrateWritable> {
 		 */
 		conf.put(DBConfiguration.DRIVER_CLASS_PROPERTY, getJdbcDriverName());
 		conf.put(DBConfiguration.URL_PROPERTY, getEndpoint());
-		
+
 		String properties = new Gson().toJson(getProperties());
 		conf.put("jdbc.properties", properties);
 
@@ -160,8 +159,8 @@ public class CrateSink extends JdbcSink<CrateWritable> {
 		 * TABLE PROPERTIES
 		 * 
 		 * The primary key of the table is important, as this [CrateSink] supports
-		 * JDBC's DUPLICATE ON KEY feature to enable proper update requests in case
-		 * of key conflicts.
+		 * JDBC's DUPLICATE ON KEY feature to enable proper update requests in case of
+		 * key conflicts.
 		 * 
 		 * The property 'mapreduce.jdbc.primaryKey' is an internal provided property
 		 */
@@ -179,13 +178,14 @@ public class CrateSink extends JdbcSink<CrateWritable> {
 			conf.put(DBConfiguration.OUTPUT_FIELD_NAMES_PROPERTY, Joiner.on(",").join(fieldNames));
 
 		}
-		
+
 		return conf;
-		
+
 	}
-	
+
 	@Override
-	public void transform(StructuredRecord input, Emitter<KeyValue<NullWritable, CrateWritable>> emitter) throws Exception {
+	public void transform(StructuredRecord input, Emitter<KeyValue<NullWritable, CrateWritable>> emitter)
+			throws Exception {
 		emitter.emit(new KeyValue<NullWritable, CrateWritable>(null, new CrateWritable(connect, input)));
 	}
 

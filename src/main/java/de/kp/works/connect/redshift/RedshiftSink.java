@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.lib.db.DBConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,15 +38,17 @@ import co.cask.cdap.api.annotation.Name;
 import co.cask.cdap.api.annotation.Plugin;
 import co.cask.cdap.api.data.batch.Output;
 import co.cask.cdap.api.data.batch.OutputFormatProvider;
+import co.cask.cdap.api.data.format.StructuredRecord;
 import co.cask.cdap.api.data.schema.Schema;
+import co.cask.cdap.api.dataset.lib.KeyValue;
+import co.cask.cdap.etl.api.Emitter;
 import co.cask.cdap.etl.api.batch.BatchSinkContext;
-import de.kp.works.connect.crate.CrateWritable;
 import de.kp.works.connect.jdbc.JdbcSink;
 
 @Plugin(type = "batchsink")
 @Name("RedshiftSink")
 @Description("A batch sink to write structured records to a Redshift data warehouse database.")
-public class RedshiftSink extends JdbcSink<CrateWritable> {
+public class RedshiftSink extends JdbcSink<RedshiftWritable> {
 
 	// TODO SSL
 
@@ -165,6 +168,11 @@ public class RedshiftSink extends JdbcSink<CrateWritable> {
 		 */
 		context.addOutput(Output.of(config.referenceName, new RedshiftOutputFormatProvider(prepareConf(schema))));
 
+	}
+	
+	@Override
+	public void transform(StructuredRecord input, Emitter<KeyValue<NullWritable, RedshiftWritable>> emitter) throws Exception {
+		emitter.emit(new KeyValue<NullWritable, RedshiftWritable>(null, new RedshiftWritable(input)));
 	}
 
 	/**

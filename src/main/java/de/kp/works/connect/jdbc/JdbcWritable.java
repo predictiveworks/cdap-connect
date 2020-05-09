@@ -35,6 +35,8 @@ import org.apache.hadoop.conf.Configurable;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Writable;
 
+import co.cask.cdap.api.data.schema.Schema;
+
 public abstract class JdbcWritable implements Configurable, Writable {
 
 	public abstract PreparedStatement write(Connection conn, PreparedStatement stmt) throws SQLException;
@@ -61,6 +63,21 @@ public abstract class JdbcWritable implements Configurable, Writable {
 	@Override
 	public void setConf(Configuration config) {
 		this.conf = config;
+	}
+
+	public static Schema.Type getNonNullableType(Schema.Field field) {
+
+		Schema.Type type;
+		if (field.getSchema().isNullable()) {
+			type = field.getSchema().getNonNullable().getType();
+
+		} else {
+			type = field.getSchema().getType();
+
+		}
+
+		return type;
+
 	}
 
 	protected void writeBytes(PreparedStatement stmt, int fieldIndex, int sqlIndex, Object fieldValue,
