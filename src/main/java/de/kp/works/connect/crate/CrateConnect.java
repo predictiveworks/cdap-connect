@@ -27,8 +27,6 @@ import de.kp.works.connect.jdbc.JdbcConnect;
 public class CrateConnect extends JdbcConnect {
 
 	private static final long serialVersionUID = -5381262653674208518L;
-	
-	private String inputQuery;
 		
 	public CrateConnect(String endpoint, String tableName, String primaryKey) {
 		this.endpoint = endpoint;
@@ -36,25 +34,13 @@ public class CrateConnect extends JdbcConnect {
 		this.tableName = tableName;
 		this.primaryKey = primaryKey;
 	}
-
-	public String getInputQuery() {
-		return inputQuery;
-	}
-
-	public CrateConnect setInputQuery(String inputQuery) {
-		this.inputQuery = inputQuery;
-		return this;
-	}
-
-	public String insertQuery(String[] fieldNames) {
-		return insertQuery(tableName, fieldNames);
-	}
 	/*
 	 * This method builds a Crate compliant insert query that is used
 	 * to feed a SQL prepared statement that finally write a record to
 	 * the database
 	 */
-	public String insertQuery(String tableName, String[] fieldNames) {
+	@Override
+	public String writeQuery(String[] fieldNames) {
 
 		if (fieldNames == null) {
 			throw new IllegalArgumentException("[CrateConnect] Field names may not be null");

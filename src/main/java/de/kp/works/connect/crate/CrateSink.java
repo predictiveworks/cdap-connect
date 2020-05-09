@@ -69,8 +69,8 @@ public class CrateSink extends JdbcSink<CrateWritable> {
 	private static final String JDBC_PLUGIN_TYPE = "jdbc";
 	private static final String JDBC_PLUGIN_NAME = "crate";
 
-	private final CrateSinkConfig cfg;
-	private final CrateConnect connect;
+	private CrateSinkConfig cfg;
+	private CrateConnect connect;
 
 	public CrateSink(CrateSinkConfig crateConfig) {
 

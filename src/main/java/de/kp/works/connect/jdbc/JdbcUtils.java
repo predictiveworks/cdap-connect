@@ -55,7 +55,9 @@ public class JdbcUtils implements Serializable {
 				stmt.close();
 
 				success = true;
-			}
+			
+			} else
+				success = true;
 
 		} catch (SQLException e) {
 			;

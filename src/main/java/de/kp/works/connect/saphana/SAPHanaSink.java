@@ -63,9 +63,11 @@ public class SAPHanaSink extends JdbcSink<SAPHanaWritable> {
 	protected static final String JDBC_PLUGIN_NAME = "saphana";
 
 	private SAPHanaSinkConfig config;
+	private SAPHanaConnect connect;
 	
 	public SAPHanaSink(SAPHanaSinkConfig config) {
 		this.config = config;
+		this.connect = new SAPHanaConnect(config.getEndpoint(), config.tableName, config.primaryKey);
 	}
 	
 	@Override
@@ -168,7 +170,7 @@ public class SAPHanaSink extends JdbcSink<SAPHanaWritable> {
 	
 	@Override
 	public void transform(StructuredRecord input, Emitter<KeyValue<NullWritable, SAPHanaWritable>> emitter) throws Exception {
-		emitter.emit(new KeyValue<NullWritable, SAPHanaWritable>(null, new SAPHanaWritable(input)));
+		emitter.emit(new KeyValue<NullWritable, SAPHanaWritable>(null, new SAPHanaWritable(connect, input)));
 	}
 
 	/**

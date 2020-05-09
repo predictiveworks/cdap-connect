@@ -28,20 +28,88 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.List;
 
+import javax.annotation.Nullable;
 import javax.sql.rowset.serial.SerialBlob;
 
 import org.apache.hadoop.conf.Configurable;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Writable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.clearspring.analytics.util.Lists;
+
+import co.cask.cdap.api.data.format.StructuredRecord;
 import co.cask.cdap.api.data.schema.Schema;
 
 public abstract class JdbcWritable implements Configurable, Writable {
 
-	public abstract PreparedStatement write(Connection conn, PreparedStatement stmt) throws SQLException;
+	private static final Logger LOG = LoggerFactory.getLogger(JdbcWritable.class);
 
-	private Configuration conf;
+	protected Configuration conf;
+	
+	protected JdbcConnect connect;
+	protected StructuredRecord record;
+
+	public PreparedStatement write(Connection conn, PreparedStatement stmt) throws SQLException {
+
+		Schema schema = record.getSchema();
+		List<Schema.Field> fields = schema.getFields();
+
+		if (stmt == null) {
+			try {
+
+				List<String> columns = getColumns(schema);
+
+				if (connect.createTable(conn, columns)) {
+					connect.loadColumnTypes(conn);
+
+					List<String> fnames = Lists.newArrayList();
+
+					for (Schema.Field field : fields) {
+						fnames.add(field.getName());
+					}
+
+					String[] fieldNames = new String[fnames.size()];
+					fieldNames = fnames.toArray(fieldNames);
+
+					String writeQuery = connect.writeQuery(fieldNames);
+					stmt = conn.prepareStatement(writeQuery);
+					
+				} else
+					throw new Exception("Provided table cannot be created.");
+
+			} catch (Exception e) {
+				LOG.error(String.format("[CrateSqlWritable] Write request failed: ", e.getLocalizedMessage()));
+
+			}
+
+		}
+
+		int[] columnTypes = connect.getColumnTypes();
+
+		for (int i = 0; i < fields.size(); i++) {
+
+			Schema.Field field = fields.get(i);
+			String fieldName = field.getName();
+
+			Schema.Type fieldType = getNonNullableType(field);
+			Object fieldValue = record.get(fieldName);
+
+			writeToDB(stmt, fieldType, fieldValue, i, columnTypes);
+
+		}
+
+		return stmt;
+
+	}
+	/*
+	 * Retrieve columns from provided schema to build
+	 * write (insert or upsert query).
+	 */
+	public abstract List<String> getColumns(Schema schema) throws Exception;
 
 	@Override
 	public void readFields(DataInput input) throws IOException {
@@ -78,6 +146,79 @@ public abstract class JdbcWritable implements Configurable, Writable {
 
 		return type;
 
+	}
+
+	protected void writeToDB(PreparedStatement stmt, Schema.Type fieldType, @Nullable Object fieldValue,
+			int fieldIndex, int[] columnTypes) throws SQLException {
+
+		int sqlIndex = fieldIndex + 1;
+		if (fieldValue == null) {
+			stmt.setNull(sqlIndex, columnTypes[fieldIndex]);
+			return;
+		}
+		/*
+		 * - setArray
+		 * - setAsciiStream
+		 * - setBigDecimal
+		 * - setBinaryStream
+		 * - setBlob
+		 * ----- setBoolean
+		 * - setByte
+		 * ----- setBytes
+		 * - setCharacterStream
+		 * ----- setClob
+		 * ----- setDate
+		 * ----- setDouble
+		 * ----- setFloat
+		 * ----- setInt
+		 * ----- setLong
+		 * - setNCharacterStream
+		 * - setNClob
+		 * - setNString
+		 * ----- setNull
+		 * - setObject
+		 * - setRef
+		 * - setRowId
+		 * ----- setShort
+		 * - setSQLXML
+		 * ----- setString
+		 * ----- setTime
+		 * ----- setTimestamp
+		 * - setUnicodeStream
+		 * 
+		 */
+		switch (fieldType) {
+		case NULL:
+			stmt.setNull(sqlIndex, columnTypes[fieldIndex]);
+			break;
+		case STRING:
+			/* clob can also be written to as setString */
+			stmt.setString(sqlIndex, (String) fieldValue);
+			break;
+		case BOOLEAN:
+			stmt.setBoolean(sqlIndex, (Boolean) fieldValue);
+			break;
+		case INT:
+			/* write short or int appropriately */
+			writeInt(stmt, fieldIndex, sqlIndex, fieldValue, columnTypes);
+			break;
+		case LONG:
+			/* write date, timestamp or long appropriately */
+			writeLong(stmt, fieldIndex, sqlIndex, fieldValue, columnTypes);
+			break;
+		case FLOAT:
+			/* both real and float are set with the same method on prepared statement */
+			stmt.setFloat(sqlIndex, (Float) fieldValue);
+			break;
+		case DOUBLE:
+			stmt.setDouble(sqlIndex, (Double) fieldValue);
+			break;
+		case BYTES:
+			writeBytes(stmt, fieldIndex, sqlIndex, fieldValue, columnTypes);
+			break;
+		default:
+			throw new SQLException(String.format("[%s] Unsupported datatype: %s with value: %s.", JdbcWritable.class.getName(), fieldType, fieldValue));
+		}
 	}
 
 	protected void writeBytes(PreparedStatement stmt, int fieldIndex, int sqlIndex, Object fieldValue,

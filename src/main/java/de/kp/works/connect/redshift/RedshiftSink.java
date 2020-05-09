@@ -66,9 +66,11 @@ public class RedshiftSink extends JdbcSink<RedshiftWritable> {
 	protected static final String JDBC_PLUGIN_NAME = "redshift";
 
 	private RedshiftSinkConfig config;
-	
+	private RedshiftConnect connect;
+
 	public RedshiftSink(RedshiftSinkConfig config) {
 		this.config = config;
+		this.connect = new RedshiftConnect(config.getEndpoint(), config.tableName, config.primaryKey);
 	}
 	
 	@Override
@@ -172,7 +174,7 @@ public class RedshiftSink extends JdbcSink<RedshiftWritable> {
 	
 	@Override
 	public void transform(StructuredRecord input, Emitter<KeyValue<NullWritable, RedshiftWritable>> emitter) throws Exception {
-		emitter.emit(new KeyValue<NullWritable, RedshiftWritable>(null, new RedshiftWritable(input)));
+		emitter.emit(new KeyValue<NullWritable, RedshiftWritable>(null, new RedshiftWritable(connect, input)));
 	}
 
 	/**

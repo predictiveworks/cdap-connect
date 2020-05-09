@@ -1,4 +1,4 @@
-package de.kp.works.connect.redshift;
+package de.kp.works.connect.panoply;
 /*
  * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -18,29 +18,19 @@ package de.kp.works.connect.redshift;
  * 
  */
 
-import java.util.List;
+import co.cask.cdap.api.annotation.Description;
+import co.cask.cdap.api.annotation.Name;
+import co.cask.cdap.api.annotation.Plugin;
+import de.kp.works.connect.redshift.RedshiftSink;
+import de.kp.works.connect.redshift.RedshiftSinkConfig;
 
-import co.cask.cdap.api.data.format.StructuredRecord;
-import co.cask.cdap.api.data.schema.Schema;
-import de.kp.works.connect.jdbc.JdbcWritable;
+@Plugin(type = "batchsink")
+@Name("PanoplySink")
+@Description("A batch sink to write structured records to a Panoply data warehouse.")
+public class PanoplySink extends RedshiftSink {
 
-public class RedshiftWritable extends JdbcWritable {
-	
-	public RedshiftWritable(RedshiftConnect connect, StructuredRecord record) {
-		this.connect = connect;
-		this.record = record;
-	}
-
-	/**
-	 * Used in map-reduce. Do not remove.
-	 */
-	public RedshiftWritable() {
-	}
-
-	@Override
-	public List<String> getColumns(Schema schema) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	public PanoplySink(RedshiftSinkConfig config) {
+		super(config);
 	}
 
 }

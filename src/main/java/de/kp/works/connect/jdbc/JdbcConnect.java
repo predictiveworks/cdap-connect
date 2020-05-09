@@ -60,6 +60,8 @@ public abstract class JdbcConnect implements Serializable {
 		return success;
 
 	}
+	
+	public abstract String writeQuery(String[] fieldNames);
 
 	public int[] getColumnTypes() {
 		return columnTypes;

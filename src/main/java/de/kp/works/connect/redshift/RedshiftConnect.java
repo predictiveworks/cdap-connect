@@ -20,25 +20,27 @@ package de.kp.works.connect.redshift;
 
 import java.util.List;
 
-import co.cask.cdap.api.data.format.StructuredRecord;
-import co.cask.cdap.api.data.schema.Schema;
-import de.kp.works.connect.jdbc.JdbcWritable;
+import de.kp.works.connect.jdbc.JdbcConnect;
 
-public class RedshiftWritable extends JdbcWritable {
-	
-	public RedshiftWritable(RedshiftConnect connect, StructuredRecord record) {
-		this.connect = connect;
-		this.record = record;
-	}
+public class RedshiftConnect extends JdbcConnect {
+		
+	private static final long serialVersionUID = 7240703449616435430L;
 
-	/**
-	 * Used in map-reduce. Do not remove.
-	 */
-	public RedshiftWritable() {
+	public RedshiftConnect(String endpoint, String tableName, String primaryKey) {
+		this.endpoint = endpoint;
+		
+		this.tableName = tableName;
+		this.primaryKey = primaryKey;
 	}
 
 	@Override
-	public List<String> getColumns(Schema schema) throws Exception {
+	public String createQuery(String tableName, String primaryKey, List<String> columns) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String writeQuery(String[] fieldNames) {
 		// TODO Auto-generated method stub
 		return null;
 	}
