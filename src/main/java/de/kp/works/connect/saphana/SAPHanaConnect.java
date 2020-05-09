@@ -20,6 +20,8 @@ package de.kp.works.connect.saphana;
 
 import java.util.List;
 
+import com.google.common.base.Joiner;
+
 import de.kp.works.connect.jdbc.JdbcConnect;
 
 public class SAPHanaConnect extends JdbcConnect {
@@ -28,28 +30,36 @@ public class SAPHanaConnect extends JdbcConnect {
 
 	public SAPHanaConnect(String endpoint, String tableName, String primaryKey) {
 		this.endpoint = endpoint;
-		
+
 		this.tableName = tableName;
 		this.primaryKey = primaryKey;
 	}
 
+	// TODO validate esc chars
+	
 	@Override
-	public String createQuery(String tableName, String primaryKey, List<String> columns) {
-		// TODO Auto-generated method stub
-		return null;
+	public String createQuery(List<String> columns) {
+		/*
+		 * The primary key and its data type is already specified as part of the colums
+		 */
+		String coldefs = String.format("%s", Joiner.on(",").join(columns));
+		String createSql = String.format("CREATE ROW TABLE %s (%s)", tableName, coldefs);
+
+		return createSql;
 	}
 
 	/*
-	 * This method defines an upsert query statement without
-	 * a trailing semicolon
-	 */	
+	 * This method defines an upsert query statement without a trailing semicolon;
+	 * TODO validate use of esc chars
+	 */
 	@Override
 	public String writeQuery(String[] fieldNames) {
 		/*
-		 * We need to insert new rows and update existing ones;
-		 * therefore SAP's UPSERT command is used: more details
+		 * We need to insert new rows and update existing ones; therefore SAP's UPSERT
+		 * command is used: more details
 		 * 
-		 * https://help.sap.com/viewer/4fe29514fd584807ac9f2a04f6754767/2.0.03/en-US/20fc06a7751910149892c0d09be21a38.html
+		 * https://help.sap.com/viewer/4fe29514fd584807ac9f2a04f6754767/2.0.03/en-US/
+		 * 20fc06a7751910149892c0d09be21a38.html
 		 */
 		StringBuilder sb = new StringBuilder();
 		sb.append("UPSERT ").append(tableName);

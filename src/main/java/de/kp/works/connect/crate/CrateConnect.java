@@ -96,7 +96,7 @@ public class CrateConnect extends JdbcConnect {
 	}
 	
 	@Override
-	public String createQuery(String tableName, String primaryKey, List<String> columns) {
+	public String createQuery(List<String> columns) {
 
 		String coldefs = String.format("%s, PRIMARY KEY(%s)", Joiner.on(",").join(columns), primaryKey);
 		/*

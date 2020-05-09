@@ -39,7 +39,7 @@ public class SAPHanaOutputFormat<K, V extends SAPHanaWritable> extends JdbcOutpu
 	private static final Logger LOG = LoggerFactory.getLogger(SAPHanaOutputFormat.class);
 	/*
 	 * This method defines an upsert query statement without
-	 * a trailing semicolon
+	 * a trailing semicolon; TODO validate use of esc chars
 	 */
 	public String upsertQuery(String table, String primaryKey, String[] fieldNames) {
 		/*

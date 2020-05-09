@@ -37,7 +37,7 @@ public abstract class JdbcConnect implements Serializable {
 	protected String tableName;
 	protected String primaryKey;
 
-	public abstract String createQuery(String tableName, String primaryKey, List<String> columns);
+	public abstract String createQuery(List<String> columns);
 	
 	public boolean createTable(Connection conn, List<String> columns) {
 		return createTable(conn, tableName, primaryKey, columns);
@@ -49,7 +49,7 @@ public abstract class JdbcConnect implements Serializable {
 
 		try {
 
-			String createSql = createQuery(tableName, primaryKey, columns);
+			String createSql = createQuery(columns);
 			success = JdbcUtils.createTable(conn, tableName, createSql);
 
 		} catch (Exception e) {
@@ -62,7 +62,7 @@ public abstract class JdbcConnect implements Serializable {
 	}
 	
 	public abstract String writeQuery(String[] fieldNames);
-
+	
 	public int[] getColumnTypes() {
 		return columnTypes;
 	}
@@ -112,6 +112,14 @@ public abstract class JdbcConnect implements Serializable {
 
 	public String getEndpoint() {
 		return endpoint;
+	}
+
+	public String getPrimaryKey() {
+		return primaryKey;
+	}
+
+	public String getTableName() {
+		return tableName;
 	}
 
 }

@@ -34,7 +34,7 @@ public class RedshiftConnect extends JdbcConnect {
 	}
 
 	@Override
-	public String createQuery(String tableName, String primaryKey, List<String> columns) {
+	public String createQuery(List<String> columns) {
 		// TODO Auto-generated method stub
 		return null;
 	}

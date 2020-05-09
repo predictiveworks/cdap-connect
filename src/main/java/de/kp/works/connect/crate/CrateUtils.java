@@ -23,18 +23,11 @@ import de.kp.works.connect.jdbc.JdbcUtils;
 
 import com.google.common.collect.Lists;
 
-import java.sql.Driver;
-import java.sql.DriverManager;
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class CrateUtils extends JdbcUtils {
 
 	private static final long serialVersionUID = -8111877341898323808L;
-	
-	private static final Logger LOG = LoggerFactory.getLogger(CrateUtils.class);
 	
 	public static List<String> getColumns(Schema schema) throws Exception {
 		
@@ -128,42 +121,6 @@ public class CrateUtils extends JdbcUtils {
 		return null;
 		
 	}	
-
-	/**
-	 * De-register all SQL drivers that are associated with the class
-	 */
-	public static void deregisterAllDrivers(Class<? extends Driver> driverClass)
-			throws NoSuchFieldException, IllegalAccessException, ClassNotFoundException {
-
-		java.lang.reflect.Field field = DriverManager.class.getDeclaredField("registeredDrivers");
-		field.setAccessible(true);
-		
-		List<?> list = (List<?>) field.get(null);
-		for (Object driverInfo : list) {
-			Class<?> driverInfoClass = CrateUtils.class.getClassLoader().loadClass("java.sql.DriverInfo");
-			java.lang.reflect.Field driverField = driverInfoClass.getDeclaredField("driver");
-			driverField.setAccessible(true);
-			Driver d = (Driver) driverField.get(driverInfo);
-			if (d == null) {
-				LOG.debug("[CrateUtils] Found null driver object in drivers list. Ignoring.");
-				continue;
-			}
-			LOG.debug("Removing non-null driver object from drivers list.");
-			ClassLoader registeredDriverClassLoader = d.getClass().getClassLoader();
-			if (registeredDriverClassLoader == null) {
-				LOG.debug(
-						"[CrateUtils] Found null classloader for default driver {}. Ignoring since this may be using system classloader.",
-						d.getClass().getName());
-				continue;
-			}
-			// Remove all objects in this list that were created using the classloader of
-			// the caller.
-			if (d.getClass().getClassLoader().equals(driverClass.getClassLoader())) {
-				LOG.debug("[CrateUtils] Removing default driver {} from registeredDrivers", d.getClass().getName());
-				list.remove(driverInfo);
-			}
-		}
-	}
 
 	private CrateUtils() {
 		throw new AssertionError("[CrateUtils] Should not instantiate static utility class.");
