@@ -39,28 +39,33 @@ public class SAPHanaUtils extends JdbcUtils {
 			String fieldName = field.getName();
 			String fieldType = getSqlType(field.getSchema());
 
-			String column = null;
-			if (fieldName.equals(primaryKey)) {
-				/*
-				 * Other than in UPSERT statements, SAP Hana expects
-				 * escaped field names in CREATE ROW TABLE statements
-				 */
-				fieldName = ESCAPE_CHAR + fieldName + ESCAPE_CHAR;
-				String.format("%s %s PRIMARY KEY", fieldName, fieldType);
-				
-			} else {
-				
-				fieldName = ESCAPE_CHAR + fieldName + ESCAPE_CHAR;
-				String.format("%s %s", fieldName, fieldType);
+			Boolean isPrimaryKey = fieldName.equals(primaryKey);
 
-			}
-					
-					
+			String column = getColumn(fieldName, fieldType, isPrimaryKey);
 			columns.add(column);
 			
 		}
 
 		return columns;
+	}
+
+	private static String getColumn(String fieldName, String fieldType, Boolean isPrimaryKey) {
+		
+		if (isPrimaryKey) {
+			/*
+			 * Other than in UPSERT statements, SAP Hana expects
+			 * escaped field names in CREATE ROW TABLE statements
+			 */
+			fieldName = ESCAPE_CHAR + fieldName + ESCAPE_CHAR;
+			return String.format("%s %s PRIMARY KEY", fieldName, fieldType);
+			
+		} else {
+			
+			fieldName = ESCAPE_CHAR + fieldName + ESCAPE_CHAR;
+			return String.format("%s %s", fieldName, fieldType);
+
+		}
+		
 	}
 
 /*
@@ -78,6 +83,40 @@ insert into "CODEJAMMER"."STORE_ADDRESS" (ID,STREETNUMBER,STREET,LOCALITY,STATE,
 */
 
 	private static String getSqlType(Schema schema) {
-		return null;
+		
+		String sqlType = null;
+		
+		Schema.Type schemaType = schema.isNullable() ? schema.getNonNullable().getType() : schema.getType();
+	    switch (schemaType) {
+	      case ARRAY:
+	        break;
+	      case BOOLEAN:
+	        break;
+	      case BYTES:
+	        break;
+	      case DOUBLE:
+	        break;
+	      case ENUM:
+	        break;
+	      case FLOAT:
+	        break;
+	      case INT:
+	        break;
+	      case LONG:
+	        break;
+	      case MAP:
+	        break;
+	      case NULL:
+	    	  	break;
+	      case RECORD:
+	        break;
+	      case STRING:
+	        break;
+	      case UNION:
+	        break;
+	    }
+	    
+		return sqlType;
+	
 	}
 }

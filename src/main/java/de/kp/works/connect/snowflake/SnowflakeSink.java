@@ -19,12 +19,18 @@ package de.kp.works.connect.snowflake;
  */
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import org.apache.hadoop.io.NullWritable;
+import org.apache.hadoop.mapreduce.lib.db.DBConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.clearspring.analytics.util.Lists;
+import com.google.common.base.Joiner;
+import com.google.gson.Gson;
 
 import co.cask.cdap.api.annotation.Description;
 import co.cask.cdap.api.annotation.Name;
@@ -142,8 +148,32 @@ public class SnowflakeSink extends JdbcSink<SnowflakeWritable> {
 	private Map<String,String> prepareConf(Schema schema) {
 
 		Map<String, String> conf = new HashMap<>();
-	
-		// TODO
+		/*
+		 * CONECTION PROPERTIES
+		 */
+		conf.put(DBConfiguration.DRIVER_CLASS_PROPERTY, getJdbcDriverName());
+		conf.put(DBConfiguration.URL_PROPERTY, getEndpoint());
+		
+		String properties = new Gson().toJson(getProperties());
+		conf.put("jdbc.properties", properties);
+
+		/*
+		 * TABLE PROPERTIES
+		 */
+		conf.put("mapreduce.jdbc.primaryKey", getPrimaryKey());
+		conf.put(DBConfiguration.OUTPUT_TABLE_NAME_PROPERTY, getTableName());
+
+		if (schema != null) {
+
+			List<String> fieldNames = Lists.newArrayList();
+
+			for (Schema.Field field : schema.getFields()) {
+				fieldNames.add(field.getName());
+			}
+
+			conf.put(DBConfiguration.OUTPUT_FIELD_NAMES_PROPERTY, Joiner.on(",").join(fieldNames));
+
+		}
 		
 		return conf;
 		

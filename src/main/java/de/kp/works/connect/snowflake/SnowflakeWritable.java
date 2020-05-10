@@ -39,8 +39,10 @@ public class SnowflakeWritable extends JdbcWritable {
 
 	@Override
 	public List<String> getColumns(Schema schema) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		
+		String primaryKey = connect.getPrimaryKey();
+		return SnowflakeUtils.getColumns(schema, primaryKey);
+		
 	}
 
 }

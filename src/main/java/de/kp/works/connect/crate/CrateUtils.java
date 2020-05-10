@@ -29,7 +29,7 @@ public class CrateUtils extends JdbcUtils {
 
 	private static final long serialVersionUID = -8111877341898323808L;
 	
-	public static List<String> getColumns(Schema schema) throws Exception {
+	public static List<String> getColumns(Schema schema, String primaryKey) throws Exception {
 		
 		List<String> columns = Lists.newArrayList();
 		for (Schema.Field field : schema.getFields()) {
@@ -37,9 +37,8 @@ public class CrateUtils extends JdbcUtils {
 			String fname = field.getName();
 			String ftype = null;
 			
-			Schema fschema = field.getSchema();
-			
-			switch (fschema.getType()) {
+			Schema.Type schemaType = schema.isNullable() ? schema.getNonNullable().getType() : schema.getType();
+		    switch (schemaType) {
 			case ARRAY:
 		        Schema componentSchema = schema.getComponentSchema();
 		        ftype = getArrayType(componentSchema);	

@@ -1,4 +1,4 @@
-package de.kp.works.connect.redshift;
+package de.kp.works.connect.snowflake;
 /*
  * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -19,14 +19,15 @@ package de.kp.works.connect.redshift;
  */
 
 import java.util.List;
+
 import com.google.common.collect.Lists;
 
 import co.cask.cdap.api.data.schema.Schema;
 import de.kp.works.connect.jdbc.JdbcUtils;
 
-public class RedshiftUtils extends JdbcUtils {
+public class SnowflakeUtils extends JdbcUtils {
 
-	private static final long serialVersionUID = 5111966838738064709L;
+	private static final long serialVersionUID = -7220904714465273495L;
 
 	public static List<String> getColumns(Schema schema, String primaryKey) throws Exception {
 
@@ -50,7 +51,7 @@ public class RedshiftUtils extends JdbcUtils {
 	private static String getColumn(String fieldName, String fieldType, Boolean isPrimaryKey) {
 		return null;
 	}
-	
+
 	private static String getSqlType(Schema schema) {
 		
 		String sqlType = null;
@@ -87,6 +88,6 @@ public class RedshiftUtils extends JdbcUtils {
 	    
 		return sqlType;
 	
-	}
-	
+	}		
+
 }
