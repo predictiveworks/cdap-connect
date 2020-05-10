@@ -18,7 +18,6 @@ package de.kp.works.connect.snowflake;
  * 
  */
 
-import java.sql.Driver;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -35,12 +34,12 @@ import joptsimple.internal.Strings;
 @Description("A batch source to read structured records from a Snowflake database.")
 public class SnowflakeSource extends JdbcSource {
 
+	// SSL
+	
 	protected static final Logger LOG = LoggerFactory.getLogger(SnowflakeSource.class);
 	
 	protected static final String JDBC_DRIVER_NAME = "com.snowflake.client.jdbc.SnowflakeDriver";
-
 	protected static final String JDBC_PLUGIN_ID = "source.jdbc.snowflake";
-	protected Class<? extends Driver> driverClass;
 	
 	/*
 	 * 'type' and 'name' must match the provided JSON specification
