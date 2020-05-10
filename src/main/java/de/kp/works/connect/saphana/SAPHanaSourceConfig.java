@@ -20,11 +20,47 @@ package de.kp.works.connect.saphana;
 
 import java.util.Locale;
 
+import com.google.common.base.Strings;
+
 import de.kp.works.connect.jdbc.JdbcSourceConfig;
 
 public class SAPHanaSourceConfig extends JdbcSourceConfig {
 
 	private static final long serialVersionUID = 773492290391412814L;
+
+	private static final Character ESCAPE_CHAR = '"';
+	
+	@Override
+	public String getInputQuery() {
+
+		if (Strings.isNullOrEmpty(inputQuery)) {
+			/*
+			 * Check whether the table name is escaped
+			 */
+			String table = tableName;
+			if (table.charAt(0) != ESCAPE_CHAR)
+				table = ESCAPE_CHAR + table;
+			
+			if (table.charAt(table.length() -1) != ESCAPE_CHAR)
+				table = table + ESCAPE_CHAR;
+			
+			return String.format("select * from %s", table);
+	
+		}
+		/* Remove (trailing) whitespace */
+		String cleaned = inputQuery.trim();
+
+		/* Remove trailing semicolon */
+		int position = cleaned.length() - 1;
+		char current = cleaned.charAt(position);
+		
+		if (current == ';') {
+			cleaned = cleaned.substring(0, position);
+		}
+		
+		return cleaned;
+	
+	}
 
 	public String getEndpoint() {
 		return String.format(Locale.ENGLISH, "jdbc:sap://%s:%s/", host, port);

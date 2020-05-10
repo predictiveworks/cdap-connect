@@ -37,9 +37,10 @@ import de.kp.works.connect.jdbc.JdbcOutputFormat;
 public class SAPHanaOutputFormat<K, V extends SAPHanaWritable> extends JdbcOutputFormat<K, V> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SAPHanaOutputFormat.class);
+
 	/*
 	 * This method defines an upsert query statement without
-	 * a trailing semicolon; TODO validate use of esc chars
+	 * a trailing semicolon;
 	 */
 	public String upsertQuery(String table, String primaryKey, String[] fieldNames) {
 		/*
@@ -47,6 +48,9 @@ public class SAPHanaOutputFormat<K, V extends SAPHanaWritable> extends JdbcOutpu
 		 * therefore SAP's UPSERT command is used: more details
 		 * 
 		 * https://help.sap.com/viewer/4fe29514fd584807ac9f2a04f6754767/2.0.03/en-US/20fc06a7751910149892c0d09be21a38.html
+		 * 
+		 * Field names (other than the table names) are not escaped
+		 * in UPSERT statements
 		 */
 		StringBuilder sb = new StringBuilder();
 		sb.append("UPSERT ").append(table);
@@ -200,6 +204,8 @@ public class SAPHanaOutputFormat<K, V extends SAPHanaWritable> extends JdbcOutpu
 		 * therefore [DBConfiguration] is used to extract them
 		 */
 		Configuration conf = context.getConfiguration();
+
+		/* The table name is escaped here */
 		String tableName = conf.get(DBConfiguration.OUTPUT_TABLE_NAME_PROPERTY);
 
 		/*

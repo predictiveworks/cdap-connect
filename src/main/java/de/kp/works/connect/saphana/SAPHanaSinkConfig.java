@@ -25,9 +25,22 @@ import de.kp.works.connect.jdbc.JdbcSinkConfig;
 public class SAPHanaSinkConfig extends JdbcSinkConfig {
 
 	private static final long serialVersionUID = -343935437395444858L;
+	private static final Character ESCAPE_CHAR = '"';
 
 	public String getEndpoint() {
 		return String.format(Locale.ENGLISH, "jdbc:sap://%s:%s/", host, port);
+	}
+	
+	public String getTableName() {
+
+		String table = tableName;
+		if (table.charAt(0) != ESCAPE_CHAR)
+			table = ESCAPE_CHAR + table;
+
+		if (table.charAt(table.length() - 1) != ESCAPE_CHAR)
+			table = table + ESCAPE_CHAR;
+		
+		return table;
 	}
 
 }

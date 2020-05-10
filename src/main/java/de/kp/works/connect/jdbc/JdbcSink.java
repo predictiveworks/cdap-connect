@@ -269,7 +269,12 @@ public abstract class JdbcSink<V extends JdbcWritable> extends BatchSink<Structu
 		Schema inSchema = field.getSchema().isNullable() ? field.getSchema().getNonNullable() : field.getSchema();
 
 		int sqlType = metadata.getColumnType(index);
-		Schema outSchema = Schema.of(JdbcUtils.getSchemaType(sqlType));
+		int precision = metadata.getPrecision(index);
+
+		int scale = metadata.getScale(index);
+		boolean signed = metadata.isSigned(index);
+		
+		Schema outSchema = Schema.of(JdbcUtils.getSchemaType(sqlType, precision, scale, signed));
 
 		if (!Objects.equals(inSchema.getType(), outSchema.getType())
 				|| !Objects.equals(inSchema.getLogicalType(), outSchema.getLogicalType())) {

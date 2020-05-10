@@ -51,7 +51,7 @@ public class SAPHanaSink extends JdbcSink<SAPHanaWritable> {
 
 	// TODO SSL
 
-	private static final Logger LOG = LoggerFactory.getLogger(SAPHanaSink.class);
+	private static final Logger LOG = LoggerFactory.getLogger(SAPHanaSink.class);	
 	
 	protected static final String JDBC_DRIVER_NAME = "com.sap.db.jdbc.Driver";
 	protected static final String JDBC_PLUGIN_ID = "sink.jdbc.saphana";
@@ -67,7 +67,8 @@ public class SAPHanaSink extends JdbcSink<SAPHanaWritable> {
 	
 	public SAPHanaSink(SAPHanaSinkConfig config) {
 		this.config = config;
-		this.connect = new SAPHanaConnect(config.getEndpoint(), config.tableName, config.primaryKey);
+		/* Escaped table name */
+		this.connect = new SAPHanaConnect(config.getEndpoint(), config.getTableName(), config.primaryKey);
 	}
 	
 	@Override
@@ -112,7 +113,8 @@ public class SAPHanaSink extends JdbcSink<SAPHanaWritable> {
 
 	@Override
 	protected String getTableName() {
-		return config.tableName;
+		/* Escaped name */
+		return config.getTableName();
 	}
 	
 	protected String getPrimaryKey() {

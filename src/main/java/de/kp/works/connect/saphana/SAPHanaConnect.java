@@ -31,16 +31,16 @@ public class SAPHanaConnect extends JdbcConnect {
 	public SAPHanaConnect(String endpoint, String tableName, String primaryKey) {
 		this.endpoint = endpoint;
 
-		this.tableName = tableName;
+		/* Table name is esacped */
+		this.tableName = tableName;		
 		this.primaryKey = primaryKey;
 	}
-
-	// TODO validate esc chars
 	
 	@Override
 	public String createQuery(List<String> columns) {
 		/*
-		 * The primary key and its data type is already specified as part of the colums
+		 * The primary key and its data type is already specified as 
+		 * part of the colums; also each column name is escaped already
 		 */
 		String coldefs = String.format("%s", Joiner.on(",").join(columns));
 		String createSql = String.format("CREATE ROW TABLE %s (%s)", tableName, coldefs);
@@ -49,8 +49,9 @@ public class SAPHanaConnect extends JdbcConnect {
 	}
 
 	/*
-	 * This method defines an upsert query statement without a trailing semicolon;
-	 * TODO validate use of esc chars
+	 * This method defines an upsert query statement without 
+	 * a trailing semicolon; SAP Hana does not escape field 
+	 * names in UPSERT statements
 	 */
 	@Override
 	public String writeQuery(String[] fieldNames) {

@@ -20,13 +20,47 @@ package de.kp.works.connect.saphana;
 
 import java.util.List;
 
-import co.cask.cdap.api.data.schema.Schema;
+import com.google.common.collect.Lists;
 
-public class SAPHanaUtils {
+import co.cask.cdap.api.data.schema.Schema;
+import de.kp.works.connect.jdbc.JdbcUtils;
+
+public class SAPHanaUtils extends JdbcUtils {
 	
+	private static final long serialVersionUID = -6304203493395042649L;
+	
+	private static final Character ESCAPE_CHAR = '"';
+
 	public static List<String> getColumns(Schema schema, String primaryKey) throws Exception {
-		// TODO
-		return null;
+
+		List<String> columns = Lists.newArrayList();
+		for (Schema.Field field : schema.getFields()) {
+			
+			String fieldName = field.getName();
+			String fieldType = getSqlType(field.getSchema());
+
+			String column = null;
+			if (fieldName.equals(primaryKey)) {
+				/*
+				 * Other than in UPSERT statements, SAP Hana expects
+				 * escaped field names in CREATE ROW TABLE statements
+				 */
+				fieldName = ESCAPE_CHAR + fieldName + ESCAPE_CHAR;
+				String.format("%s %s PRIMARY KEY", fieldName, fieldType);
+				
+			} else {
+				
+				fieldName = ESCAPE_CHAR + fieldName + ESCAPE_CHAR;
+				String.format("%s %s", fieldName, fieldType);
+
+			}
+					
+					
+			columns.add(column);
+			
+		}
+
+		return columns;
 	}
 
 /*
@@ -43,4 +77,7 @@ insert into "CODEJAMMER"."STORE_ADDRESS" (ID,STREETNUMBER,STREET,LOCALITY,STATE,
 insert into "CODEJAMMER"."STORE_ADDRESS" (ID,STREETNUMBER,STREET,LOCALITY,STATE,COUNTRY)  values(3,2395,'Broadway Street','New York','NY','USA');   		
 */
 
+	private static String getSqlType(Schema schema) {
+		return null;
+	}
 }

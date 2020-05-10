@@ -47,7 +47,9 @@ import de.kp.works.connect.jdbc.JdbcSink;
 
 @Plugin(type = "batchsink")
 @Name("RedshiftSink")
-@Description("A batch sink to write structured records to a Redshift data warehouse database.")
+@Description("A batch sink to write structured records to a Redshift data warehouse database. "
+		+ "It is not recommended to use this sink connector for (very) large datasets. In this case "
+		+ "leverage the S3 sink connector and the S3-to-Redshift action.")
 public class RedshiftSink extends JdbcSink<RedshiftWritable> {
 
 	// TODO SSL

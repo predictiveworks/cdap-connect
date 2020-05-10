@@ -1,4 +1,4 @@
-package de.kp.works.connect.panoply;
+package de.kp.works.connect.redshift;
 /*
  * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -18,21 +18,10 @@ package de.kp.works.connect.panoply;
  * 
  */
 
-import co.cask.cdap.api.annotation.Description;
-import co.cask.cdap.api.annotation.Name;
-import co.cask.cdap.api.annotation.Plugin;
-import de.kp.works.connect.redshift.RedshiftSink;
-import de.kp.works.connect.redshift.RedshiftSinkConfig;
+import de.kp.works.connect.jdbc.JdbcUtils;
 
-@Plugin(type = "batchsink")
-@Name("PanoplySink")
-@Description("A batch sink to write structured records to a Panoply data warehouse. "
-		+ "It is not recommended to use this sink connector for (very) large datasets. "
-		+ "In this case leverage the S3 sink connector and the S3-to-Redshift action.")
-public class PanoplySink extends RedshiftSink {
+public class RedshiftUtils extends JdbcUtils {
 
-	public PanoplySink(RedshiftSinkConfig config) {
-		super(config);
-	}
+	private static final long serialVersionUID = 5111966838738064709L;
 
 }

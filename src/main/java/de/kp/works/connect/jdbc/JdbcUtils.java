@@ -29,9 +29,7 @@ import java.sql.Types;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-
 import co.cask.cdap.api.data.schema.Schema;
-import co.cask.cdap.api.data.schema.UnsupportedTypeException;
 
 public class JdbcUtils implements Serializable {
 
@@ -95,47 +93,81 @@ public class JdbcUtils implements Serializable {
 		for (int i = 1; i <= metadata.getColumnCount(); i++) {
 
 			String columnName = metadata.getColumnName(i);
-			int columnSqlType = metadata.getColumnType(i);
 
-			Schema columnSchema = Schema.of(getSchemaType(columnSqlType));
+			int sqlType = metadata.getColumnType(i);			
+			int precision = metadata.getPrecision(i);
 
-			if (ResultSetMetaData.columnNullable == metadata.isNullable(i)) {
-				columnSchema = Schema.nullableOf(columnSchema);
+			int scale = metadata.getScale(i);
+			boolean signed = metadata.isSigned(i);
+			
+			Schema.Type schemaType = getSchemaType(sqlType, precision, scale, signed);	
+			if (schemaType != null) {
+				
+				Schema columnSchema = Schema.of(schemaType);
+	
+				if (ResultSetMetaData.columnNullable == metadata.isNullable(i)) {
+					columnSchema = Schema.nullableOf(columnSchema);
+				}
+	
+				Schema.Field field = Schema.Field.of(columnName, columnSchema);
+				schemaFields.add(field);
+
 			}
-
-			Schema.Field field = Schema.Field.of(columnName, columnSchema);
-			schemaFields.add(field);
-
 		}
 
 		return schemaFields;
 
 	}
 
-	public static Schema.Type getSchemaType(int sqlType) throws SQLException {
-		/*
-		 * Type.STRING covers the following SQL types:
-		 * 
-		 * VARCHAR, CHAR, CLOB, LONGNVARCHAR, LONGVARCHAR, NCHAR, NCLOB, NVARCHAR
-		 */
-		Schema.Type type = Schema.Type.STRING;
-		switch (sqlType) {
-		case Types.NULL:
-			type = Schema.Type.NULL;
-			break;
+	public static Schema.Type getSchemaType(int sqlType, int precision, int scale, boolean signed) throws SQLException {
 
+		Schema.Type type = null;
+		switch (sqlType) {
+
+		/* BOOLEAN */
 		case Types.BOOLEAN:
 		case Types.BIT:
 			type = Schema.Type.BOOLEAN;
 			break;
 
-		case Types.TINYINT:
+		/* INT or LONG */
+		case Types.INTEGER: {
+			
+			if (signed) 
+				type = Schema.Type.INT; 
+			else 
+				type = Schema.Type.LONG;
+			
+			break;
+		}
+		
+		/* INT */
 		case Types.SMALLINT:
-		case Types.INTEGER:
+		case Types.TINYINT:
 			type = Schema.Type.INT;
+			break;
+		
+		/* STRING */
+		case Types.CHAR:
+		case Types.CLOB:
+		case Types.LONGNVARCHAR:
+		case Types.LONGVARCHAR:
+		case Types.NCHAR:
+		case Types.NCLOB:
+		case Types.NVARCHAR:
+		case Types.REF:
+		case Types.SQLXML:
+		case Types.STRUCT:
+		case Types.VARCHAR:
+			type = Schema.Type.STRING;
+			break;
+		
+		case Types.NULL:
+			type = Schema.Type.NULL;
 			break;
 
 		case Types.BIGINT:
+		case Types.ROWID:
 			type = Schema.Type.LONG;
 			break;
 
@@ -144,8 +176,8 @@ public class JdbcUtils implements Serializable {
 			type = Schema.Type.FLOAT;
 			break;
 
-		case Types.NUMERIC:
 		case Types.DECIMAL:
+		case Types.NUMERIC:
 		case Types.DOUBLE:
 			type = Schema.Type.DOUBLE;
 			break;
@@ -168,12 +200,7 @@ public class JdbcUtils implements Serializable {
 		case Types.DISTINCT:
 		case Types.JAVA_OBJECT:
 		case Types.OTHER:
-		case Types.REF:
-		case Types.ROWID:
-		case Types.SQLXML:
-		case Types.STRUCT:
-			throw new SQLException(new UnsupportedTypeException(
-					String.format("[%s] Unsupported SQL Type: %s", JdbcUtils.class.getName(), sqlType)));
+			type = null;
 		}
 
 		return type;
