@@ -118,7 +118,7 @@ public class JdbcUtils implements Serializable {
 		return schemaFields;
 
 	}
-
+	
 	public static Schema.Type getSchemaType(int sqlType, int precision, int scale, boolean signed) throws SQLException {
 
 		Schema.Type type = null;

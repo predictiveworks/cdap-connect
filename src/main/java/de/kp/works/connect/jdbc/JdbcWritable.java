@@ -23,11 +23,14 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Date;
+import java.sql.JDBCType;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -40,6 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.clearspring.analytics.util.Lists;
+import com.google.gson.Gson;
 
 import co.cask.cdap.api.data.format.StructuredRecord;
 import co.cask.cdap.api.data.schema.Schema;
@@ -49,10 +53,12 @@ public abstract class JdbcWritable implements Configurable, Writable {
 	private static final Logger LOG = LoggerFactory.getLogger(JdbcWritable.class);
 
 	protected Configuration conf;
-	
+
 	protected JdbcConnect connect;
 	protected StructuredRecord record;
 
+	private Gson GSON = new Gson();
+	
 	public PreparedStatement write(Connection conn, PreparedStatement stmt) throws SQLException {
 
 		Schema schema = record.getSchema();
@@ -77,7 +83,7 @@ public abstract class JdbcWritable implements Configurable, Writable {
 
 					String writeQuery = connect.writeQuery(fieldNames);
 					stmt = conn.prepareStatement(writeQuery);
-					
+
 				} else
 					throw new Exception("Provided table cannot be created.");
 
@@ -93,21 +99,22 @@ public abstract class JdbcWritable implements Configurable, Writable {
 		for (int i = 0; i < fields.size(); i++) {
 
 			Schema.Field field = fields.get(i);
+			
 			String fieldName = field.getName();
+			Schema fieldSchema = field.getSchema();
 
-			Schema.Type fieldType = getNonNullableType(field);
 			Object fieldValue = record.get(fieldName);
-
-			writeToDB(stmt, fieldType, fieldValue, i, columnTypes);
+			writeToDB(conn, stmt, fieldSchema, fieldValue, i, columnTypes);
 
 		}
 
 		return stmt;
 
 	}
+
 	/*
-	 * Retrieve columns from provided schema to build
-	 * write (insert or upsert query).
+	 * Retrieve columns from provided schema to build write (insert or upsert
+	 * query).
 	 */
 	public abstract List<String> getColumns(Schema schema) throws Exception;
 
@@ -133,14 +140,14 @@ public abstract class JdbcWritable implements Configurable, Writable {
 		this.conf = config;
 	}
 
-	public static Schema.Type getNonNullableType(Schema.Field field) {
+	public static Schema.Type getNonNullableType(Schema schema) {
 
 		Schema.Type type;
-		if (field.getSchema().isNullable()) {
-			type = field.getSchema().getNonNullable().getType();
+		if (schema.isNullable()) {
+			type = schema.getNonNullable().getType();
 
 		} else {
-			type = field.getSchema().getType();
+			type = schema.getType();
 
 		}
 
@@ -148,55 +155,46 @@ public abstract class JdbcWritable implements Configurable, Writable {
 
 	}
 
-	protected void writeToDB(PreparedStatement stmt, Schema.Type fieldType, @Nullable Object fieldValue,
-			int fieldIndex, int[] columnTypes) throws SQLException {
+	/*
+	 * Usually, the table does not exist and the connect.createQuery method is used
+	 * to define and create a new table; in this case, all unsupported CDAP data
+	 * types (e.g. array, map, record etc) are mapped into STRING
+	 */
+	protected void writeToDB(Connection conn, PreparedStatement stmt, Schema fieldSchema, @Nullable Object fieldValue, int fieldIndex,
+			int[] columnTypes) throws SQLException {
 
 		int sqlIndex = fieldIndex + 1;
 		if (fieldValue == null) {
 			stmt.setNull(sqlIndex, columnTypes[fieldIndex]);
 			return;
 		}
-		/*
-		 * - setArray
-		 * - setAsciiStream
-		 * - setBigDecimal
-		 * - setBinaryStream
-		 * - setBlob
-		 * ----- setBoolean
-		 * - setByte
-		 * ----- setBytes
-		 * - setCharacterStream
-		 * ----- setClob
-		 * ----- setDate
-		 * ----- setDouble
-		 * ----- setFloat
-		 * ----- setInt
-		 * ----- setLong
-		 * - setNCharacterStream
-		 * - setNClob
-		 * - setNString
-		 * ----- setNull
-		 * - setObject
-		 * - setRef
-		 * - setRowId
-		 * ----- setShort
-		 * - setSQLXML
-		 * ----- setString
-		 * ----- setTime
-		 * ----- setTimestamp
-		 * - setUnicodeStream
-		 * 
-		 */
+		
+		Schema.Type fieldType = getNonNullableType(fieldSchema);
+
 		switch (fieldType) {
-		case NULL:
-			stmt.setNull(sqlIndex, columnTypes[fieldIndex]);
+		case ARRAY: {
+			writeArray(conn, stmt, fieldIndex, sqlIndex, fieldValue, fieldSchema, columnTypes);
 			break;
-		case STRING:
-			/* clob can also be written to as setString */
-			stmt.setString(sqlIndex, (String) fieldValue);
-			break;
+		}
 		case BOOLEAN:
 			stmt.setBoolean(sqlIndex, (Boolean) fieldValue);
+			break;
+		case BYTES:
+			writeBytes(stmt, fieldIndex, sqlIndex, fieldValue, columnTypes);
+			break;
+		case DOUBLE:
+			stmt.setDouble(sqlIndex, (Double) fieldValue);
+			break;
+		case ENUM: {
+			/*
+			 * ENUM data types are serialized and represented
+			 * as STRING values
+			 */
+			writeJson(stmt, sqlIndex, fieldValue);
+			break;
+		}
+		case FLOAT:
+			stmt.setFloat(sqlIndex, (Float) fieldValue);
 			break;
 		case INT:
 			/* write short or int appropriately */
@@ -206,34 +204,223 @@ public abstract class JdbcWritable implements Configurable, Writable {
 			/* write date, timestamp or long appropriately */
 			writeLong(stmt, fieldIndex, sqlIndex, fieldValue, columnTypes);
 			break;
-		case FLOAT:
-			/* both real and float are set with the same method on prepared statement */
-			stmt.setFloat(sqlIndex, (Float) fieldValue);
+		case MAP: {
+			/*
+			 * MAP data types are serialized and represented
+			 * as STRING values
+			 */
+			writeJson(stmt, sqlIndex, fieldValue);
 			break;
-		case DOUBLE:
-			stmt.setDouble(sqlIndex, (Double) fieldValue);
+		}
+		case NULL: {
+			/*
+			 * NULL data types are serialized and represented
+			 * as STRING values
+			 */
+			writeJson(stmt, sqlIndex, fieldValue);
 			break;
-		case BYTES:
-			writeBytes(stmt, fieldIndex, sqlIndex, fieldValue, columnTypes);
+		}
+		case RECORD:
+			/*
+			 * RECORD data types are serialized and represented
+			 * as STRING values
+			 */
+			writeJson(stmt, sqlIndex, fieldValue);
 			break;
-		default:
-			throw new SQLException(String.format("[%s] Unsupported datatype: %s with value: %s.", JdbcWritable.class.getName(), fieldType, fieldValue));
+		case STRING:
+			stmt.setString(sqlIndex, (String) fieldValue);
+			break;
+		case UNION:
+			throw new SQLException("Data type UNION is not supported");
 		}
 	}
+	
+	protected java.sql.Array getSqlArray(Connection conn, Schema schema, List<Object> values) throws SQLException {
+				
+		Schema.Type schemaType = getNonNullableType(schema);
+		switch(schemaType) {
+		case ARRAY:
+		case BYTES:
+		case MAP:
+		case NULL:		
+		case RECORD:	 {		
+			
+			/* These nested data types are serialized as String */
+			String typeName = JDBCType.VARCHAR.getName();
+			String[] elements = new String[values.size()];
+			
+			for (int i=0; i < values.size(); i++) {
+				elements[i] = GSON.toJson(values.get(i));
+			}
+			
+			return conn.createArrayOf(typeName, elements);
 
+		}
+		/* Basic data type */
+		case BOOLEAN: {
+			
+			String typeName = JDBCType.BOOLEAN.getName();
+			Boolean[] elements = new Boolean[values.size()];
+			
+			for (int i=0; i < values.size(); i++) {
+				elements[i] = (Boolean)values.get(i);
+			}
+			
+			return conn.createArrayOf(typeName, elements);
+
+		}
+		case DOUBLE: {
+			
+			String typeName = JDBCType.DOUBLE.getName();
+			Double[] elements = new Double[values.size()];
+			
+			for (int i=0; i < values.size(); i++) {
+				elements[i] = (Double)values.get(i);
+			}
+			
+			return conn.createArrayOf(typeName, elements);
+
+		}
+		case ENUM: {
+			/*
+			 * ENUM data types are serialized and represented
+			 * as STRING values
+			 */
+			
+			String typeName = JDBCType.VARCHAR.getName();
+			String[] elements = new String[values.size()];
+			
+			for (int i=0; i < values.size(); i++) {
+				elements[i] = GSON.toJson(values.get(i));
+			}
+			
+			return conn.createArrayOf(typeName, elements);
+
+		}
+		case FLOAT: {
+			
+			String typeName = JDBCType.FLOAT.getName();
+			Float[] elements = new Float[values.size()];
+			
+			for (int i=0; i < values.size(); i++) {
+				elements[i] = (Float)values.get(i);
+			}
+			
+			return conn.createArrayOf(typeName, elements);
+
+		}
+		case INT: {
+			
+			String typeName = JDBCType.INTEGER.getName();
+			Integer[] elements = new Integer[values.size()];
+			
+			for (int i=0; i < values.size(); i++) {
+				elements[i] = (Integer)values.get(i);
+			}
+			
+			return conn.createArrayOf(typeName, elements);
+
+		}
+		case LONG: {
+			
+			String typeName = JDBCType.BIGINT.getName();
+			Long[] elements = new Long[values.size()];
+			
+			for (int i=0; i < values.size(); i++) {
+				elements[i] = (Long)values.get(i);
+			}
+			
+			return conn.createArrayOf(typeName, elements);
+
+		}
+		case STRING: {
+			
+			String typeName = JDBCType.VARCHAR.getName();
+			String[] elements = new String[values.size()];
+			
+			for (int i=0; i < values.size(); i++) {
+				elements[i] = (String)values.get(i);
+			}
+			
+			return conn.createArrayOf(typeName, elements);
+
+		}
+		case UNION:
+			throw new SQLException("Data type UNION is not supported");
+		}
+		
+		return null;
+	}
+
+	/*
+	 * Databases such as CRATE DB exist, that support ARRAY 
+	 * data types
+	 */
+	protected void writeArray(Connection conn, PreparedStatement stmt, int fieldIndex, int sqlIndex, Object fieldValue,
+			Schema schema, int[] columnTypes) throws SQLException {
+		
+		int parameterType = columnTypes[fieldIndex];
+		switch(parameterType) {
+		case Types.ARRAY: {
+			/*
+			 * This use case e.g. is supported by Crate DB; currently, 
+			 * we do not support nested arrays, i.e. the component
+			 * schema must be a basic data type 
+			 */
+	        List<Object> values = new ArrayList<>((Collection<?>) fieldValue);
+	        java.sql.Array arrayValues = getSqlArray(conn, schema.getComponentSchema(), values);
+	        
+	        stmt.setArray(sqlIndex, arrayValues);
+			break;
+		}
+		default:
+			String json = GSON.toJson(fieldValue);
+			stmt.setString(sqlIndex, json);
+
+		}
+		
+	}
+
+	protected void writeJson(PreparedStatement stmt, int sqlIndex, Object fieldValue) throws SQLException {
+
+		String json = GSON.toJson(fieldValue);
+		stmt.setString(sqlIndex, json);
+		
+	}
+	/*
+	 * Databases such as the CRATE DB exist, that do not
+	 * support BYTES data type; unsupported data types are
+	 * commonly mapped into STRING
+	 */
 	protected void writeBytes(PreparedStatement stmt, int fieldIndex, int sqlIndex, Object fieldValue,
 			int[] columnTypes) throws SQLException {
 
-		byte[] byteValue = (byte[]) fieldValue;
 		int parameterType = columnTypes[fieldIndex];
-
-		if (Types.BLOB == parameterType) {
+		switch(parameterType) {
+		/* BLOB */
+		case Types.BLOB: {
+			
+			byte[] byteValue = (byte[]) fieldValue;
 			stmt.setBlob(sqlIndex, new SerialBlob(byteValue));
-			return;
+			break;
+		}
+		/* STRING */
+		case Types.CHAR:
+		case Types.LONGVARCHAR:
+		case Types.VARCHAR: {
+
+			String json = GSON.toJson(fieldValue);
+			stmt.setString(sqlIndex, json);
+
+			break;
+			
+		}
+		default:
+			/* handles BINARY, VARBINARY and LOGVARBINARY */
+			stmt.setBytes(sqlIndex, (byte[]) fieldValue);
+			
 		}
 
-		/* handles BINARY, VARBINARY and LOGVARBINARY */
-		stmt.setBytes(sqlIndex, (byte[]) fieldValue);
 
 	}
 

@@ -36,10 +36,14 @@ public class SnowflakeUtils extends JdbcUtils {
 			
 			String fieldName = field.getName();
 			String fieldType = getSqlType(field.getSchema());
-
+			/*
+			 * The field type can be null; in this case, the respective
+			 * column is described as STRING
+			 */
 			Boolean isPrimaryKey = fieldName.equals(primaryKey);
+			Boolean isNullable = field.getSchema().isNullable();
 
-			String column = getColumn(fieldName, fieldType, isPrimaryKey);
+			String column = getColumn(fieldName, fieldType, isNullable, isPrimaryKey);
 			columns.add(column);
 			
 		}
@@ -48,31 +52,43 @@ public class SnowflakeUtils extends JdbcUtils {
 
 	}
 
-	private static String getColumn(String fieldName, String fieldType, Boolean isPrimaryKey) {
-		return null;
+	private static String getColumn(String fieldName, String fieldType, Boolean isNullable, Boolean isPrimaryKey) {
+		
+		if (isNullable)
+			return String.format("%s %s", fieldName, fieldType);
+		
+		return String.format("%s %s NOT NULL", fieldName, fieldType);
+		
 	}
 
 	private static String getSqlType(Schema schema) {
 		
-		String sqlType = null;
+		String sqlType = "STRING";
 		
 		Schema.Type schemaType = schema.isNullable() ? schema.getNonNullable().getType() : schema.getType();
 	    switch (schemaType) {
 	      case ARRAY:
 	        break;
 	      case BOOLEAN:
+	    	  	sqlType = "BOOLEAN"; 
 	        break;
 	      case BYTES:
+	    	  	sqlType = "BLOB";
 	        break;
 	      case DOUBLE:
+	    	  	sqlType = "DOUBLE";
 	        break;
 	      case ENUM:
+	    	  	sqlType = "STRING";
 	        break;
 	      case FLOAT:
+	    	  	sqlType = "FLOAT";
 	        break;
 	      case INT:
+	    	  	sqlType = "INTEGER";
 	        break;
 	      case LONG:
+	    	  	sqlType = "INTEGER";
 	        break;
 	      case MAP:
 	        break;
@@ -81,6 +97,7 @@ public class SnowflakeUtils extends JdbcUtils {
 	      case RECORD:
 	        break;
 	      case STRING:
+	    	  	sqlType = "STRING";
 	        break;
 	      case UNION:
 	        break;

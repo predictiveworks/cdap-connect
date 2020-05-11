@@ -23,103 +23,130 @@ import de.kp.works.connect.jdbc.JdbcUtils;
 
 import com.google.common.collect.Lists;
 
+import java.sql.JDBCType;
 import java.util.List;
 
 public class CrateUtils extends JdbcUtils {
 
 	private static final long serialVersionUID = -8111877341898323808L;
-	
+
 	public static List<String> getColumns(Schema schema, String primaryKey) throws Exception {
-		
+
 		List<String> columns = Lists.newArrayList();
 		for (Schema.Field field : schema.getFields()) {
-			
-			String fname = field.getName();
-			String ftype = null;
-			
-			Schema.Type schemaType = schema.isNullable() ? schema.getNonNullable().getType() : schema.getType();
-		    switch (schemaType) {
-			case ARRAY:
-		        Schema componentSchema = schema.getComponentSchema();
-		        ftype = getArrayType(componentSchema);	
-		        break;
-			case BOOLEAN:
-				ftype = "boolean";				
-		        break;
-			case BYTES:
-				throw new Exception("[CrateUtils] BYTES is not supported");				
-			case DOUBLE:
-				ftype = "double";				
-		        break;
-			case ENUM:
-				ftype = "string";
-		        break;
-			case FLOAT:
-				ftype = "float";				
-		        break;
-			case INT:
-				ftype = "integer";				
-		        break;
-			case LONG:
-				ftype = "long";				
-		        break;
-			case NULL:
-				throw new Exception("[CrateUtils] NULL is not supported");		
-			case MAP:
-				throw new Exception("[CrateUtils] MAP is not supported");		
-			case RECORD:
-				throw new Exception("[CrateUtils] RECORD is not supported");						
-			case STRING:
-				ftype = "string";
-		        break;
-			case UNION:
-				throw new Exception("[CrateUtils] UNION is not supported");										
-			}
-			
-			String column = String.format("%s %s", fname, ftype);
+
+			String fieldName = field.getName();
+			String fieldType = getSqlType(field.getSchema());
+			/*
+			 * The field type can be null; in this case, the respective column is described
+			 * as STRING
+			 */
+			Boolean isPrimaryKey = fieldName.equals(primaryKey);
+			Boolean isNullable = field.getSchema().isNullable();
+
+			String column = getColumn(fieldName, fieldType, isNullable, isPrimaryKey);
 			columns.add(column);
 
 		}
-		
+
 		return columns;
-		
+
 	}
-	
-	private static String getArrayType(Schema schema) throws Exception {
+	/*
+	 * Crate DB does not support JDBC type names, e.g.
+	 * BIGINT, VARCHAR etc.
+	 */
+	private static String getSqlType(Schema schema) {
 		
-		switch (schema.getType()) {
+		String ftype = null;
+
+		Schema.Type schemaType = schema.isNullable() ? schema.getNonNullable().getType() : schema.getType();
+		switch (schemaType) {
 		case ARRAY:
-			throw new Exception("[CrateUtils] ARRAY is not supported");				
+			Schema componentSchema = schema.getComponentSchema();
+			ftype = getArrayType(componentSchema);
+			break;
 		case BOOLEAN:
-			return "array(boolean)";				
-		case BYTES:
-			throw new Exception("[CrateUtils] BYTES is not supported");				
+			ftype = JDBCType.BOOLEAN.getName();
+			break;
 		case DOUBLE:
-			return "array(double)";				
-		case ENUM:
-			return "array(string)";
+			ftype = JDBCType.DOUBLE.getName();
+			break;
 		case FLOAT:
-			return "array(float)";				
+			ftype = JDBCType.FLOAT.getName();
+			break;
 		case INT:
-			return "array(integer)";				
+			ftype = JDBCType.INTEGER.getName();
+			break;
 		case LONG:
-			return "array(long)";				
-		case NULL:
-			throw new Exception("[CrateUtils] NULL is not supported");		
-		case MAP:
-			throw new Exception("[CrateUtils] MAP is not supported");		
-		case RECORD:
-			throw new Exception("[CrateUtils] RECORD is not supported");						
+			ftype = "LONG";
+			break;
 		case STRING:
-			return "array(string)";
+			ftype = "STRING";
+			break;
+		
+		/** UNSUPPORTED **/
+		case BYTES:
+		case ENUM:
+		case NULL:
+		case MAP:
+		case RECORD:
 		case UNION:
-			throw new Exception("[CrateUtils] UNION is not supported");			
+			ftype = "STRING";
+			break;
+		}
+		return ftype;
+
+	}
+
+	private static String getColumn(String fieldName, String fieldType, Boolean isNullable, Boolean isPrimaryKey) {
+
+		if (isNullable)
+			return String.format("%s %s", fieldName, fieldType);
+
+		return String.format("%s %s NOT NULL", fieldName, fieldType);
+
+	}
+
+	private static String getArrayType(Schema schema) {
+
+		String ftype = null;
+		
+		Schema.Type schemaType = schema.isNullable() ? schema.getNonNullable().getType() : schema.getType();		
+		switch (schemaType) {
+		case ARRAY:
+		case BYTES:
+		case ENUM:
+		case NULL:
+		case MAP:
+		case RECORD:
+		case UNION:
+			ftype = "ARRAY(STRING)";
+			break;
+		case BOOLEAN:
+			ftype = "ARRAY(BOOLEAN)";
+			break;
+		case DOUBLE:
+			ftype = "ARRAY(DOUBLE)";
+			break;
+		case FLOAT:
+			ftype = "ARRAY(FLOAT)";
+			break;
+		case INT:
+			ftype = "ARRAY(INTEGER)";
+			break;
+		case LONG:
+			ftype = "ARRAY(LONG)";
+			break;
+		case STRING:
+			ftype = "ARRAY(STRING)";
+			break;
 
 		}
-		
-		return null;
-		
-	}	
+
+		return ftype;
+
+	}
 
 	private CrateUtils() {
 		throw new AssertionError("[CrateUtils] Should not instantiate static utility class.");

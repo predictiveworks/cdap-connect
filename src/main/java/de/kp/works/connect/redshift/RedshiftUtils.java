@@ -37,8 +37,9 @@ public class RedshiftUtils extends JdbcUtils {
 			String fieldType = getSqlType(field.getSchema());
 
 			Boolean isPrimaryKey = fieldName.equals(primaryKey);
+			Boolean isNullable = field.getSchema().isNullable();
 
-			String column = getColumn(fieldName, fieldType, isPrimaryKey);
+			String column = getColumn(fieldName, fieldType, isNullable, isPrimaryKey);
 			columns.add(column);
 			
 		}
@@ -47,7 +48,7 @@ public class RedshiftUtils extends JdbcUtils {
 
 	}
 
-	private static String getColumn(String fieldName, String fieldType, Boolean isPrimaryKey) {
+	private static String getColumn(String fieldName, String fieldType, Boolean isNullable, Boolean isPrimaryKey) {
 		return null;
 	}
 	
