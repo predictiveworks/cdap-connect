@@ -18,6 +18,7 @@ package de.kp.works.connect.snowflake;
  * 
  */
 
+import java.sql.JDBCType;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -63,43 +64,43 @@ public class SnowflakeUtils extends JdbcUtils {
 
 	private static String getSqlType(Schema schema) {
 		
-		String sqlType = "STRING";
+		String sqlType = null;
 		
 		Schema.Type schemaType = schema.isNullable() ? schema.getNonNullable().getType() : schema.getType();
 	    switch (schemaType) {
 	      case ARRAY:
-	        break;
+	    	  	/* Snowflake specific */
+	    	  	sqlType = "ARRAY";
 	      case BOOLEAN:
-	    	  	sqlType = "BOOLEAN"; 
+	    	  	sqlType = JDBCType.BOOLEAN.getName(); 
 	        break;
 	      case BYTES:
-	    	  	sqlType = "BLOB";
+	    	  	/* Snowflake specific */
+	    	  	sqlType = "BINARY";
 	        break;
 	      case DOUBLE:
-	    	  	sqlType = "DOUBLE";
-	        break;
-	      case ENUM:
-	    	  	sqlType = "STRING";
+	    	  	sqlType = JDBCType.DOUBLE.getName();
 	        break;
 	      case FLOAT:
-	    	  	sqlType = "FLOAT";
+	    	  	sqlType = JDBCType.FLOAT.getName();
 	        break;
 	      case INT:
-	    	  	sqlType = "INTEGER";
+	    	  	sqlType = JDBCType.INTEGER.getName();
 	        break;
 	      case LONG:
-	    	  	sqlType = "INTEGER";
-	        break;
-	      case MAP:
-	        break;
-	      case NULL:
-	    	  	break;
-	      case RECORD:
+	    	  	sqlType = JDBCType.BIGINT.getName();
 	        break;
 	      case STRING:
-	    	  	sqlType = "STRING";
+	    	  	sqlType = JDBCType.VARCHAR.getName();
 	        break;
+	       
+	      /** UNSUPPORTED **/
+	      case ENUM:
+	      case NULL:
+	      case MAP:
+	      case RECORD:
 	      case UNION:
+	    	  	sqlType = JDBCType.VARCHAR.getName();
 	        break;
 	    }
 	    

@@ -35,9 +35,9 @@ public class CrateConnect extends JdbcConnect {
 		this.primaryKey = primaryKey;
 	}
 	/*
-	 * This method builds a Crate compliant insert query that is used
-	 * to feed a SQL prepared statement that finally write a record to
-	 * the database
+	 * The current implementation of the Crate DB Sink connectors supports INSERT
+	 * only, i.e. the user to make sure that there are no conflicts with respect to
+	 * duplicated primary keys
 	 */
 	@Override
 	public String writeQuery(String[] fieldNames) {
@@ -72,22 +72,6 @@ public class CrateConnect extends JdbcConnect {
 		}
 
 		sb.append(")");
-		/*
-		 * Append duplicate block; it is important
-		 * to note, that the KEY must be excluded 
-		 * from this block
-		 */
-		sb.append(" ON DUPLICATE KEY UPDATE ");
-		for (int i = 0; i < fieldNames.length; i++) {
-			
-			if (fieldNames[i].equals(primaryKey)) continue;
-
-			sb.append(fieldNames[i] + "=VALUES(" + fieldNames[i] + ")");
-			if (i != fieldNames.length - 1) {
-				sb.append(",");
-			}
-
-		}
 		/*
 		 * We have to omit the ';' at the end
 		 */

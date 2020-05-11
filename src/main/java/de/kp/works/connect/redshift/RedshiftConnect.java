@@ -49,7 +49,6 @@ public class RedshiftConnect extends JdbcConnect {
 	 * only, i.e. the user to make sure that there are no conflicts with respect to
 	 * duplicated primary keys
 	 */
-
 	@Override
 	public String writeQuery(String[] fieldNames) {
 

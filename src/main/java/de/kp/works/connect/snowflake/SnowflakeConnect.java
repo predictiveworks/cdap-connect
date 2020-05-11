@@ -46,10 +46,49 @@ public class SnowflakeConnect extends JdbcConnect {
 
 	}
 
+	/*
+	 * The current implementation of the Snowflake Sink connectors supports INSERT
+	 * only, i.e. the user to make sure that there are no conflicts with respect to
+	 * duplicated primary keys
+	 */
 	@Override
 	public String writeQuery(String[] fieldNames) {
-		// TODO Auto-generated method stub
-		return null;
+
+		if (fieldNames == null) {
+			throw new IllegalArgumentException("[SnowflakeConnect] Field names may not be null");
+		}
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("INSERT INTO ").append(tableName);
+		/*
+		 * Append column block
+		 */
+		sb.append(" (");
+		for (int i = 0; i < fieldNames.length; i++) {
+			sb.append(fieldNames[i]);
+			if (i != fieldNames.length - 1) {
+				sb.append(",");
+			}
+		}
+		sb.append(")");
+		/*
+		 * Append binding block
+		 */
+		sb.append(" VALUES (");
+
+		for (int i = 0; i < fieldNames.length; i++) {
+			sb.append("?");
+			if (i != fieldNames.length - 1) {
+				sb.append(",");
+			}
+		}
+
+		sb.append(")");
+		/*
+		 * We have to omit the ';' at the end
+		 */
+		return sb.toString();
+
 	}
 
 }
