@@ -18,6 +18,7 @@ package de.kp.works.connect.redshift;
  * 
  */
 
+import java.sql.JDBCType;
 import java.util.List;
 import com.google.common.collect.Lists;
 
@@ -49,7 +50,12 @@ public class RedshiftUtils extends JdbcUtils {
 	}
 
 	private static String getColumn(String fieldName, String fieldType, Boolean isNullable, Boolean isPrimaryKey) {
-		return null;
+
+		if (isNullable)
+			return String.format("%s %s", fieldName, fieldType);
+
+		return String.format("%s %s NOT NULL", fieldName, fieldType);
+
 	}
 	
 	private static String getSqlType(Schema schema) {
@@ -58,31 +64,34 @@ public class RedshiftUtils extends JdbcUtils {
 		
 		Schema.Type schemaType = schema.isNullable() ? schema.getNonNullable().getType() : schema.getType();
 	    switch (schemaType) {
-	      case ARRAY:
-	        break;
 	      case BOOLEAN:
-	        break;
-	      case BYTES:
+	    	  	sqlType = JDBCType.BOOLEAN.getName();
 	        break;
 	      case DOUBLE:
-	        break;
-	      case ENUM:
+	    	  	sqlType = "DOUBLE PRECISION";
 	        break;
 	      case FLOAT:
+	    	  	sqlType = "REAL";
 	        break;
 	      case INT:
+	    	  	sqlType = JDBCType.INTEGER.getName();
 	        break;
 	      case LONG:
+	    	  	sqlType = JDBCType.BIGINT.getName();
 	        break;
+	      
+	      /** UNSUPPORTED **/
+	      case ARRAY:
+	      case BYTES:
+	      case ENUM:
 	      case MAP:
-	        break;
 	      case NULL:
-	    	  	break;
 	      case RECORD:
+	      case UNION:
+	    	  	sqlType = JDBCType.VARCHAR.getName();
 	        break;
 	      case STRING:
-	        break;
-	      case UNION:
+	    	  	sqlType = JDBCType.VARCHAR.getName();
 	        break;
 	    }
 	    

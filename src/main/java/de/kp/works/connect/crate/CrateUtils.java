@@ -58,31 +58,31 @@ public class CrateUtils extends JdbcUtils {
 	 */
 	private static String getSqlType(Schema schema) {
 		
-		String ftype = null;
+		String sqlType = null;
 
 		Schema.Type schemaType = schema.isNullable() ? schema.getNonNullable().getType() : schema.getType();
 		switch (schemaType) {
 		case ARRAY:
 			Schema componentSchema = schema.getComponentSchema();
-			ftype = getArrayType(componentSchema);
+			sqlType = getArrayType(componentSchema);
 			break;
 		case BOOLEAN:
-			ftype = JDBCType.BOOLEAN.getName();
+			sqlType = JDBCType.BOOLEAN.getName();
 			break;
 		case DOUBLE:
-			ftype = JDBCType.DOUBLE.getName();
+			sqlType = JDBCType.DOUBLE.getName();
 			break;
 		case FLOAT:
-			ftype = JDBCType.FLOAT.getName();
+			sqlType = JDBCType.FLOAT.getName();
 			break;
 		case INT:
-			ftype = JDBCType.INTEGER.getName();
+			sqlType = JDBCType.INTEGER.getName();
 			break;
 		case LONG:
-			ftype = "LONG";
+			sqlType = "LONG";
 			break;
 		case STRING:
-			ftype = "STRING";
+			sqlType = "STRING";
 			break;
 		
 		/** UNSUPPORTED **/
@@ -92,10 +92,10 @@ public class CrateUtils extends JdbcUtils {
 		case MAP:
 		case RECORD:
 		case UNION:
-			ftype = "STRING";
+			sqlType = "STRING";
 			break;
 		}
-		return ftype;
+		return sqlType;
 
 	}
 

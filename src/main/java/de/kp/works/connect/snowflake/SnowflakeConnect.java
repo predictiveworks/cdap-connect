@@ -32,7 +32,7 @@ public class SnowflakeConnect extends JdbcConnect {
 		this.endpoint = endpoint;
 
 		/* Table name is esacped */
-		this.tableName = tableName;		
+		this.tableName = tableName;
 		this.primaryKey = primaryKey;
 	}
 
@@ -40,24 +40,10 @@ public class SnowflakeConnect extends JdbcConnect {
 	public String createQuery(List<String> columns) {
 
 		String coldefs = String.format("%s, PRIMARY KEY(%s)", Joiner.on(",").join(columns), primaryKey);
-		/*
-		 * A simple, but very important tweak to speed up importing is to set the
-		 * refresh interval of the table to 0. This will disable the periodic refresh of
-		 * the table that is needed to minimise the effect of eventual consistency and
-		 * therefore also minimise the overhead during import.
-		 * 
-		 * Lessons learned: This configuration prevents read-after-write which is also
-		 * an important feature. As a trade off, we explicitly refresh the data after
-		 * import.
-		 * 
-		 * Lessons learned: Refresh initiates a table reader and requires the table to
-		 * be 'visible'; this, however, is achieved after having refreshed the table.
-		 */
-		String createSql = String.format("CREATE TABLE IF NOT EXISTS %s (%s)", tableName,
-				coldefs);
-		
+		String createSql = String.format("CREATE TABLE IF NOT EXISTS %s (%s)", tableName, coldefs);
+
 		return createSql;
-		
+
 	}
 
 	@Override

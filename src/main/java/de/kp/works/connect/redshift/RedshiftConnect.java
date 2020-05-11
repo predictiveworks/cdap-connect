@@ -20,29 +20,74 @@ package de.kp.works.connect.redshift;
 
 import java.util.List;
 
+import com.google.common.base.Joiner;
+
 import de.kp.works.connect.jdbc.JdbcConnect;
 
 public class RedshiftConnect extends JdbcConnect {
-		
+
 	private static final long serialVersionUID = 7240703449616435430L;
 
 	public RedshiftConnect(String endpoint, String tableName, String primaryKey) {
 		this.endpoint = endpoint;
-		
+
 		this.tableName = tableName;
 		this.primaryKey = primaryKey;
 	}
 
 	@Override
 	public String createQuery(List<String> columns) {
-		// TODO Auto-generated method stub
-		return null;
+
+		String coldefs = String.format("%s, PRIMARY KEY(%s)", Joiner.on(",").join(columns), primaryKey);
+		String createSql = String.format("CREATE TABLE IF NOT EXISTS %s (%s)", tableName, coldefs);
+
+		return createSql;
 	}
+
+	/*
+	 * The current implementation of the Redshift Sink connectors supports INSERT
+	 * only, i.e. the user to make sure that there are no conflicts with respect to
+	 * duplicated primary keys
+	 */
 
 	@Override
 	public String writeQuery(String[] fieldNames) {
-		// TODO Auto-generated method stub
-		return null;
+
+		if (fieldNames == null) {
+			throw new IllegalArgumentException("[RedshiftConnect] Field names may not be null");
+		}
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("INSERT INTO ").append(tableName);
+		/*
+		 * Append column block
+		 */
+		sb.append(" (");
+		for (int i = 0; i < fieldNames.length; i++) {
+			sb.append(fieldNames[i]);
+			if (i != fieldNames.length - 1) {
+				sb.append(",");
+			}
+		}
+		sb.append(")");
+		/*
+		 * Append binding block
+		 */
+		sb.append(" VALUES (");
+
+		for (int i = 0; i < fieldNames.length; i++) {
+			sb.append("?");
+			if (i != fieldNames.length - 1) {
+				sb.append(",");
+			}
+		}
+
+		sb.append(")");
+		/*
+		 * We have to omit the ';' at the end
+		 */
+		return sb.toString();
+
 	}
 
 }
