@@ -1,0 +1,86 @@
+{
+"metadata": {"spec-version": "1.5"},
+
+"display-name": "Osquery Source",
+ "configuration-groups": [
+    {
+      "label": "Kafka Configuration",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "Reference Name",
+          "name": "referenceName"
+        },
+        {
+          "widget-type": "csv",
+          "label": "Brokers",
+          "name": "brokers",
+          "widget-attributes": {
+            "delimiter": ","
+          }
+        },
+        {
+          "widget-type": "keyvalue",
+          "label": "Properties",
+          "name": "kafkaProperties",
+          "widget-attributes": {
+            "showDelimiter": "false",
+            "key-placeholder": "Kafka property",
+            "value-placeholder": "Kafka property value"
+          }
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Topic",
+          "name": "topic"
+        },
+        {
+          "widget-type": "csv",
+          "label": "Partitions",
+          "name": "partitions",
+          "widget-attributes": {
+            "delimiter": ","
+          }
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Max Rate Per Partition",
+          "name": "maxRatePerPartition",
+          "widget-attributes": {
+            "default": "1000"
+          }
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Initial Offset",
+          "name": "defaultInitialOffset"
+        },
+        {
+          "widget-type": "keyvalue",
+          "label": "Partition Offsets",
+          "name": "initialPartitionOffsets",
+          "widget-attributes": {
+            "showDelimiter": "false",
+            "key-placeholder": "Partition",
+            "value-placeholder": "Offset"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Authentication",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "Kerberos Principal",
+          "name": "principal"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Keytab Location",
+          "name": "keytabLocation"
+        }
+      ]
+    }
+  ]
+}
