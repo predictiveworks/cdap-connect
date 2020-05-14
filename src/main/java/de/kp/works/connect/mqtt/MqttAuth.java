@@ -21,8 +21,7 @@ package de.kp.works.connect.mqtt;
 public enum MqttAuth {
 
 	BASIC("basic"),
-	X509("x509"),
-	X509_PEM("x509_pem");
+	X509("x509");
 
 	private final String value;
 

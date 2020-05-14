@@ -39,7 +39,7 @@ public class MqttSource extends StreamingSource<StructuredRecord> {
 	private MqttConfig config;
 	
 	public MqttSource(MqttConfig config) {
-		this.config = config;
+		this.config = config;				
 	}
 
 	@Override
@@ -47,6 +47,7 @@ public class MqttSource extends StreamingSource<StructuredRecord> {
 		super.configurePipeline(pipelineConfigurer);
 
 		config.validate();
+
 		/*
 		 * __KUP__
 		 * 

@@ -41,9 +41,6 @@ public class MqttStreamUtil {
 		case X509: {
 			break;
 		}
-		case X509_PEM: {
-			break;
-		}
 		}
 		
 		String[] topics = config.getTopics();
