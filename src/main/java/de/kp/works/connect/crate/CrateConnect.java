@@ -77,6 +77,47 @@ public class CrateConnect extends JdbcConnect {
 		 */
 		return sb.toString();		
 
+		/*
+		 * @Override
+  public String buildUpsertQueryStatement(
+      TableId table,
+      Collection<ColumnId> keyColumns,
+      Collection<ColumnId> nonKeyColumns
+  ) {
+    final Transform<ColumnId> transform = (builder, col) -> {
+      builder.appendColumnName(col.name())
+             .append("=EXCLUDED.")
+             .appendColumnName(col.name());
+    };
+
+    ExpressionBuilder builder = expressionBuilder();
+    builder.append("INSERT INTO ");
+    builder.append(table);
+    builder.append(" (");
+    builder.appendList()
+           .delimitedBy(",")
+           .transformedBy(ExpressionBuilder.columnNames())
+           .of(keyColumns, nonKeyColumns);
+    builder.append(") VALUES (");
+    builder.appendMultiple(",", "?", keyColumns.size() + nonKeyColumns.size());
+    builder.append(") ON CONFLICT (");
+    builder.appendList()
+           .delimitedBy(",")
+           .transformedBy(ExpressionBuilder.columnNames())
+           .of(keyColumns);
+    if (nonKeyColumns.isEmpty()) {
+      builder.append(") DO NOTHING");
+    } else {
+      builder.append(") DO UPDATE SET ");
+      builder.appendList()
+              .delimitedBy(",")
+              .transformedBy(transform)
+              .of(nonKeyColumns);
+    }
+    return builder.toString();
+  }
+		 */
+		
 	}
 	
 	@Override

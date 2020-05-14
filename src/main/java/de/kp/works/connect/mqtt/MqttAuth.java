@@ -1,6 +1,6 @@
 package de.kp.works.connect.mqtt;
 /*
- * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
+ * Copyright (c) 2020 Dr. Krusche & Partner PartG. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -18,12 +18,25 @@ package de.kp.works.connect.mqtt;
  * 
  */
 
-import java.io.Serializable;
+public enum MqttAuth {
 
-import de.kp.works.connect.BaseConfig;
+	BASIC("basic"),
+	X509("x509"),
+	X509_PEM("x509_pem");
 
-public class MQTTConfig extends BaseConfig implements Serializable {
+	private final String value;
 
-	private static final long serialVersionUID = 1193310212809609121L;
+	MqttAuth(String value) {
+		this.value = value;
+	}
+
+	public String getValue() {
+		return value;
+	}
+
+	@Override
+	public String toString() {
+		return this.getValue();
+	}
 
 }

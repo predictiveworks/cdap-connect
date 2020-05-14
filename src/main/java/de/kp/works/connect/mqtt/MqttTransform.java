@@ -1,6 +1,6 @@
 package de.kp.works.connect.mqtt;
 /*
- * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
+ * Copyright (c) 2020 Dr. Krusche & Partner PartG. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -18,18 +18,25 @@ package de.kp.works.connect.mqtt;
  * 
  */
 
-import org.apache.spark.streaming.api.java.JavaDStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.function.Function;
 
 import co.cask.cdap.api.data.format.StructuredRecord;
-import co.cask.cdap.etl.api.streaming.StreamingContext;
+import de.kp.works.stream.mqtt.*;
 
-public class MQTTStreamUtil {
+public class MqttTransform implements Function<JavaRDD<MqttResult>, JavaRDD<StructuredRecord>> {
+
+	private static final long serialVersionUID = 5511944788990345893L;
+
+	private MqttConfig config;
 	
-	private static final Logger LOG = LoggerFactory.getLogger(MQTTStreamUtil.class);
-
-	static JavaDStream<StructuredRecord> getStructuredRecordJavaDStream(StreamingContext context, MQTTConfig config) {
+	public MqttTransform(MqttConfig config) {
+		this.config = config;
+	}
+	
+	@Override
+	public JavaRDD<StructuredRecord> call(JavaRDD<MqttResult> input) throws Exception {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
