@@ -55,6 +55,11 @@ public class MqttConfig extends BaseConfig implements Serializable {
 	@Macro
 	public String mqttTopics;
 
+	@Description("The format of the MQTT messages to listen to.")
+	@Macro
+	public String mqttFormat;
+	
+	
 	/***** AUTHENTICATION *****/
 	
 	/*
@@ -156,6 +161,32 @@ public class MqttConfig extends BaseConfig implements Serializable {
 		}
 		}
 		
+		/* Validate MQTT format */
+		
+		MqttFormat format = getFormat();
+		switch(format) {
+		case TTN_UPLINK: {
+
+			String[] topics = getTopics();
+			for (int i = 0; i < topics.length; i++) {
+				
+				String[] tokens = topics[i].split("\\/");
+				if (tokens.length != 4)
+					throw new IllegalArgumentException(
+							String.format("[%s] The topics are not compliant to retrieve TTN Uplink messages.", className));
+			
+				if (tokens[3].equals("up") == false)
+					throw new IllegalArgumentException(
+							String.format("[%s] The topics are not compliant to retrieve TTN Uplink messages.", className));
+			
+			}
+			
+			break;
+
+		}
+		default:
+			break;
+		}
 
 	}
 	
@@ -167,6 +198,17 @@ public class MqttConfig extends BaseConfig implements Serializable {
 				.filter(keyType -> keyType.getValue().equalsIgnoreCase(mqttAuth)).findAny()
 				.orElseThrow(() -> new IllegalArgumentException(
 						String.format("Unsupported value for authentication method: '%s'", mqttAuth)));
+
+	}
+	
+	public MqttFormat getFormat() {
+		
+		Class<MqttFormat> enumClazz = MqttFormat.class;
+
+		return Stream.of(enumClazz.getEnumConstants())
+				.filter(keyType -> keyType.getValue().equalsIgnoreCase(mqttFormat)).findAny()
+				.orElseThrow(() -> new IllegalArgumentException(
+						String.format("Unsupported value for message format: '%s'", mqttFormat)));
 
 	}
 	

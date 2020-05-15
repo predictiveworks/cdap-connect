@@ -29,15 +29,12 @@ import co.cask.cdap.api.data.schema.Schema;
 
 import de.kp.works.stream.mqtt.*;
 
-public class MqttTransform implements Function<JavaRDD<MqttResult>, JavaRDD<StructuredRecord>> {
+public class DefaultTransform extends MqttTransform {
 
 	private static final long serialVersionUID = 5511944788990345893L;
-
-	private MqttConfig config;
-	private Schema schema;
 	
-	public MqttTransform(MqttConfig config) {
-		this.config = config;
+	public DefaultTransform(MqttConfig config) {
+		super(config);
 	}
 	
 	@Override
@@ -61,26 +58,16 @@ public class MqttTransform implements Function<JavaRDD<MqttResult>, JavaRDD<Stru
 			
 		} else {
 
-			if (schema == null) {
-
-				List<Schema.Field> fields = new ArrayList<>();
-				
-				Schema.Field topic = Schema.Field.of("topic", Schema.of(Schema.Type.STRING));
-				fields.add(topic);
-
-				Schema.Field payload = Schema.Field.of("payload", Schema.of(Schema.Type.STRING));
-				fields.add(payload);
-
-				schema = Schema.recordOf("topicsOutput", fields);
-				
-			}
+			if (schema == null)
+				schema = buildPlainSchema();
 			
 			return input.map(new MultiTopicTransform(schema, config));
 		}
 
 	}
 	
-	private Schema inferSchema(List<MqttResult> samples, MqttConfig config) {
+	@Override
+	public Schema inferSchema(List<MqttResult> samples, MqttConfig config) {
 		// TODO
 		return null;
 	}
@@ -103,58 +90,6 @@ public class MqttTransform implements Function<JavaRDD<MqttResult>, JavaRDD<Stru
 			return null;
 		}
 		
-	}
-	/**
-	 * This method transforms a stream of multiple topics into a more
-	 * or less generic record format; this approach leaves room for
-	 * subsequent pipeline stages to filter and process topic specific
-	 * data
-	 */
-	public class MultiTopicTransform implements Function<MqttResult, StructuredRecord> {
-
-		private static final long serialVersionUID = 2437381949864484498L;
-
-		private MqttConfig config;
-		private Schema schema;
-		
-		public MultiTopicTransform(Schema schema, MqttConfig config) {
-			this.config = config;
-			this.schema = schema;
-		}
-		
-		@Override
-		public StructuredRecord call(MqttResult in) throws Exception {
-
-			StructuredRecord.Builder builder = StructuredRecord.builder(schema);
-			
-			// TODO field message format
-			builder.set("topic", in.topic());
-			builder.set("payload", in.payload());
-			
-			return builder.build();
-			
-		}
-
-	}
-	/**
-	 * This method transforms an empty stream batch into
-	 * a dummy structured record
-	 */
-	public class EmptyTransform implements Function<MqttResult, StructuredRecord> {
-
-		private static final long serialVersionUID = -2582275414113323812L;
-
-		@Override
-		public StructuredRecord call(MqttResult in) throws Exception {
-
-			List<Schema.Field> schemaFields = new ArrayList<>();
-			Schema schema = Schema.recordOf("emptyOutput", schemaFields);
-
-			StructuredRecord.Builder builder = StructuredRecord.builder(schema);
-			return builder.build();
-			
-		}
-
 	}
 
 }

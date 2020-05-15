@@ -47,7 +47,16 @@ public class MqttStreamUtil {
 		JavaDStream<MqttResult> stream = MqttUtils.createStream(context.getSparkStreamingContext(), config.mqttBroker,
 				topics, null, creds, true);
 
-		return stream.transform(new MqttTransform(config));
+		MqttFormat format = config.getFormat();
+		switch(format) {
+		case TTN_UPLINK: {
+			break;
+		}
+		default:
+		}
+		
+		
+		return stream.transform(new DefaultTransform(config));
 		
 	}
 
