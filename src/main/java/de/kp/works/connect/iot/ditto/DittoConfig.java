@@ -1,4 +1,4 @@
-package de.kp.works.connect.bosch;
+package de.kp.works.connect.iot.ditto;
 /*
  * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -30,7 +30,7 @@ import com.google.common.base.Strings;
 import de.kp.works.connect.BaseConfig;
 import de.kp.works.ditto.DittoUtils;
 
-public class ThingConfig extends BaseConfig {
+public class DittoConfig extends BaseConfig {
 
 	private static final long serialVersionUID = 3823407192490514926L;
 

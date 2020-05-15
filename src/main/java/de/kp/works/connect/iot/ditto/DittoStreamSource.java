@@ -1,4 +1,4 @@
-package de.kp.works.connect.thingsboard;
+package de.kp.works.connect.iot.ditto;
 /*
  * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -18,9 +18,6 @@ package de.kp.works.connect.thingsboard;
  * 
  */
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.spark.streaming.api.java.JavaDStream;
 
 import co.cask.cdap.api.annotation.Description;
@@ -33,16 +30,17 @@ import co.cask.cdap.etl.api.streaming.StreamingContext;
 import co.cask.cdap.etl.api.streaming.StreamingSource;
 
 @Plugin(type = StreamingSource.PLUGIN_TYPE)
-@Name("ThingsboardSource")
-@Description("An Apache Kafka streaming source that supports real-time events that originate from Thingsboard.")
-public class ThingsboardSource extends StreamingSource<StructuredRecord> {
+@Name("ThingStreamSource")
+@Description("A Bosch IoT Thing streaming source that supports real-time websocket event streams.")
+public class DittoStreamSource extends StreamingSource<StructuredRecord>{
 
-	private static final long serialVersionUID = 2853490513177740072L;
-
-	private ThingsboardSourceConfig config;
+	private static final long serialVersionUID = -8154749515870756082L;
 	
-	public ThingsboardSource(ThingsboardSourceConfig config) {
+	private final DittoConfig config;
+	
+	public DittoStreamSource(DittoConfig config) {
 		this.config = config;
+		
 	}
 
 	@Override
@@ -51,27 +49,22 @@ public class ThingsboardSource extends StreamingSource<StructuredRecord> {
 
 		config.validate();
 		/*
+		 * __KUP__
+		 * 
 		 * We set the output schema explicitly to 'null' as the 
-		 * schema is inferred dynamically from the provided format
+		 * schema is inferred dynamically from the provided events
 		 */
 		StageConfigurer stageConfigurer = pipelineConfigurer.getStageConfigurer();
 		stageConfigurer.setOutputSchema(null);
 		
-		if (config.getMaxRatePerPartition() != null && config.getMaxRatePerPartition() > 0) {
-
-			Map<String, String> pipelineProperties = new HashMap<>();
-
-			pipelineProperties.put("spark.streaming.kafka.maxRatePerPartition",
-					config.getMaxRatePerPartition().toString());
-			pipelineConfigurer.setPipelineProperties(pipelineProperties);
-
-		}
 	}
-	
+
 	@Override
 	public JavaDStream<StructuredRecord> getStream(StreamingContext context) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		
+		context.registerLineage(config.referenceName);
+		return DittoStreamUtil.getStructuredRecordJavaDStream(context, config);
+		
 	}
 
 }

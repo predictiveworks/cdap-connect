@@ -1,4 +1,4 @@
-package de.kp.works.connect.mqtt;
+package de.kp.works.connect.iot.mqtt;
 /*
  * Copyright (c) 2020 Dr. Krusche & Partner PartG. All rights reserved.
  *

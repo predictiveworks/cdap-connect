@@ -1,4 +1,4 @@
-package de.kp.works.connect.bosch;
+package de.kp.works.connect.iot.ditto;
 /*
  * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -36,9 +36,9 @@ import org.apache.spark.storage.StorageLevel;
 
 import de.kp.works.ditto.*;
 
-public class ThingStreamUtil {
+public class DittoStreamUtil {
 
-	static JavaDStream<StructuredRecord> getStructuredRecordJavaDStream(StreamingContext context, ThingConfig config) {
+	static JavaDStream<StructuredRecord> getStructuredRecordJavaDStream(StreamingContext context, DittoConfig config) {
 
 		Properties properties = config.getThingConf();
 		StorageLevel storageLevel = StorageLevel.MEMORY_ONLY_SER();
@@ -199,7 +199,7 @@ public class ThingStreamUtil {
 
 	}
 
-	private ThingStreamUtil() {
+	private DittoStreamUtil() {
 		// no-op
 	}
 

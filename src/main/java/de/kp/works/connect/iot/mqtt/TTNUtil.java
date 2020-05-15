@@ -1,4 +1,4 @@
-package de.kp.works.connect.mqtt;
+package de.kp.works.connect.iot.mqtt;
 /*
  * Copyright (c) 2020 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -125,7 +125,7 @@ public class TTNUtil implements Serializable {
 
 			if (jsonElement.isJsonObject() == false)
 				throw new Exception(String.format("[%s] Uplink messages are specified as JSON objects.",
-						TTNTransform.class.getName()));
+						TTNUtil.class.getName()));
 
 			JsonElement fieldsElement = jsonElement.getAsJsonObject().get("payload_fields");
 			if (fieldsElement == null)

@@ -1,4 +1,4 @@
-package de.kp.works.connect.bosch;
+package de.kp.works.connect.iot.ditto;
 /*
  * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
  *

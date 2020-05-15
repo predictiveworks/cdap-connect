@@ -1,4 +1,4 @@
-package de.kp.works.connect.bosch;
+package de.kp.works.connect.iot.ditto;
 /*
  * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -32,17 +32,12 @@ import co.cask.cdap.api.data.format.StructuredRecord;
 import co.cask.cdap.api.data.schema.Schema;
 import de.kp.works.ditto.DittoUtils;
 
-/*
- * This class transforms all changes of all things available; this indicates 
- * that we have to process a variety of variety of different feature sets.
- * 
- */
-public class ThingTransform extends RecordTransform {
+public class FeaturesTransform extends RecordTransform {
 
-	private static final long serialVersionUID = -8700001898164977790L;
+	private static final long serialVersionUID = -5993773809859124183L;
 	private Boolean isThing = false;
 
-	public ThingTransform(Properties properties) {
+	public FeaturesTransform(Properties properties) {
 		super();
 
 		isThing = properties.containsKey(DittoUtils.DITTO_THING_ID());
@@ -68,12 +63,6 @@ public class ThingTransform extends RecordTransform {
 			/* timestamp */
 			builder.set("timestamp", json.get("timestamp").getAsLong());
 
-			/* name */
-			builder.set("name", json.get("name").getAsString());
-
-			/* name */
-			builder.set("namespace", json.get("namespace").getAsString());
-
 			/* features */
 			JsonArray features = json.get("features").getAsJsonArray();
 			features2Record(builder, schema, features);
@@ -85,19 +74,13 @@ public class ThingTransform extends RecordTransform {
 			 * All things and all features are members of the data stream; in this case, we
 			 * cannot build a schema that is based on the individual feature.
 			 * 
-			 * Here, we aggregate all features into a single MAP data datatype
+			 * Here, we aggregate all features into a single JSON data datatype
 			 */
 			Schema schema = buildSchema(MULTI_THING_SCHEMA);
 			StructuredRecord.Builder builder = StructuredRecord.builder(schema);
 
 			/* timestamp */
 			builder.set("timestamp", json.get("timestamp").getAsLong());
-
-			/* name */
-			builder.set("name", json.get("name").getAsString());
-
-			/* name */
-			builder.set("namespace", json.get("namespace").getAsString());
 
 			/* features */
 			JsonArray features = json.get("features").getAsJsonArray();
@@ -116,12 +99,6 @@ public class ThingTransform extends RecordTransform {
 
 		Schema.Field timestamp = Schema.Field.of("timestamp", Schema.of(Schema.Type.LONG));
 		schemaFields.add(timestamp);
-
-		Schema.Field name = Schema.Field.of("name", Schema.of(Schema.Type.STRING));
-		schemaFields.add(name);
-
-		Schema.Field namespace = Schema.Field.of("namespace", Schema.of(Schema.Type.STRING));
-		schemaFields.add(namespace);
 
 		/*
 		 * Features are present and represent an Array[JsonObject]

@@ -1,6 +1,6 @@
-package de.kp.works.connect.bosch;
+package de.kp.works.connect.iot.mqtt;
 /*
- * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
+ * Copyright (c) 2020 Dr. Krusche & Partner PartG. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -30,17 +30,16 @@ import co.cask.cdap.etl.api.streaming.StreamingContext;
 import co.cask.cdap.etl.api.streaming.StreamingSource;
 
 @Plugin(type = StreamingSource.PLUGIN_TYPE)
-@Name("ThingStreamSource")
-@Description("A Bosch IoT Thing streaming source that supports real-time websocket event streams.")
-public class ThingStreamSource extends StreamingSource<StructuredRecord>{
+@Name("MQTTSource")
+@Description("An MQTT streaming source that listens to an MQTT broker and subscribes to a given topic.")
+public class MqttSource extends StreamingSource<StructuredRecord> {
 
-	private static final long serialVersionUID = -8154749515870756082L;
+	private static final long serialVersionUID = -8515614253262827164L;
+
+	private MqttConfig config;
 	
-	private final ThingConfig config;
-	
-	public ThingStreamSource(ThingConfig config) {
-		this.config = config;
-		
+	public MqttSource(MqttConfig config) {
+		this.config = config;				
 	}
 
 	@Override
@@ -48,6 +47,7 @@ public class ThingStreamSource extends StreamingSource<StructuredRecord>{
 		super.configurePipeline(pipelineConfigurer);
 
 		config.validate();
+
 		/*
 		 * __KUP__
 		 * 
@@ -56,15 +56,11 @@ public class ThingStreamSource extends StreamingSource<StructuredRecord>{
 		 */
 		StageConfigurer stageConfigurer = pipelineConfigurer.getStageConfigurer();
 		stageConfigurer.setOutputSchema(null);
-		
-	}
 
+	}
+	
 	@Override
 	public JavaDStream<StructuredRecord> getStream(StreamingContext context) throws Exception {
-		
-		context.registerLineage(config.referenceName);
-		return ThingStreamUtil.getStructuredRecordJavaDStream(context, config);
-		
-	}
+		return MqttStreamUtil.getStructuredRecordJavaDStream(context, config);			}
 
 }

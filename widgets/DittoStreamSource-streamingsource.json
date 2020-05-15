@@ -1,7 +1,7 @@
 {
 "metadata": {"spec-version": "1.5"},
 
-"display-name": "Thing Stream Source",
+"display-name": "Ditto Stream Source",
  "configuration-groups": [
     {
       "label": "Connection",

@@ -1,4 +1,4 @@
-package de.kp.works.connect.thingsboard;
+package de.kp.works.connect.iot.thingsboard;
 /*
  * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
  *
