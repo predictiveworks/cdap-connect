@@ -28,16 +28,24 @@ import com.google.gson.JsonObject;
 import co.cask.cdap.api.data.format.StructuredRecord;
 import co.cask.cdap.api.data.schema.Schema;
 import co.cask.cdap.format.StructuredRecordStringConverter;
-import de.kp.works.stream.mqtt.*;
+import de.kp.works.stream.mqtt.MqttResult;
 
-public class DefaultTransform extends MqttTransform {
+/**
+ * This transformer supports The Things Network uplink messages, 
+ * i.e. topics look like <app-id>/devices/<dev-id>/up
+ */
+public class TTNTransform extends MqttTransform {
 
-	private static final long serialVersionUID = 5511944788990345893L;
+	private static final long serialVersionUID = 693735165758844114L;
+
+	/* The specification of the payload fields */
+	private List<String> columns = null;
 	
-	public DefaultTransform(MqttConfig config) {
+	public TTNTransform(MqttConfig config) {
 		super(config);
+
 	}
-	
+
 	@Override
 	public JavaRDD<StructuredRecord> call(JavaRDD<MqttResult> input) throws Exception {
 		
@@ -52,10 +60,14 @@ public class DefaultTransform extends MqttTransform {
 		String[] topics = config.getTopics();
 		if (topics.length == 1) {
 
-			if (schema == null)
+			if (schema == null) {
+				
 				schema = inferSchema(input.collect(), config);
+				columns = TTNUtil.getColumns(schema);
+				
+			}
 			
-			return input.map(new SingleTopicTransform(schema));
+			return input.map(new SingleTopicTransform(schema, columns));
 			
 		} else {
 
@@ -63,35 +75,40 @@ public class DefaultTransform extends MqttTransform {
 				schema = buildPlainSchema();
 			
 			return input.map(new MultiTopicTransform(schema, config));
-		}
 
-	}
+		}
 	
+	}
+
 	@Override
 	public Schema inferSchema(List<MqttResult> samples, MqttConfig config) {
-		return DefaultUtil.getSchema(samples);
+		return TTNUtil.getSchema(samples);
 	}
 	
 	public class SingleTopicTransform implements Function<MqttResult, StructuredRecord> {
 
-		private static final long serialVersionUID = 1811675023332143555L;
+		private static final long serialVersionUID = 5408293859618821904L;
 
+		/* The specification of the payload fields */
+		private List<String> columns = null;
 		private Schema schema;
 		
-		public SingleTopicTransform(Schema schema) {
+		public SingleTopicTransform(Schema schema, List<String> columns) {
+			this.columns = columns;
 			this.schema = schema;
 		}
 
 		@Override
 		public StructuredRecord call(MqttResult in) throws Exception {
 			
-			JsonObject jsonObject = DefaultUtil.buildJsonObject(in);
+			JsonObject jsonObject = TTNUtil.buildJsonObject(in, columns);
 			
 			/* Retrieve structured record */
 			String json = jsonObject.toString();
 			return StructuredRecordStringConverter.fromJsonString(json, schema);
+
 		}
 		
 	}
-
+	
 }
