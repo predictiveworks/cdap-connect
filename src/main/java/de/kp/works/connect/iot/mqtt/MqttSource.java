@@ -18,12 +18,15 @@ package de.kp.works.connect.iot.mqtt;
  * 
  */
 
+import java.util.Map;
+
 import org.apache.spark.streaming.api.java.JavaDStream;
 
 import co.cask.cdap.api.annotation.Description;
 import co.cask.cdap.api.annotation.Name;
 import co.cask.cdap.api.annotation.Plugin;
 import co.cask.cdap.api.data.format.StructuredRecord;
+import co.cask.cdap.api.security.store.SecureStore;
 import co.cask.cdap.etl.api.PipelineConfigurer;
 import co.cask.cdap.etl.api.StageConfigurer;
 import co.cask.cdap.etl.api.streaming.StreamingContext;
@@ -39,13 +42,13 @@ public class MqttSource extends StreamingSource<StructuredRecord> {
 	private MqttConfig config;
 	
 	public MqttSource(MqttConfig config) {
-		this.config = config;				
+		this.config = config;			
 	}
 
 	@Override
 	public void configurePipeline(PipelineConfigurer pipelineConfigurer) throws IllegalArgumentException {
 		super.configurePipeline(pipelineConfigurer);
-
+		
 		config.validate();
 
 		/*
@@ -61,6 +64,17 @@ public class MqttSource extends StreamingSource<StructuredRecord> {
 	
 	@Override
 	public JavaDStream<StructuredRecord> getStream(StreamingContext context) throws Exception {
+		
+		SecureStore secureStore = context.getSparkExecutionContext().getSecureStore();
+		Map<String,String> secureData = secureStore.listSecureData(context.getNamespace());
+
+		/*
+		 * Trained analytic model retrieval
+		 * 
+		 * Admin admin = cdapContext.getAdmin();
+    		 *	if (!admin.datasetExists(config.getName())) {
+		 */
+		
 		return MqttStreamUtil.getStructuredRecordJavaDStream(context, config);			}
 
 }

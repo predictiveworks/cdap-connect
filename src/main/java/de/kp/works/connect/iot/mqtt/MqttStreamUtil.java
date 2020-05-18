@@ -18,6 +18,8 @@ package de.kp.works.connect.iot.mqtt;
  * 
  */
 
+import java.util.Properties;
+
 import org.apache.spark.streaming.api.java.JavaDStream;
 
 import co.cask.cdap.api.data.format.StructuredRecord;
@@ -26,10 +28,12 @@ import co.cask.cdap.etl.api.streaming.StreamingContext;
 import de.kp.works.stream.creds.*;
 import de.kp.works.stream.mqtt.*;
 
-public class MqttStreamUtil {
+public class MqttStreamUtil extends BaseMqttUtil{
 
-	static JavaDStream<StructuredRecord> getStructuredRecordJavaDStream(StreamingContext context, MqttConfig config) {
+	public static JavaDStream<StructuredRecord> getStructuredRecordJavaDStream(StreamingContext context, MqttConfig config) {
 
+		setSparkStreamingConf(context, getSparkStreamingProperties(config));
+		
 		Credentials creds = null;
 
 		MqttAuth auth = config.getAuth();
@@ -81,4 +85,9 @@ public class MqttStreamUtil {
 		
 	}
 
+	private static Properties getSparkStreamingProperties(MqttConfig config) {
+		
+		Properties properties = new Properties();
+		return properties;
+	}
 }

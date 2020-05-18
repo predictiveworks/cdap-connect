@@ -141,6 +141,14 @@
         <version>${hadoop.version}</version>
         <scope>provided</scope>
       </dependency>
+
+	  <!-- Spark core dependencies -->
+	  
+  	  <dependency>
+	    <groupId>org.apache.spark</groupId>
+	    <artifactId>spark-core_2.11</artifactId>
+	    <version>${spark.version}</version>
+ 	  </dependency>
 		
 	  <!-- Spark streaming dependencies -->
 	  

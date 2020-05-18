@@ -32,7 +32,7 @@ import com.google.gson.JsonPrimitive;
 import co.cask.cdap.api.data.schema.Schema;
 import de.kp.works.connect.core.SchemaUtil;
 
-public class DefaultUtil implements Serializable {
+public class DefaulSingleTopicUtil implements Serializable {
 
 	private static final long serialVersionUID = 1839935244896054913L;
 
@@ -46,10 +46,6 @@ public class DefaultUtil implements Serializable {
 
 		int size = objects.size();
 		Random random = new Random();
-		
-		/* Intermediate schemas for Json Objects */
-		List<Schema> schemas = new ArrayList<>();
-		List<String> fieldNames = new ArrayList<>();
 
 		/* The final inferred schema */
 		Schema result = null;
@@ -91,17 +87,7 @@ public class DefaultUtil implements Serializable {
 				Schema schema = getArraySchema(array, tokens);
 				if (schema != null)
 					result = schema;
-				
-				else {
-					/*
-					 * The payload specifies a [JsonArray] and its
-					 * first item (and all other items) does not
-					 * describe a [JsonPrimitive].
-					 * 
-					 * This use case is not supported
-					 */
-					break;
-				}
+
 			}
 			
 			else if (payload.isJsonObject()) {
@@ -123,28 +109,7 @@ public class DefaultUtil implements Serializable {
 				schema = getObjectSchema(object, tokens);
 				if (schema != null)
 					result = schema;
-				
-				else {
-					
-					/*
-					 * The [JsonObject] has at least one entry that
-					 * does not specify a primititive.
-					 * 
-					 * Retrieve schema and also the unique list of all 
-					 * field names to determine whether a certain schema 
-					 * must be nullable or not
-					 */
-					schema = SchemaUtil.inferSchema(object);
-					schema.getFields().stream().forEach(field -> {
 
-						String fieldName = field.getName();
-
-						if (!fieldNames.contains(fieldName))
-							fieldNames.add(fieldName);
-
-					});
-					
-				}
 			}
 			
 			else if (payload.isJsonPrimitive()) {
@@ -167,23 +132,8 @@ public class DefaultUtil implements Serializable {
 			
 		}
 		
-		if (result == null && fieldNames.isEmpty() == false) {
-
-			/*
-			 * The schema is inferred from payloads that are 
-			 */
-			List<Schema.Field> fields = new ArrayList<>();
-
-			/* Common fields & topic extraction */
-			fields.addAll(getCommonFields(tokens));
-
-			for (String fieldName : fieldNames) {
-				fields.add(SchemaUtil.inferField(schemas, fieldName));
-			}
-
-			result = Schema.recordOf("mqttSchema", fields);
-		
-		}
+		if (result == null)
+			throw new RuntimeException("Schema inference failed for a single fully qualified MQTT topic");
 		
 		return result;
 		
@@ -208,10 +158,7 @@ public class DefaultUtil implements Serializable {
 			 * The last topic level is used to infer the
 			 * field name
 			 */
-			String fieldName = tokens[tokens.length - 1];
-			if (fieldName.equals("#") || fieldName.equals("+"))
-				fieldName = "value";
-			
+			String fieldName = tokens[tokens.length - 1];			
 			/* 
 			 * In order to increase flexibility, we define
 			 * a nullable schema for the MQTT field
@@ -244,9 +191,6 @@ public class DefaultUtil implements Serializable {
 		 * field name
 		 */
 		String fieldName = tokens[tokens.length - 1];
-		if (fieldName.equals("#") || fieldName.equals("+"))
-			fieldName = "value";
-
 		for (Map.Entry<String, JsonElement> entry : object.entrySet()) {
 			
 			String itemName = fieldName + "_" + entry.getKey();
@@ -322,9 +266,6 @@ public class DefaultUtil implements Serializable {
 			 * field name
 			 */
 			String fieldName = tokens[tokens.length - 1];
-			if (fieldName.equals("#") || fieldName.equals("+"))
-				fieldName = "value";
-			
 			/* 
 			 * In order to increase flexibility, we define
 			 * a nullable schema for the MQTT field
@@ -414,8 +355,6 @@ public class DefaultUtil implements Serializable {
 		 * field name
 		 */
 		String fieldName = tokens[tokens.length - 1];
-		if (fieldName.equals("#") || fieldName.equals("+"))
-			fieldName = "value";
 		
 		JsonElement payload = in.get("payload");
 		if (payload.isJsonArray() || payload.isJsonPrimitive())

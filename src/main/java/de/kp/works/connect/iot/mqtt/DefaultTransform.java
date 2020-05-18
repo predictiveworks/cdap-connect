@@ -59,9 +59,11 @@ public class DefaultTransform extends MqttTransform {
 		 * Distinguish between a multi topic and a single topic use 
 		 * case; for multiple topics, we cannot expect a detailed schema
 		 */
-		String[] topics = config.getTopics();
-		if (topics.length == 1) {
-			
+		String action = topics2Action(config.getTopics());
+		if (action.equals("single")) {
+			/*
+			 * Retrieve a single topic without any wildcards
+			 */
 			JavaRDD<JsonObject> filtered = json.filter(new SingleTopicFilter());
 			if (filtered.isEmpty())
 				return filtered.map(new EmptyJsonTransform());
@@ -81,9 +83,31 @@ public class DefaultTransform extends MqttTransform {
 
 	}
 	
+	private String topics2Action(String[] topics) {
+
+		String action = "single";
+
+		if (topics.length > 1) {
+			action = "multpile";
+		} else {
+			/* Check for wildcards */
+			String[] tokens = topics[0].split("\\/");
+			for (int i = 0; i < tokens.length; i++) {
+
+				String token = tokens[i];
+				if (token.equals("+") || token.equals("#")) {
+					action = "multiple";
+					break;
+				}
+			}
+		}
+		
+		return action;
+	}
+	
 	@Override
 	public Schema inferSchema(List<JsonObject> samples, MqttConfig config) {
-		return DefaultUtil.getSchema(samples);
+		return DefaulSingleTopicUtil.getSchema(samples);
 	}
 	
 	public class SingleTopicTransform implements Function<JsonObject, StructuredRecord> {
@@ -101,7 +125,7 @@ public class DefaultTransform extends MqttTransform {
 		@Override
 		public StructuredRecord call(JsonObject in) throws Exception {
 			
-			JsonObject jsonObject = DefaultUtil.buildJsonObject(in, schema, config);
+			JsonObject jsonObject = DefaulSingleTopicUtil.buildJsonObject(in, schema, config);
 			
 			/* Retrieve structured record */
 			String json = jsonObject.toString();
