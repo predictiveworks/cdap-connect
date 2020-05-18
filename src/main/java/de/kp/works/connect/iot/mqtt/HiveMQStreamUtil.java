@@ -18,25 +18,15 @@ package de.kp.works.connect.iot.mqtt;
  * 
  */
 
-public enum MqttAuth {
+import org.apache.spark.streaming.api.java.JavaDStream;
 
-	BASIC("basic"),
-	SSL("ssl"),
-	X509("x509");
+import co.cask.cdap.api.data.format.StructuredRecord;
+import co.cask.cdap.etl.api.streaming.StreamingContext;
 
-	private final String value;
+public class HiveMQStreamUtil {
 
-	MqttAuth(String value) {
-		this.value = value;
-	}
-
-	public String getValue() {
-		return value;
-	}
-
-	@Override
-	public String toString() {
-		return this.getValue();
+	static JavaDStream<StructuredRecord> getStructuredRecordJavaDStream(StreamingContext context,HiveMQConfig config) {
+		return null;
 	}
 
 }

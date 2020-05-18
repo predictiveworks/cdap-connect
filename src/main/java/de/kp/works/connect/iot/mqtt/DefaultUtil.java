@@ -191,13 +191,9 @@ public class DefaultUtil implements Serializable {
 	
 	private static Schema getArraySchema(JsonArray array, String[] tokens) {
 
-		JsonElement item = array.get(0);
-		if (item.isJsonPrimitive() == false)
-			return null;
-
-		JsonPrimitive primitive = item.getAsJsonPrimitive();
-		
+		JsonPrimitive primitive = array.get(0).getAsJsonPrimitive();		
 		Schema fieldSchema = SchemaUtil.primitive2Schema(primitive);
+		
 		if (fieldSchema == null)
 			return null;
 		
@@ -232,7 +228,7 @@ public class DefaultUtil implements Serializable {
 	private static Schema getObjectSchema(JsonObject object, String[] tokens) {
 
 		Schema schema = null;
-		Boolean isPrimitive = true;
+		Boolean isAccepted = true;
 
 		/*
 		 * It is an optimistic approach to retrieve the schema
@@ -259,21 +255,40 @@ public class DefaultUtil implements Serializable {
 			 * We expect that the entry is a [JsonPrimitive] and
 			 * also no [JsonNull]
 			 */
-			if (entryValue.isJsonPrimitive() == false || entryValue.isJsonNull()) {
+			if (entryValue.isJsonNull() || entryValue.isJsonObject()) {
 
-				isPrimitive = false;
+				isAccepted = false;
 				break;
 
 			}
 			
-			Schema itemSchema = SchemaUtil.primitive2Schema(entryValue.getAsJsonPrimitive());
-			if (itemSchema == null) {
-
-				isPrimitive = false;
-				break;
-
+			Schema itemSchema = null;
+			if (entryValue.isJsonArray()) {
+				
+				JsonElement entryElem = entryValue.getAsJsonArray().get(0);
+				
+				Schema elemSchema = SchemaUtil.primitive2Schema(entryElem.getAsJsonPrimitive());
+				if (elemSchema == null) {
+					
+					isAccepted = false;
+					break;
+	
+				}
+				
+				itemSchema = Schema.arrayOf(elemSchema);
+				
 			}
+			else {
+
+				itemSchema = SchemaUtil.primitive2Schema(entryValue.getAsJsonPrimitive());
+				if (itemSchema == null) {
+	
+					isAccepted = false;
+					break;
+	
+				}
 			
+			}
 			/* 
 			 * In order to increase flexibility, we define
 			 * a nullable schema for the MQTT field
@@ -282,7 +297,7 @@ public class DefaultUtil implements Serializable {
 			
 		}
 		
-		if (isPrimitive)
+		if (isAccepted)
 			schema = Schema.recordOf("defaultSchema", fields);
 		
 		return schema;
@@ -352,16 +367,13 @@ public class DefaultUtil implements Serializable {
 		
 	}
 	
-	private static JsonObject setCommonFields(JsonObject out, JsonObject in, String format) {
-		
-		String topic = in.get("topic").getAsString();
+	private static JsonObject setCommonFields(JsonObject out, JsonObject in, String format, String topic, String[] tokens) {
 		
 		out.add("timestamp", in.get("timestamp"));
 		
 		out.addProperty("format", format);
 		out.addProperty("topic", topic);
 		
-		String[] tokens = topic.split("\\/");
 		if (tokens.length > 1) {
 			/*
 			 * The tokens are added as contextual information 
@@ -385,19 +397,44 @@ public class DefaultUtil implements Serializable {
 	public static JsonObject buildJsonObject(JsonObject in, Schema schema, MqttConfig config) throws Exception {
 
 		JsonObject out = new JsonObject();
+
+		String format = config.getFormat().name().toLowerCase();
+		
+		String topic = in.get("topic").getAsString();
+		String[] tokens = topic.split("\\/");
 		
 		/* Common Fields */
 
-		out = setCommonFields(out, in, config.getFormat().name().toLowerCase());
+		out = setCommonFields(out, in, format, topic, tokens);
 		
 		/* Payload fields */
 		
+		/*
+		 * The last topic level is used to infer the
+		 * field name
+		 */
+		String fieldName = tokens[tokens.length - 1];
+		if (fieldName.equals("#") || fieldName.equals("+"))
+			fieldName = "value";
+		
 		JsonElement payload = in.get("payload");
-		if (payload.isJsonArray()) {
+		if (payload.isJsonArray() || payload.isJsonPrimitive())
+			out.add(fieldName, payload);
+			
+		else if (payload.isJsonObject()) {
+			/*
+			 * We have to flatten the field names
+			 */
+			for (Map.Entry<String, JsonElement> entry : payload.getAsJsonObject().entrySet()) {
+				
+				String itemName = fieldName + "_" + entry.getKey();
+				JsonElement itemValue = entry.getValue();
+
+				out.add(itemName, itemValue);
+				
+			}
 			
 		}
-		
-		// TODO
 		
 		return out;
 

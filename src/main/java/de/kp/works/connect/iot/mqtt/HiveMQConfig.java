@@ -18,25 +18,26 @@ package de.kp.works.connect.iot.mqtt;
  * 
  */
 
-public enum MqttAuth {
+import java.io.Serializable;
 
-	BASIC("basic"),
-	SSL("ssl"),
-	X509("x509");
+import co.cask.cdap.api.annotation.Description;
+import co.cask.cdap.api.annotation.Macro;
+import de.kp.works.connect.SslConfig;
 
-	private final String value;
+public class HiveMQConfig extends SslConfig implements Serializable {
 
-	MqttAuth(String value) {
-		this.value = value;
-	}
+	private static final long serialVersionUID = 3127652226872012920L;
 
-	public String getValue() {
-		return value;
-	}
+	private static final String USER_DESC = "The MQTT user name.";
+	
+	private static final String PASSWORD_DESC = "The MQTT user password.";
+	
+	@Description(USER_DESC)
+	@Macro
+	public String mqttUser;
 
-	@Override
-	public String toString() {
-		return this.getValue();
-	}
+	@Description(PASSWORD_DESC)
+	@Macro
+	public String mqttPassword;
 
 }

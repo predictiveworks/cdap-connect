@@ -19,10 +19,13 @@ package de.kp.works.connect.iot.mqtt;
  */
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.Function;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import co.cask.cdap.api.data.format.StructuredRecord;
@@ -58,11 +61,15 @@ public class DefaultTransform extends MqttTransform {
 		 */
 		String[] topics = config.getTopics();
 		if (topics.length == 1) {
-
-			if (schema == null)
-				schema = inferSchema(json.collect(), config);
 			
-			return json.map(new SingleTopicTransform(schema, config));
+			JavaRDD<JsonObject> filtered = json.filter(new SingleTopicFilter());
+			if (filtered.isEmpty())
+				return filtered.map(new EmptyJsonTransform());
+				
+			if (schema == null)
+				schema = inferSchema(filtered.collect(), config);
+			
+			return filtered.map(new SingleTopicTransform(schema, config));
 			
 		} else {
 
@@ -99,6 +106,71 @@ public class DefaultTransform extends MqttTransform {
 			/* Retrieve structured record */
 			String json = jsonObject.toString();
 			return StructuredRecordStringConverter.fromJsonString(json, schema);
+		}
+		
+	}
+	/*
+	 * The current implementation does to support any structured
+	 * payloads 
+	 */
+	public class SingleTopicFilter implements Function<JsonObject, Boolean> {
+
+		private static final long serialVersionUID = 4723281489022361128L;
+
+		public SingleTopicFilter() {}
+
+		@Override
+		public Boolean call(JsonObject in) throws Exception {
+			
+			JsonElement payload = in.get("payload");
+			if (payload.isJsonArray()) {
+				/*
+				 * We accept payloads that specifies Arrays of basic data types; 
+				 * the data type is from the first item 
+				 */
+				JsonArray array = payload.getAsJsonArray();
+				if (array.size() == 0)
+					/* Must be delegated to object processing */
+					return true;
+
+				JsonElement item = array.get(0);
+				return item.isJsonPrimitive();
+				
+			}
+			else if (payload.isJsonObject()) {
+				/*
+				 * We accept payloads that specify Objects of basic data types
+				 * or items that describe Arrays of primitive data types
+				 */
+				boolean accepted = true;
+				for (Map.Entry<String, JsonElement> item : payload.getAsJsonObject().entrySet()) {
+					
+					JsonElement value = item.getValue();
+					if (value.isJsonArray()) {
+						
+						JsonArray array = value.getAsJsonArray();
+						if (array.size() == 0) break;
+						
+						accepted = array.get(0).isJsonPrimitive();
+						if (!accepted) break;
+						
+					}
+					else if (value.isJsonObject()) {
+						accepted = false;
+						break;
+					}
+					
+				}
+				
+				return accepted;
+			}
+			
+			else if (payload.isJsonNull()) return false;
+			
+			else if (payload.isJsonPrimitive()) return true;
+			
+			return true;
+
 		}
 		
 	}

@@ -38,6 +38,9 @@ public class MqttStreamUtil {
 			creds = new BasicCredentials(config.mqttUser, config.mqttPassword);
 			break;
 		}
+		case SSL: {
+			break;
+		}
 		case X509: {
 			creds = new PEMX509Credentials(
 					config.mqttUser, 

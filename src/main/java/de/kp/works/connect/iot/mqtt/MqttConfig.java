@@ -132,6 +132,9 @@ public class MqttConfig extends BaseConfig implements Serializable {
 		case BASIC: {
 			break;
 		}
+		case SSL: {
+			break;
+		}
 		case X509: {
 			
 			if (Strings.isNullOrEmpty(mqttCaCertFile)) {
