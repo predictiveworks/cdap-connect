@@ -39,22 +39,40 @@ public class MqttStreamUtil {
 			break;
 		}
 		case X509: {
+			creds = new PEMX509Credentials(
+					config.mqttUser, 
+					config.mqttPassword,    
+					config.mqttCaCertFile,
+					config.mqttCertFile,
+					config.mqttKeyFile, 
+					config.mqttKeyPass);
 			break;
 		}
+		
+		// TODO SSL
+/*
+ * class SSLCredentials(  
+		val username: String,
+		val password: String,
+
+		val keystoreFile: String, 
+		val keystoreType: String,
+		val keystorePassword: String, 
+		val keystoreAlgorithm: String,
+
+		val truststoreFile: String, 
+		val truststoreType: String,
+		val truststorePassword: String, 
+		val truststoreAlgorithm: String, 
+
+		val tlsVersion: String) extends Credentials {
+		
+ */
 		}
 		
 		String[] topics = config.getTopics();
 		JavaDStream<MqttResult> stream = MqttUtils.createStream(context.getSparkStreamingContext(), config.mqttBroker,
 				topics, null, creds, true);
-
-		MqttFormat format = config.getFormat();
-		switch(format) {
-		case TTN_UPLINK: {
-			break;
-		}
-		default:
-		}
-		
 		
 		return stream.transform(new DefaultTransform(config));
 		

@@ -19,7 +19,6 @@ package de.kp.works.connect.iot.mqtt;
  */
 
 import java.io.Serializable;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -31,12 +30,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 
 import co.cask.cdap.api.data.schema.Schema;
 import de.kp.works.connect.core.SchemaUtil;
-import de.kp.works.stream.mqtt.MqttResult;
 
 /**
  * This class contains static helper method to infer the 
@@ -53,7 +50,7 @@ public class TTNUtil implements Serializable {
 
 	/***** SCHEMA *****/
 
-	public static Schema getSchema(List<MqttResult> samples) {
+	public static Schema getSchema(List<JsonObject> samples) {
 
 		List<Schema.Field> fields = new ArrayList<>();
 
@@ -112,16 +109,12 @@ public class TTNUtil implements Serializable {
 	 * We leverage the payload_fields of the provided samples to infer the maximum
 	 * number of fields that are provided by these uplink messages
 	 */
-	private static Collection<Schema.Field> inferPayloadFields(List<MqttResult> samples) throws Exception {
+	private static Collection<Schema.Field> inferPayloadFields(List<JsonObject> samples) throws Exception {
 
 		Map<String, Schema.Field> fieldMap = new HashMap<>();
-		for (MqttResult sample : samples) {
+		for (JsonObject sample : samples) {
 
-			/* Parse plain byte message */
-			Charset UTF8 = Charset.forName("UTF-8");
-
-			String json = new String(sample.payload(), UTF8);
-			JsonElement jsonElement = new JsonParser().parse(json);
+			JsonElement jsonElement = sample.get("payload");
 
 			if (jsonElement.isJsonObject() == false)
 				throw new Exception(String.format("[%s] Uplink messages are specified as JSON objects.",
@@ -237,13 +230,9 @@ public class TTNUtil implements Serializable {
 
 	/***** JSON OBJECT *****/
 
-	public static JsonObject buildJsonObject(MqttResult result, List<String> columns) throws Exception {
+	public static JsonObject buildJsonObject(JsonObject result, List<String> columns) throws Exception {
 
-		/* Parse plain byte message */
-		Charset UTF8 = Charset.forName("UTF-8");
-
-		String json = new String(result.payload(), UTF8);
-		JsonElement jsonElement = new JsonParser().parse(json);
+		JsonElement jsonElement = result.get("payload");
 
 		if (jsonElement.isJsonObject() == false)
 			throw new Exception(

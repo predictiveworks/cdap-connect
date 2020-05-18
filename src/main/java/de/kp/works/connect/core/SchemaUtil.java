@@ -109,8 +109,8 @@ public class SchemaUtil implements Serializable {
 		return schema;
 		
 	}
-
-	private static Schema.Field inferField(List<Schema> schemas, String fieldName) {
+	
+	public static Schema.Field inferField(List<Schema> schemas, String fieldName) {
 
 		Schema fieldSchema = null;
 		boolean isNullable = false;

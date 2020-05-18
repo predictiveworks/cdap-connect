@@ -73,12 +73,10 @@ public class MqttConfig extends BaseConfig implements Serializable {
 	
 	@Description(USER_DESC)
 	@Macro
-	@Nullable
 	public String mqttUser;
 
 	@Description(PASSWORD_DESC)
 	@Macro
-	@Nullable
 	public String mqttPassword;
 
 	@Description(CA_CERT_DESC)
@@ -119,20 +117,19 @@ public class MqttConfig extends BaseConfig implements Serializable {
 		
 		/* Validate quthentication */
 		
+		if (Strings.isNullOrEmpty(mqttUser)) {
+			throw new IllegalArgumentException(
+					String.format("[%s] The MQTT user name must not be empty.", className));
+		}
+		
+		if (Strings.isNullOrEmpty(mqttPassword)) {
+			throw new IllegalArgumentException(
+					String.format("[%s] The MQTT password must not be empty.", className));
+		}
+		
 		MqttAuth auth = getAuth();
 		switch (auth) {
 		case BASIC: {
-			
-			if (Strings.isNullOrEmpty(mqttUser)) {
-				throw new IllegalArgumentException(
-						String.format("[%s] The MQTT user name must not be empty.", className));
-			}
-			
-			if (Strings.isNullOrEmpty(mqttPassword)) {
-				throw new IllegalArgumentException(
-						String.format("[%s] The MQTT password must not be empty.", className));
-			}
-			
 			break;
 		}
 		case X509: {

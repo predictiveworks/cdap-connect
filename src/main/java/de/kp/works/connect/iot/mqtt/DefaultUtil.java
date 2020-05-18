@@ -19,17 +19,18 @@ package de.kp.works.connect.iot.mqtt;
  */
 
 import java.io.Serializable;
-import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.Random;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
 
 import co.cask.cdap.api.data.schema.Schema;
 import de.kp.works.connect.core.SchemaUtil;
-import de.kp.works.stream.mqtt.MqttResult;
 
 public class DefaultUtil implements Serializable {
 
@@ -37,45 +38,368 @@ public class DefaultUtil implements Serializable {
 
 	/***** SCHEMA *****/
 
-	public static Schema getSchema(List<MqttResult> samples) {
-		/*
-		 * STEP #1: Transform Mqtt results into JsonObjects
-		 */
-		List<JsonObject> items = samples.stream().map(sample -> {
-			
-			/* Parse plain byte message */
-			Charset UTF8 = Charset.forName("UTF-8");
+	public static Schema getSchema(List<JsonObject> samples) {
+		return getSchema(samples, 10);
+	}
 
-			String json = new String(sample.payload(), UTF8);
-			JsonElement jsonElement = new JsonParser().parse(json);
+	private static Schema getSchema(List<JsonObject> objects, Integer samples) {
 
-			if (jsonElement.isJsonObject() == false)
-				throw new RuntimeException(String.format("[%s] Mqtt messages are specified as JSON objects.",
-						DefaultUtil.class.getName()));
-			
-			return jsonElement.getAsJsonObject();
-			
-		}).collect(Collectors.toList());
+		int size = objects.size();
+		Random random = new Random();
 		
-		return SchemaUtil.inferSchema(items, 10);
+		/* Intermediate schemas for Json Objects */
+		List<Schema> schemas = new ArrayList<>();
+		List<String> fieldNames = new ArrayList<>();
+
+		/* The final inferred schema */
+		Schema result = null;
+		
+		/* Randomly selected samples to infer a schema */
+		
+		String topic = null;
+		String[] tokens = null;
+		
+		for (int i = 0; i < samples; i++) {
+
+			int index = random.nextInt(size);
+			JsonObject obj = objects.get(index);
+			
+			if (topic == null) {
+				
+				topic = obj.get("topic").getAsString();
+				tokens = topic.split("\\/");
+				
+			}
+
+			JsonElement payload = objects.get(index).get("payload");			
+			if (payload.isJsonArray()) {
+				
+				/* Json Array
+				 * 
+				 * The topic is expected to describe a single field
+				 * and its value is assumed to be an Array of basic
+				 * data values.
+				 * 
+				 * In case of an array result, we not not infer the 
+				 * schema from the set of samples
+				 */
+				if (result != null) break;
+				
+				JsonArray array = payload.getAsJsonArray();
+				if (array.size() == 0) continue;
+				
+				Schema schema = getArraySchema(array, tokens);
+				if (schema != null)
+					result = schema;
+				
+				else {
+					/*
+					 * The payload specifies a [JsonArray] and its
+					 * first item (and all other items) does not
+					 * describe a [JsonPrimitive].
+					 * 
+					 * This use case is not supported
+					 */
+					break;
+				}
+			}
+			
+			else if (payload.isJsonObject()) {
+
+				/* Json Object
+				 * 
+				 * The topic is expected to describe a single field
+				 * and its value is assumed to be an object of basic
+				 * data values.
+				 * 
+				 * In case of an object result, we not not infer the 
+				 * schema from the set of samples
+				 */
+				if (result != null) break;
+				
+				JsonObject object = payload.getAsJsonObject();
+				Schema schema = null;
+				
+				schema = getObjectSchema(object, tokens);
+				if (schema != null)
+					result = schema;
+				
+				else {
+					
+					/*
+					 * The [JsonObject] has at least one entry that
+					 * does not specify a primititive.
+					 * 
+					 * Retrieve schema and also the unique list of all 
+					 * field names to determine whether a certain schema 
+					 * must be nullable or not
+					 */
+					schema = SchemaUtil.inferSchema(object);
+					schema.getFields().stream().forEach(field -> {
+
+						String fieldName = field.getName();
+
+						if (!fieldNames.contains(fieldName))
+							fieldNames.add(fieldName);
+
+					});
+					
+				}
+			}
+			
+			else if (payload.isJsonPrimitive()) {
+				
+				/* Json Primitive
+				 * 				 
+				 * The topic is expected to describe a single field
+				 * and its value is assumed to be a basicdata value.
+				 * 
+				 * In case of a primitive result, we not notinfer the 
+				 * schema from the set of samples
+				 */
+				if (result != null) break;
+				
+				Schema schema = getPrimitiveSchema(payload.getAsJsonPrimitive(), tokens);
+				if (schema != null)
+					result = schema;
+				
+			}
+			
+		}
+		
+		if (result == null && fieldNames.isEmpty() == false) {
+
+			/*
+			 * The schema is inferred from payloads that are 
+			 */
+			List<Schema.Field> fields = new ArrayList<>();
+
+			/* Common fields & topic extraction */
+			fields.addAll(getCommonFields(tokens));
+
+			for (String fieldName : fieldNames) {
+				fields.add(SchemaUtil.inferField(schemas, fieldName));
+			}
+
+			result = Schema.recordOf("mqttSchema", fields);
+		
+		}
+		
+		return result;
+		
+	}
+	
+	private static Schema getArraySchema(JsonArray array, String[] tokens) {
+
+		JsonElement item = array.get(0);
+		if (item.isJsonPrimitive() == false)
+			return null;
+
+		JsonPrimitive primitive = item.getAsJsonPrimitive();
+		
+		Schema fieldSchema = SchemaUtil.primitive2Schema(primitive);
+		if (fieldSchema == null)
+			return null;
+		
+		else {
+			
+			List<Schema.Field> fields = new ArrayList<>();
+
+			/* Common fields & topic extraction */
+			fields.addAll(getCommonFields(tokens));
+			
+			/*
+			 * The last topic level is used to infer the
+			 * field name
+			 */
+			String fieldName = tokens[tokens.length - 1];
+			if (fieldName.equals("#") || fieldName.equals("+"))
+				fieldName = "value";
+			
+			/* 
+			 * In order to increase flexibility, we define
+			 * a nullable schema for the MQTT field
+			 */
+			fields.add(Schema.Field.of(fieldName, Schema.nullableOf(Schema.arrayOf(fieldSchema))));
+			
+			Schema schema = Schema.recordOf("defaultSchema", fields);
+			return schema;
+			
+			
+		}
+	}
+	
+	private static Schema getObjectSchema(JsonObject object, String[] tokens) {
+
+		Schema schema = null;
+		Boolean isPrimitive = true;
+
+		/*
+		 * It is an optimistic approach to retrieve the schema
+		 * from the object
+		 */
+		List<Schema.Field> fields = new ArrayList<>();
+
+		/* Common fields & topic extraction */
+		fields.addAll(getCommonFields(tokens));
+		
+		/*
+		 * The last topic level is used to infer the
+		 * field name
+		 */
+		String fieldName = tokens[tokens.length - 1];
+		if (fieldName.equals("#") || fieldName.equals("+"))
+			fieldName = "value";
+
+		for (Map.Entry<String, JsonElement> entry : object.entrySet()) {
+			
+			String itemName = fieldName + "_" + entry.getKey();
+			JsonElement entryValue = entry.getValue();
+			/*
+			 * We expect that the entry is a [JsonPrimitive] and
+			 * also no [JsonNull]
+			 */
+			if (entryValue.isJsonPrimitive() == false || entryValue.isJsonNull()) {
+
+				isPrimitive = false;
+				break;
+
+			}
+			
+			Schema itemSchema = SchemaUtil.primitive2Schema(entryValue.getAsJsonPrimitive());
+			if (itemSchema == null) {
+
+				isPrimitive = false;
+				break;
+
+			}
+			
+			/* 
+			 * In order to increase flexibility, we define
+			 * a nullable schema for the MQTT field
+			 */
+			fields.add(Schema.Field.of(itemName, Schema.nullableOf(itemSchema)));
+			
+		}
+		
+		if (isPrimitive)
+			schema = Schema.recordOf("defaultSchema", fields);
+		
+		return schema;
+		
+	}
+	
+	private static Schema getPrimitiveSchema(JsonPrimitive primitive, String[] tokens) {
+		
+		Schema fieldSchema = SchemaUtil.primitive2Schema(primitive);
+		if (fieldSchema == null)
+			return null;
+		
+		else {
+			
+			List<Schema.Field> fields = new ArrayList<>();
+
+			/* Common fields & topic extraction */
+			fields.addAll(getCommonFields(tokens));
+			
+			/*
+			 * The last topic level is used to infer the
+			 * field name
+			 */
+			String fieldName = tokens[tokens.length - 1];
+			if (fieldName.equals("#") || fieldName.equals("+"))
+				fieldName = "value";
+			
+			/* 
+			 * In order to increase flexibility, we define
+			 * a nullable schema for the MQTT field
+			 */
+			fields.add(Schema.Field.of(fieldName, Schema.nullableOf(fieldSchema)));
+			
+			Schema schema = Schema.recordOf("defaultSchema", fields);
+			return schema;
+			
+			
+		}
 
 	}
 
+	private static List<Schema.Field> getCommonFields(String[] tokens) {
+		
+		List<Schema.Field> fields = new ArrayList<>();
+
+		/* Common fields */
+		fields.add(Schema.Field.of("timestamp", Schema.of(Schema.Type.LONG)));		
+		
+		fields.add(Schema.Field.of("format", Schema.of(Schema.Type.STRING)));			
+		fields.add(Schema.Field.of("topic", Schema.of(Schema.Type.STRING)));			
+		
+		/* Topic extraction */		
+		if (tokens.length > 1) {
+			/*
+			 * The tokens are added as contextual information 
+			 * to enable subsequent fitering or more
+			 */
+			for (int i = 0; i < tokens.length -1; i++) {
+				
+				String fieldName = "level_" + i;
+				fields.add(Schema.Field.of(fieldName, Schema.of(Schema.Type.STRING)));
+				
+			}
+		}
+
+		return fields;
+		
+	}
+	
+	private static JsonObject setCommonFields(JsonObject out, JsonObject in, String format) {
+		
+		String topic = in.get("topic").getAsString();
+		
+		out.add("timestamp", in.get("timestamp"));
+		
+		out.addProperty("format", format);
+		out.addProperty("topic", topic);
+		
+		String[] tokens = topic.split("\\/");
+		if (tokens.length > 1) {
+			/*
+			 * The tokens are added as contextual information 
+			 * to enable subsequent fitering or more
+			 */
+			for (int i = 0; i < tokens.length -1; i++) {
+				
+				String fieldName = "level_" + i;
+				String fieldValue = tokens[i];
+				
+				out.addProperty(fieldName, fieldValue);;
+				
+			}
+		}
+
+		return out;
+	}
+	
 	/***** JSON OBJECT *****/
 
-	public static JsonObject buildJsonObject(MqttResult result) throws Exception {
+	public static JsonObject buildJsonObject(JsonObject in, Schema schema, MqttConfig config) throws Exception {
+
+		JsonObject out = new JsonObject();
 		
-		/* Parse plain byte message */
-		Charset UTF8 = Charset.forName("UTF-8");
+		/* Common Fields */
 
-		String json = new String(result.payload(), UTF8);
-		JsonElement jsonElement = new JsonParser().parse(json);
-
-		if (jsonElement.isJsonObject() == false)
-			throw new RuntimeException(String.format("[%s] Mqtt messages are specified as JSON objects.",
-					DefaultUtil.class.getName()));
-
-		return jsonElement.getAsJsonObject();
+		out = setCommonFields(out, in, config.getFormat().name().toLowerCase());
+		
+		/* Payload fields */
+		
+		JsonElement payload = in.get("payload");
+		if (payload.isJsonArray()) {
+			
+		}
+		
+		// TODO
+		
+		return out;
 
 	}
 

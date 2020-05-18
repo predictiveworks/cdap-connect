@@ -42,50 +42,59 @@ public class DefaultTransform extends MqttTransform {
 	public JavaRDD<StructuredRecord> call(JavaRDD<MqttResult> input) throws Exception {
 		
 		if (input.isEmpty())
-			return input.map(new EmptyTransform());
-		
+			return input.map(new EmptyMqttTransform());
+
 		/*
-		 * Distinguish between a multi topic and a single
-		 * topic use case; for multiple topics, we cannot
-		 * expect a detailed schema
+		 * We transform [MqttResult] into generic [JsonObjects]
+		 * and filter those that are NULL
+		 */
+		JavaRDD<JsonObject> json = input.map(new JsonTransform()).filter(new JsonFilter());
+		if (json.isEmpty())
+			return json.map(new EmptyJsonTransform());
+
+		/*
+		 * Distinguish between a multi topic and a single topic use 
+		 * case; for multiple topics, we cannot expect a detailed schema
 		 */
 		String[] topics = config.getTopics();
 		if (topics.length == 1) {
 
 			if (schema == null)
-				schema = inferSchema(input.collect(), config);
+				schema = inferSchema(json.collect(), config);
 			
-			return input.map(new SingleTopicTransform(schema));
+			return json.map(new SingleTopicTransform(schema, config));
 			
 		} else {
 
 			if (schema == null)
 				schema = buildPlainSchema();
 			
-			return input.map(new MultiTopicTransform(schema, config));
+			return json.map(new MultiTopicTransform(schema, config));
 		}
 
 	}
 	
 	@Override
-	public Schema inferSchema(List<MqttResult> samples, MqttConfig config) {
+	public Schema inferSchema(List<JsonObject> samples, MqttConfig config) {
 		return DefaultUtil.getSchema(samples);
 	}
 	
-	public class SingleTopicTransform implements Function<MqttResult, StructuredRecord> {
+	public class SingleTopicTransform implements Function<JsonObject, StructuredRecord> {
 
 		private static final long serialVersionUID = 1811675023332143555L;
 
+		private MqttConfig config;
 		private Schema schema;
 		
-		public SingleTopicTransform(Schema schema) {
+		public SingleTopicTransform(Schema schema, MqttConfig config) {
+			this.config = config;
 			this.schema = schema;
 		}
 
 		@Override
-		public StructuredRecord call(MqttResult in) throws Exception {
+		public StructuredRecord call(JsonObject in) throws Exception {
 			
-			JsonObject jsonObject = DefaultUtil.buildJsonObject(in);
+			JsonObject jsonObject = DefaultUtil.buildJsonObject(in, schema, config);
 			
 			/* Retrieve structured record */
 			String json = jsonObject.toString();

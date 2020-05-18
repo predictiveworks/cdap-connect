@@ -50,7 +50,15 @@ public class TTNTransform extends MqttTransform {
 	public JavaRDD<StructuredRecord> call(JavaRDD<MqttResult> input) throws Exception {
 		
 		if (input.isEmpty())
-			return input.map(new EmptyTransform());
+			return input.map(new EmptyMqttTransform());
+
+		/*
+		 * We transform [MqttResult] into generic [JsonObjects]
+		 * and filter those that are NULL
+		 */
+		JavaRDD<JsonObject> json = input.map(new JsonTransform()).filter(new JsonFilter());
+		if (json.isEmpty())
+			return json.map(new EmptyJsonTransform());
 		
 		/*
 		 * Distinguish between a multi topic and a single
@@ -62,30 +70,30 @@ public class TTNTransform extends MqttTransform {
 
 			if (schema == null) {
 				
-				schema = inferSchema(input.collect(), config);
+				schema = inferSchema(json.collect(), config);
 				columns = TTNUtil.getColumns(schema);
 				
 			}
 			
-			return input.map(new SingleTopicTransform(schema, columns));
+			return json.map(new SingleTopicTransform(schema, columns));
 			
 		} else {
 
 			if (schema == null)
 				schema = buildPlainSchema();
 			
-			return input.map(new MultiTopicTransform(schema, config));
+			return json.map(new MultiTopicTransform(schema, config));
 
 		}
 	
 	}
 
 	@Override
-	public Schema inferSchema(List<MqttResult> samples, MqttConfig config) {
+	public Schema inferSchema(List<JsonObject> samples, MqttConfig config) {
 		return TTNUtil.getSchema(samples);
 	}
 	
-	public class SingleTopicTransform implements Function<MqttResult, StructuredRecord> {
+	public class SingleTopicTransform implements Function<JsonObject, StructuredRecord> {
 
 		private static final long serialVersionUID = 5408293859618821904L;
 
@@ -99,12 +107,12 @@ public class TTNTransform extends MqttTransform {
 		}
 
 		@Override
-		public StructuredRecord call(MqttResult in) throws Exception {
+		public StructuredRecord call(JsonObject in) throws Exception {
 			
-			JsonObject jsonObject = TTNUtil.buildJsonObject(in, columns);
+			JsonObject outObject = TTNUtil.buildJsonObject(in, columns);
 			
 			/* Retrieve structured record */
-			String json = jsonObject.toString();
+			String json = outObject.toString();
 			return StructuredRecordStringConverter.fromJsonString(json, schema);
 
 		}

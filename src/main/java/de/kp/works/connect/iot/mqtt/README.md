@@ -1,7 +1,7 @@
-# MQTT Plugin
+# MQTT Connectors
 
-## The Things Network (TTN)
+## Default Connector
 
-TTN uses MQTT to publish device activations and messages, but also allows to publish a message for a specific device in response.
+## HiveMQ Connector
 
-## The Things Stack
+## TheThings Network Connector
