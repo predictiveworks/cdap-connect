@@ -19,25 +19,62 @@ package de.kp.works.connect.iot.mqtt;
  */
 
 import java.io.Serializable;
+import java.util.stream.Stream;
+
+import com.google.common.base.Strings;
 
 import co.cask.cdap.api.annotation.Description;
 import co.cask.cdap.api.annotation.Macro;
-import de.kp.works.connect.SslConfig;
 
-public class HiveMQConfig extends SslConfig implements Serializable {
+public class HiveMQConfig extends BaseMqttConfig implements Serializable {
 
 	private static final long serialVersionUID = 3127652226872012920L;
 
-	private static final String USER_DESC = "The MQTT user name.";
-	
-	private static final String PASSWORD_DESC = "The MQTT user password.";
-	
-	@Description(USER_DESC)
+	@Description("The host of the HiveMQ broker.")
 	@Macro
-	public String mqttUser;
+	public String mqttHost;
 
-	@Description(PASSWORD_DESC)
+	@Description("The port of the HiveMQ broker.")
 	@Macro
-	public String mqttPassword;
+	public Integer mqttPort;
 
+	@Description("The MQTT topic to listen to.")
+	@Macro
+	public String mqttTopic;
+
+	@Description("The version of MQTT protocol.")
+	@Macro
+	public String mqttVersion;
+
+	public MqttVersion getMqttVersion() {
+
+		Class<MqttVersion> enumClazz = MqttVersion.class;
+
+		return Stream.of(enumClazz.getEnumConstants()).filter(keyType -> keyType.getValue().equalsIgnoreCase(mqttVersion))
+				.findAny().orElseThrow(() -> new IllegalArgumentException(
+						String.format("Unsupported value for MQTT version: '%s'", mqttVersion)));
+
+	}
+
+	public void validate() {
+		super.validate();
+
+		String className = this.getClass().getName();
+		
+		if (Strings.isNullOrEmpty(mqttHost)) {
+			throw new IllegalArgumentException(
+					String.format("[%s] The MQTT host must not be empty.", className));
+		}
+
+		if (mqttPort < 1) {
+			throw new IllegalArgumentException(
+					String.format("[%s] The MQTT port must be positive.", className));
+		}
+		
+		if (Strings.isNullOrEmpty(mqttTopic)) {
+			throw new IllegalArgumentException(
+					String.format("[%s] The MQTT topic must not be empty.", className));
+		}
+
+	}
 }

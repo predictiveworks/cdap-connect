@@ -20,82 +20,131 @@ package de.kp.works.connect;
 
 import javax.annotation.Nullable;
 
-import com.google.common.base.Strings;
-
 import co.cask.cdap.api.annotation.Description;
 import co.cask.cdap.api.annotation.Macro;
 
 public class SslConfig extends BaseConfig {
 	
 	private static final long serialVersionUID = 6634557540579917171L;
+	
+	protected static final String CA_CERT_DESC = "The path to the file that contains the CA certificate.";
+	
+	protected static final String CERT_DESC = "The path to the file that contains the client certificate.";
+	
+	protected static final String PRIVATE_KEY_DESC = "The path to the file that contains the private key.";
+	
+	protected static final String PRIVATE_KEY_PASSWORD_DESC = "The password to read the private key.";
+	
+	protected static final String CIPHER_SUITES_DESC = "A comma-separated list of cipher suites which are allowed for "
+			+ "a secure connection. Samples are TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256, TLS_RSA_WITH_AES_128_GCM_SHA256 and others.";
 
-	@Description("An indicator to determine whether SSL has to be used to secure a remote "
-			+ "connection. Supported values are 'true' and 'false'. Default is 'true'.")
-	@Macro
-	public String sslMode;
+	protected static final String KEYSTORE_PATH_DESC = "A path to a file which contains the client SSL keystore.";
 
-	@Description("An indicator to determine whether certificates have to be verified. "
+	protected static final String KEYSTORE_TYPE_DESC = "The format of the client SSL keystore. Suported values are 'JKS', "
+			+ "'JCEKS' and 'PKCS12'. Default is 'JKS'.";
+
+	protected static final String KEYSTORE_PASS_DESC = "The password of the client SSL keystore.";
+
+	protected static final String KEYSTORE_ALGO_DESC = "The algorithm used for the client SSL keystore. Default is 'SunX509'.";
+	
+	protected static final String TRUSTSTORE_PATH_DESC = "A path to a file which contains the client SSL truststore.";
+
+	protected static final String TRUSTSTORE_TYPE_DESC = "The format of the client SSL truststore. Suported values are 'JKS', "
+			+ "'JCEKS' and 'PKCS12'. Default is 'JKS'.";
+
+	protected static final String TRUSTSTORE_PASS_DESC = "The password of the client SSL truststore.";
+
+	protected static final String TRUSTSTORE_ALGO_DESC = "The algorithm used for the client SSL truststore. Default is 'SunX509'.";
+	
+	protected static final String SSL_VERIFY_DESC = "An indicator to determine whether certificates have to be verified. "
 			+ "Supported values are 'true' and 'false'. If 'false', untrusted trust "
-			+ "certificates (e.g. self signed), will not lead to an error. Do not disable "
-			+ "this in production environment on a network you do not entirely trust.")
+			+ "certificates (e.g. self signed), will not lead to an error.";
+	
+	/*
+	 * Support for SSL client-server authentication, based on a set of files
+	 * that contain certificates and private key; this information is used to
+	 * create respective key and truststores for authentication
+	 */
+	
+	@Description(CA_CERT_DESC)
 	@Macro
 	@Nullable
-	public String sslVerify;
+	public String sslCaCertFile;
 
-	/** KEY STORE **/
+	@Description(CERT_DESC)
+	@Macro
+	@Nullable
+	public String sslCertFile;
 
-	@Description("A comma-separated list of cipher suites which are allowed for a secure connection. "
-			+ "Samples are TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256, TLS_RSA_WITH_AES_128_GCM_SHA256 and others.")
+	@Description(PRIVATE_KEY_DESC)
+	@Macro
+	@Nullable
+	public String sslPrivateKeyFile;
+
+	@Description(PRIVATE_KEY_PASSWORD_DESC)
+	@Macro
+	@Nullable
+	public String sslPrivateKeyPass;
+	
+	/*
+	* Support for SSL client-server authentication, based on existing key & trust
+	* store files; this information is used to build key & trust managers from
+	* existing key & trust stores.
+	*/
+
+	@Description(CIPHER_SUITES_DESC)
 	@Macro
 	@Nullable
 	public String sslCipherSuites;
 	
-	@Description("A path to a file which contains the client SSL keystore.")
+	@Description(KEYSTORE_PATH_DESC)
 	@Macro
 	@Nullable
 	public String sslKeyStorePath;
 
-	@Description("The format of the client SSL keystore. Suported values are 'JKS', 'JCEKS' and 'PKCS12'. Default is 'JKS'.")
+	@Description(KEYSTORE_TYPE_DESC)
 	@Macro
 	@Nullable
 	public String sslKeyStoreType;
 
-	@Description("The password of the client SSL keystore.")
+	@Description(KEYSTORE_PASS_DESC)
 	@Macro
 	@Nullable
 	public String sslKeyStorePass;
 
-	@Description("The algorithm used for the client SSL keystore. Default is 'SunX509'.")
+	@Description(KEYSTORE_ALGO_DESC)
 	@Macro
 	@Nullable
 	public String sslKeyStoreAlgo;
-	
-	/** TRUST STORE **/
 
-	@Description("A path to a file which contains the client SSL truststore.")
+	@Description(TRUSTSTORE_PATH_DESC)
 	@Macro
 	@Nullable
 	public String sslTrustStorePath;
 
-	@Description("The format of the client SSL truststore. Suported values are 'JKS', 'JCEKS' and 'PKCS12'. Default is 'JKS'.")
+	@Description(TRUSTSTORE_TYPE_DESC)
 	@Macro
 	@Nullable
 	public String sslTrustStoreType;
 
-	@Description("The password of the client SSL truststore.")
+	@Description(TRUSTSTORE_PASS_DESC)
 	@Macro
 	@Nullable
 	public String sslTrustStorePass;
 
-	@Description("The algorithm used for the client SSL truststore. Default is 'SunX509'.")
+	@Description(TRUSTSTORE_ALGO_DESC)
 	@Macro
 	@Nullable
 	public String sslTrustStoreAlgo;
 	
+	@Description(SSL_VERIFY_DESC)
+	@Macro
+	@Nullable
+	public String sslVerify;
+	
 	public SslConfig() {
 		super();
 		
-		sslMode = "true";
 		sslVerify = "true";
 		
 		sslKeyStoreType = "JKS";
@@ -108,11 +157,6 @@ public class SslConfig extends BaseConfig {
 	
 	public void validate() {
 		super.validate();
-		
-		if (Strings.isNullOrEmpty(sslMode)) {
-			throw new IllegalArgumentException(
-					String.format("[%s] The SSL indicator must not be empty.", this.getClass().getName()));
-		}
 		
 	}
 	

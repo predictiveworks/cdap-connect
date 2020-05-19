@@ -18,12 +18,15 @@ package de.kp.works.connect.iot.mqtt;
  * 
  */
 
+import java.util.Map;
+
 import org.apache.spark.streaming.api.java.JavaDStream;
 
 import co.cask.cdap.api.annotation.Description;
 import co.cask.cdap.api.annotation.Name;
 import co.cask.cdap.api.annotation.Plugin;
 import co.cask.cdap.api.data.format.StructuredRecord;
+import co.cask.cdap.api.security.store.SecureStore;
 import co.cask.cdap.etl.api.PipelineConfigurer;
 import co.cask.cdap.etl.api.StageConfigurer;
 import co.cask.cdap.etl.api.streaming.StreamingContext;
@@ -61,6 +64,10 @@ public class HiveMQSource extends StreamingSource<StructuredRecord> {
 	
 	@Override
 	public JavaDStream<StructuredRecord> getStream(StreamingContext context) throws Exception {
-		return HiveMQStreamUtil.getStructuredRecordJavaDStream(context, config);			}
+		
+		SecureStore secureStore = context.getSparkExecutionContext().getSecureStore();
+		Map<String,String> secureData = secureStore.listSecureData(context.getNamespace());
+		
+		return HiveMQStreamUtil.getStructuredRecordJavaDStream(context, config, secureData);			}
 
 }

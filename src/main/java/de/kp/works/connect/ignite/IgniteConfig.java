@@ -69,6 +69,11 @@ public class IgniteConfig extends SslConfig {
 	@Macro
 	@Nullable
 	public String password;
+
+	@Description("Indicator to determine whether SSL transport security is used or not.")
+	@Macro
+	@Nullable
+	public String sslMode;
 	
 	public IgniteConfig() {
 	}

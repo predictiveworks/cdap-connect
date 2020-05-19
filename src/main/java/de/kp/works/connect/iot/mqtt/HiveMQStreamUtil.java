@@ -18,15 +18,65 @@ package de.kp.works.connect.iot.mqtt;
  * 
  */
 
+import java.util.Map;
+import java.util.Properties;
+
 import org.apache.spark.streaming.api.java.JavaDStream;
+import org.apache.spark.storage.StorageLevel;
 
 import co.cask.cdap.api.data.format.StructuredRecord;
 import co.cask.cdap.etl.api.streaming.StreamingContext;
 
-public class HiveMQStreamUtil {
+import de.kp.works.stream.mqtt.HiveMQUtils;
+import de.kp.works.stream.mqtt.MqttResult;
+import de.kp.works.stream.ssl.*;
 
-	static JavaDStream<StructuredRecord> getStructuredRecordJavaDStream(StreamingContext context,HiveMQConfig config) {
+public class HiveMQStreamUtil extends BaseMqttUtil {
+
+	static JavaDStream<StructuredRecord> getStructuredRecordJavaDStream(StreamingContext context,HiveMQConfig mqttConfig, Map<String, String> mqttSecure) {
+
+		setSparkStreamingConf(context, getSparkStreamingProperties(mqttConfig));		
+		SSLOptions sslOptions = mqttConfig.getMqttSsl(mqttSecure);
+		
+		int qos = mqttConfig.getMqttQoS().ordinal();		
+		int version = 0;
+		
+		MqttVersion mqttVersion = mqttConfig.getMqttVersion();
+		switch (mqttVersion) {
+		case V_3: {
+			version = 3;
+			break;
+		}
+		case V_5: {
+			version = 5;
+			break;
+		}
+		}
+		
+		JavaDStream<MqttResult> stream = HiveMQUtils.createStream(
+				context.getSparkStreamingContext(), 
+				StorageLevel.MEMORY_AND_DISK_SER_2(), 
+				mqttConfig.mqttTopic,
+				mqttConfig.mqttHost,
+				mqttConfig.mqttPort,
+				mqttConfig.mqttUser, 
+				mqttConfig.mqttPass, 
+				sslOptions, 
+				qos,
+				version);
+					 		
 		return null;
+	
+	}
+	/*
+	 * This method is used to add Spark Streaming specific
+	 * parameters from configuration
+	 */
+	private static Properties getSparkStreamingProperties(HiveMQConfig config) {
+		
+		Properties properties = new Properties();
+		return properties;
+		
 	}
 
 }

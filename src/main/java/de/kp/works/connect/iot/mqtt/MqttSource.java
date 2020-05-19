@@ -67,14 +67,7 @@ public class MqttSource extends StreamingSource<StructuredRecord> {
 		
 		SecureStore secureStore = context.getSparkExecutionContext().getSecureStore();
 		Map<String,String> secureData = secureStore.listSecureData(context.getNamespace());
-
-		/*
-		 * Trained analytic model retrieval
-		 * 
-		 * Admin admin = cdapContext.getAdmin();
-    		 *	if (!admin.datasetExists(config.getName())) {
-		 */
 		
-		return MqttStreamUtil.getStructuredRecordJavaDStream(context, config);			}
+		return MqttStreamUtil.getStructuredRecordJavaDStream(context, config, secureData);			}
 
 }

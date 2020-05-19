@@ -18,6 +18,7 @@ package de.kp.works.connect.iot.mqtt;
  * 
  */
 
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.spark.streaming.api.java.JavaDStream;
@@ -25,69 +26,33 @@ import org.apache.spark.streaming.api.java.JavaDStream;
 import co.cask.cdap.api.data.format.StructuredRecord;
 import co.cask.cdap.etl.api.streaming.StreamingContext;
 
-import de.kp.works.stream.creds.*;
+import de.kp.works.stream.ssl.*;
 import de.kp.works.stream.mqtt.*;
 
-public class MqttStreamUtil extends BaseMqttUtil{
+public class MqttStreamUtil extends BaseMqttUtil {
 
-	public static JavaDStream<StructuredRecord> getStructuredRecordJavaDStream(StreamingContext context, MqttConfig config) {
+	public static JavaDStream<StructuredRecord> getStructuredRecordJavaDStream(StreamingContext context, MqttConfig mqttConfig, Map<String,String> mqttSecure) {
 
-		setSparkStreamingConf(context, getSparkStreamingProperties(config));
+		setSparkStreamingConf(context, getSparkStreamingProperties(mqttConfig));		
+		SSLOptions sslOptions = mqttConfig.getMqttSsl(mqttSecure);
 		
-		Credentials creds = null;
-
-		MqttAuth auth = config.getAuth();
-		switch (auth) {
-		case BASIC: {
-			creds = new BasicCredentials(config.mqttUser, config.mqttPassword);
-			break;
-		}
-		case SSL: {
-			break;
-		}
-		case X509: {
-			creds = new PEMX509Credentials(
-					config.mqttUser, 
-					config.mqttPassword,    
-					config.mqttCaCertFile,
-					config.mqttCertFile,
-					config.mqttKeyFile, 
-					config.mqttKeyPass);
-			break;
-		}
+		String[] topics = mqttConfig.getTopics();
+		int qos = mqttConfig.getMqttQoS().ordinal();
 		
-		// TODO SSL
-/*
- * class SSLCredentials(  
-		val username: String,
-		val password: String,
-
-		val keystoreFile: String, 
-		val keystoreType: String,
-		val keystorePassword: String, 
-		val keystoreAlgorithm: String,
-
-		val truststoreFile: String, 
-		val truststoreType: String,
-		val truststorePassword: String, 
-		val truststoreAlgorithm: String, 
-
-		val tlsVersion: String) extends Credentials {
-		
- */
-		}
-		
-		String[] topics = config.getTopics();
-		JavaDStream<MqttResult> stream = MqttUtils.createStream(context.getSparkStreamingContext(), config.mqttBroker,
-				topics, null, creds, true);
-		
-		return stream.transform(new DefaultTransform(config));
+		JavaDStream<MqttResult> stream = MqttUtils.createStream(context.getSparkStreamingContext(), mqttConfig.mqttBroker,
+				topics, mqttConfig.mqttUser, mqttConfig.mqttPass, sslOptions, null, true, qos);
+						  		
+		return stream.transform(new DefaultTransform(mqttConfig));
 		
 	}
-
+	/*
+	 * This method is used to add Spark Streaming specific
+	 * parameters from configuration
+	 */
 	private static Properties getSparkStreamingProperties(MqttConfig config) {
 		
 		Properties properties = new Properties();
 		return properties;
+		
 	}
 }
