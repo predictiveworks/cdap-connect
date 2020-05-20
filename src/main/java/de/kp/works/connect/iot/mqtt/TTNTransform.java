@@ -40,9 +40,10 @@ public class TTNTransform extends MqttTransform {
 
 	/* The specification of the payload fields */
 	private List<String> columns = null;
+	private MqttConfig config;
 	
 	public TTNTransform(MqttConfig config) {
-		super(config);
+		this.config = config;
 
 	}
 
@@ -70,7 +71,7 @@ public class TTNTransform extends MqttTransform {
 
 			if (schema == null) {
 				
-				schema = inferSchema(json.collect(), config);
+				schema = inferSchema(json.collect());
 				columns = TTNUtil.getColumns(schema);
 				
 			}
@@ -82,14 +83,15 @@ public class TTNTransform extends MqttTransform {
 			if (schema == null)
 				schema = buildPlainSchema();
 			
-			return json.map(new MultiTopicTransform(schema, config));
+			String format = config.getFormat().name().toLowerCase();
+			return json.map(new MultiTopicTransform(schema, format));
 
 		}
 	
 	}
 
 	@Override
-	public Schema inferSchema(List<JsonObject> samples, MqttConfig config) {
+	public Schema inferSchema(List<JsonObject> samples) {
 		return TTNUtil.getSchema(samples);
 	}
 	

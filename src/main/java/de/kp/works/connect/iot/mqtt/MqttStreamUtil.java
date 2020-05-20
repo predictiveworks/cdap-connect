@@ -36,13 +36,15 @@ public class MqttStreamUtil extends BaseMqttUtil {
 		setSparkStreamingConf(context, getSparkStreamingProperties(mqttConfig));		
 		SSLOptions sslOptions = mqttConfig.getMqttSsl(mqttSecure);
 		
+		String format = mqttConfig.getFormat().name().toLowerCase();
 		String[] topics = mqttConfig.getTopics();
+		
 		int qos = mqttConfig.getMqttQoS().ordinal();
 		
 		JavaDStream<MqttResult> stream = MqttUtils.createStream(context.getSparkStreamingContext(), mqttConfig.mqttBroker,
 				topics, mqttConfig.mqttUser, mqttConfig.mqttPass, sslOptions, null, true, qos);
 						  		
-		return stream.transform(new DefaultTransform(mqttConfig));
+		return stream.transform(new DefaultTransform(format, topics));
 		
 	}
 	/*

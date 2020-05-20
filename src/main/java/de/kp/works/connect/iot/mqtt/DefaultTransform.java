@@ -37,8 +37,15 @@ public class DefaultTransform extends MqttTransform {
 
 	private static final long serialVersionUID = 5511944788990345893L;
 	
-	public DefaultTransform(MqttConfig config) {
-		super(config);
+	private String format;
+	private String[] topics;
+	
+	public DefaultTransform(String format, String[] topics) {
+		super();
+		
+		this.format = format;
+		this.topics = topics;
+		
 	}
 	
 	@Override
@@ -59,7 +66,7 @@ public class DefaultTransform extends MqttTransform {
 		 * Distinguish between a multi topic and a single topic use 
 		 * case; for multiple topics, we cannot expect a detailed schema
 		 */
-		String action = topics2Action(config.getTopics());
+		String action = topics2Action(topics);
 		if (action.equals("single")) {
 			/*
 			 * Retrieve a single topic without any wildcards
@@ -69,16 +76,16 @@ public class DefaultTransform extends MqttTransform {
 				return filtered.map(new EmptyJsonTransform());
 				
 			if (schema == null)
-				schema = inferSchema(filtered.collect(), config);
+				schema = inferSchema(filtered.collect());
 			
-			return filtered.map(new SingleTopicTransform(schema, config));
+			return filtered.map(new SingleTopicTransform(schema, format));
 			
 		} else {
 
 			if (schema == null)
 				schema = buildPlainSchema();
 			
-			return json.map(new MultiTopicTransform(schema, config));
+			return json.map(new MultiTopicTransform(schema, format));
 		}
 
 	}
@@ -106,7 +113,7 @@ public class DefaultTransform extends MqttTransform {
 	}
 	
 	@Override
-	public Schema inferSchema(List<JsonObject> samples, MqttConfig config) {
+	public Schema inferSchema(List<JsonObject> samples) {
 		return DefaulSingleTopicUtil.getSchema(samples);
 	}
 	
@@ -114,18 +121,18 @@ public class DefaultTransform extends MqttTransform {
 
 		private static final long serialVersionUID = 1811675023332143555L;
 
-		private MqttConfig config;
+		private String format;
 		private Schema schema;
 		
-		public SingleTopicTransform(Schema schema, MqttConfig config) {
-			this.config = config;
+		public SingleTopicTransform(Schema schema, String format) {
+			this.format = format;
 			this.schema = schema;
 		}
 
 		@Override
 		public StructuredRecord call(JsonObject in) throws Exception {
 			
-			JsonObject jsonObject = DefaulSingleTopicUtil.buildJsonObject(in, schema, config);
+			JsonObject jsonObject = DefaulSingleTopicUtil.buildJsonObject(in, schema, format);
 			
 			/* Retrieve structured record */
 			String json = jsonObject.toString();

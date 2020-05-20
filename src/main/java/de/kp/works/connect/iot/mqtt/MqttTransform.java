@@ -18,7 +18,6 @@ package de.kp.works.connect.iot.mqtt;
  * 
  */
 
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,31 +38,28 @@ public abstract class MqttTransform implements Function<JavaRDD<MqttResult>, Jav
 	private static final long serialVersionUID = 5511944788990345893L;
 
 	protected Gson GSON = new Gson();
-	
-	protected MqttConfig config;
 	protected Schema schema;
 
-	public MqttTransform(MqttConfig config) {
-		this.config = config;
+	public MqttTransform() {
 	}
 	
-	public abstract Schema inferSchema(List<JsonObject> samples, MqttConfig config);
+	public abstract Schema inferSchema(List<JsonObject> samples);
 
 	public Schema buildPlainSchema() {
 
 		List<Schema.Field> fields = new ArrayList<>();
 		
-		Schema.Field timestamp = Schema.Field.of("timestamp", Schema.of(Schema.Type.LONG));
-		fields.add(timestamp);
+		fields.add(Schema.Field.of("timestamp", Schema.of(Schema.Type.LONG)));
+		fields.add(Schema.Field.of("seconds", Schema.of(Schema.Type.LONG)));
 		
-		Schema.Field format = Schema.Field.of("format", Schema.of(Schema.Type.STRING));
-		fields.add(format);
-		
-		Schema.Field topic = Schema.Field.of("topic", Schema.of(Schema.Type.STRING));
-		fields.add(topic);
+		fields.add(Schema.Field.of("format", Schema.of(Schema.Type.STRING)));
+		fields.add(Schema.Field.of("topic", Schema.of(Schema.Type.STRING)));
 
-		Schema.Field payload = Schema.Field.of("payload", Schema.of(Schema.Type.STRING));
-		fields.add(payload);
+		fields.add(Schema.Field.of("digest", Schema.of(Schema.Type.STRING)));
+		fields.add(Schema.Field.of("context", Schema.of(Schema.Type.STRING)));
+
+		fields.add(Schema.Field.of("dimension", Schema.of(Schema.Type.STRING)));
+		fields.add(Schema.Field.of("payload", Schema.of(Schema.Type.STRING)));
 
 		schema = Schema.recordOf("plainSchema", fields);
 		return schema;
@@ -80,11 +76,12 @@ public abstract class MqttTransform implements Function<JavaRDD<MqttResult>, Jav
 
 		private static final long serialVersionUID = 2437381949864484498L;
 
-		private MqttConfig config;
 		private Schema schema;
+		private String format;
 		
-		public MultiTopicTransform(Schema schema, MqttConfig config) {
-			this.config = config;
+		public MultiTopicTransform(Schema schema, String format) {
+			
+			this.format = format;
 			this.schema = schema;
 		}
 		
@@ -94,10 +91,16 @@ public abstract class MqttTransform implements Function<JavaRDD<MqttResult>, Jav
 			StructuredRecord.Builder builder = StructuredRecord.builder(schema);
 			
 			builder.set("timestamp", in.get("timestamp").getAsLong());
-			builder.set("format", config.getFormat().name().toLowerCase());
-			
+			builder.set("seconds", in.get("seconds").getAsLong());
+
+			builder.set("format", format);
 			builder.set("topic", in.get("topic").getAsString());
+
+			builder.set("digest", in.get("digest").getAsString());
+			builder.set("context", in.get("context").getAsString());
 			
+			builder.set("dimension", in.get("dimension").getAsString());
+
 			JsonElement payload = in.get("payload");
 			builder.set("payload", GSON.toJson(payload));
 			
@@ -162,19 +165,45 @@ public abstract class MqttTransform implements Function<JavaRDD<MqttResult>, Jav
 		public JsonObject call(MqttResult in) throws Exception {
 			
 			JsonObject jsonObject = new JsonObject();
-			
+
+			/* Timestamp in milliseconds the MQTT message arrived */
 			jsonObject.addProperty("timestamp", in.timestamp());
+			
+			/* Timestamp in seconds the MQTT message arrived;
+			 * this field is introduced to support time bins
+			 */
+			jsonObject.addProperty("seconds", in.seconds());
+
+			/* The complete topic, i.e. all hierarchies this
+			 * MQTT message refers to
+			 */
 			jsonObject.addProperty("topic", in.topic());
 			
-			/* Parse plain byte message */
-			Charset UTF8 = Charset.forName("UTF-8");
-
-			String json = new String(in.payload(), UTF8);
-			JsonElement jsonElement = new JsonParser().parse(json);
+			/* digest describes the MD5 digest of topic and
+			 * serialized payload and can be used to identify
+			 * MQTT messages that contain the same information
+			 */
+			jsonObject.addProperty("digest", in.digest());
+			
+			/* context describes the MD5 digest of all topic
+			 * levels except the last or lowest one and can
+			 * be used to group MQTT messages
+			 */
+			jsonObject.addProperty("context", in.context());
+			
+			/* dimension describes the last or lowest topic
+			 * level and is excepted to specify the name of
+			 * a data field, e.g. temperature, pressure etc.
+			 */
+			jsonObject.addProperty("dimension", in.dimension());
+			
+			/* The raw payloaf Array[Byte] is not used here
+			 */
+			JsonElement jsonElement = new JsonParser().parse( in.json());
 			
 			jsonObject.add("payload", jsonElement);
 			return jsonObject;
-
+			
 		}
 		
 	}

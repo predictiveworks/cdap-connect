@@ -152,7 +152,7 @@ public class DefaulSingleTopicUtil implements Serializable {
 			List<Schema.Field> fields = new ArrayList<>();
 
 			/* Common fields & topic extraction */
-			fields.addAll(getCommonFields(tokens));
+			fields.addAll(getCommonFields());
 			
 			/*
 			 * The last topic level is used to infer the
@@ -184,7 +184,7 @@ public class DefaulSingleTopicUtil implements Serializable {
 		List<Schema.Field> fields = new ArrayList<>();
 
 		/* Common fields & topic extraction */
-		fields.addAll(getCommonFields(tokens));
+		fields.addAll(getCommonFields());
 		
 		/*
 		 * The last topic level is used to infer the
@@ -259,7 +259,7 @@ public class DefaulSingleTopicUtil implements Serializable {
 			List<Schema.Field> fields = new ArrayList<>();
 
 			/* Common fields & topic extraction */
-			fields.addAll(getCommonFields(tokens));
+			fields.addAll(getCommonFields());
 			
 			/*
 			 * The last topic level is used to infer the
@@ -280,73 +280,52 @@ public class DefaulSingleTopicUtil implements Serializable {
 
 	}
 
-	private static List<Schema.Field> getCommonFields(String[] tokens) {
+	private static List<Schema.Field> getCommonFields() {
 		
 		List<Schema.Field> fields = new ArrayList<>();
 
 		/* Common fields */
 		fields.add(Schema.Field.of("timestamp", Schema.of(Schema.Type.LONG)));		
+		fields.add(Schema.Field.of("seconds", Schema.of(Schema.Type.LONG)));		
 		
 		fields.add(Schema.Field.of("format", Schema.of(Schema.Type.STRING)));			
 		fields.add(Schema.Field.of("topic", Schema.of(Schema.Type.STRING)));			
-		
-		/* Topic extraction */		
-		if (tokens.length > 1) {
-			/*
-			 * The tokens are added as contextual information 
-			 * to enable subsequent fitering or more
-			 */
-			for (int i = 0; i < tokens.length -1; i++) {
-				
-				String fieldName = "level_" + i;
-				fields.add(Schema.Field.of(fieldName, Schema.of(Schema.Type.STRING)));
-				
-			}
-		}
 
+		fields.add(Schema.Field.of("digest", Schema.of(Schema.Type.STRING)));
+		fields.add(Schema.Field.of("context", Schema.of(Schema.Type.STRING)));
+
+		fields.add(Schema.Field.of("dimension", Schema.of(Schema.Type.STRING)));
 		return fields;
 		
 	}
 	
-	private static JsonObject setCommonFields(JsonObject out, JsonObject in, String format, String topic, String[] tokens) {
+	private static JsonObject setCommonFields(JsonObject out, JsonObject in, String format) {
 		
 		out.add("timestamp", in.get("timestamp"));
+		out.add("seconds", in.get("seconds"));
 		
 		out.addProperty("format", format);
-		out.addProperty("topic", topic);
+		out.add("topic", in.get("topic"));
 		
-		if (tokens.length > 1) {
-			/*
-			 * The tokens are added as contextual information 
-			 * to enable subsequent fitering or more
-			 */
-			for (int i = 0; i < tokens.length -1; i++) {
-				
-				String fieldName = "level_" + i;
-				String fieldValue = tokens[i];
-				
-				out.addProperty(fieldName, fieldValue);;
-				
-			}
-		}
+		out.add("digest", in.get("digest"));
+		out.add("context", in.get("context"));
 
+		out.add("dimension", in.get("dimension"));
 		return out;
 	}
 	
 	/***** JSON OBJECT *****/
 
-	public static JsonObject buildJsonObject(JsonObject in, Schema schema, MqttConfig config) throws Exception {
+	public static JsonObject buildJsonObject(JsonObject in, Schema schema, String format) throws Exception {
 
 		JsonObject out = new JsonObject();
-
-		String format = config.getFormat().name().toLowerCase();
 		
 		String topic = in.get("topic").getAsString();
 		String[] tokens = topic.split("\\/");
 		
 		/* Common Fields */
 
-		out = setCommonFields(out, in, format, topic, tokens);
+		out = setCommonFields(out, in, format);
 		
 		/* Payload fields */
 		

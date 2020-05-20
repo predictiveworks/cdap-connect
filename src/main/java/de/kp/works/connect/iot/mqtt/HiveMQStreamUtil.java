@@ -64,8 +64,11 @@ public class HiveMQStreamUtil extends BaseMqttUtil {
 				sslOptions, 
 				qos,
 				version);
-					 		
-		return null;
+
+		String format = "default";
+		String[] topics = new String[] {mqttConfig.mqttTopic};
+		
+		return stream.transform(new DefaultTransform(format, topics));
 	
 	}
 	/*
