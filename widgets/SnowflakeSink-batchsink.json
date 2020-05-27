@@ -1,0 +1,82 @@
+{
+"metadata": {"spec-version": "1.5"},
+
+"display-name": "Snowflake Sink",
+ "configuration-groups": [
+    {
+      "label": "Plugin Configuration",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "Reference Name",
+          "name": "referenceName"
+        }
+ 	    ]
+    },
+    {
+      "label": "Endpoint Configuration",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "Host",
+          "name": "host"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Port",
+          "name": "port"
+        }
+      ]
+    },
+    {
+      "label": "Data Configuration",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "Warehouse Name",
+          "name": "warehouse"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Account",
+          "name": "account"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Database Name",
+          "name": "database"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Database Schema",
+          "name": "schema"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Table Name",
+          "name": "tableName"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Primary Key",
+          "name": "primaryKey"
+        }
+      ]
+    },
+    {
+      "label": "Authentication",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "User Name",
+          "name": "user"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Password",
+          "name": "password"
+        }
+      ]
+    }
+  ]
+}
