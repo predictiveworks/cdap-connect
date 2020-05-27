@@ -27,7 +27,7 @@ import com.google.gson.JsonParser;
 
 import co.cask.cdap.api.data.format.StructuredRecord;
 import co.cask.cdap.api.data.schema.Schema;
-import de.kp.works.connect.osquery.OsqueryUtil;
+import de.kp.works.connect.kafka.osquery.OsqueryUtil;
 import de.kp.works.stream.pubsub.PubSubResult;
 
 public class KolideTransform extends PubSubTransform {

@@ -1,4 +1,4 @@
-package de.kp.works.connect.osquery;
+package de.kp.works.connect.kafka.osquery;
 /*
  * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
  *

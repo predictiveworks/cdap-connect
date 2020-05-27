@@ -1,4 +1,4 @@
-package de.kp.works.connect.parsers;
+package de.kp.works.connect.kafka.zeek;
 /*
  * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
  *
