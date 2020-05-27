@@ -1,7 +1,7 @@
 {
 "metadata": {"spec-version": "1.5"},
 
-"display-name": "Crate Source",
+"display-name": "Redshift Source",
  "configuration-groups": [
     {
       "label": "Plugin Configuration",
@@ -33,6 +33,11 @@
       "properties": [
         {
           "widget-type": "textbox",
+          "label": "Database Name",
+          "name": "database"
+        },
+        {
+          "widget-type": "textbox",
           "label": "Table Name",
           "name": "tableName"
         },
@@ -44,7 +49,7 @@
             "rows": "10"
           }
         }
-      ]
+ 	    ]
     },
     {
       "label": "Authentication",
@@ -61,5 +66,5 @@
         }
       ]
     }
-  ]
+ 	]
 }

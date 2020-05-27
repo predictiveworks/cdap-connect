@@ -1,7 +1,7 @@
 {
 "metadata": {"spec-version": "1.5"},
 
-"display-name": "Crate Source",
+"display-name": "SAP Hana Source",
  "configuration-groups": [
     {
       "label": "Plugin Configuration",
@@ -11,7 +11,7 @@
           "label": "Reference Name",
           "name": "referenceName"
         }
- 	  ]
+ 	    ]
     },
     {
       "label": "Endpoint Configuration",
@@ -44,7 +44,7 @@
             "rows": "10"
           }
         }
-      ]
+ 	    ]
     },
     {
       "label": "Authentication",
@@ -61,5 +61,5 @@
         }
       ]
     }
-  ]
+ 	]
 }
