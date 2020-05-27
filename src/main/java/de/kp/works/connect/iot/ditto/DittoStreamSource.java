@@ -30,8 +30,8 @@ import co.cask.cdap.etl.api.streaming.StreamingContext;
 import co.cask.cdap.etl.api.streaming.StreamingSource;
 
 @Plugin(type = StreamingSource.PLUGIN_TYPE)
-@Name("ThingStreamSource")
-@Description("A Bosch IoT Thing streaming source that supports real-time websocket event streams.")
+@Name("DittoSource")
+@Description("An Eclipse Ditto IoT streaming source that supports real-time websocket event streams.")
 public class DittoStreamSource extends StreamingSource<StructuredRecord>{
 
 	private static final long serialVersionUID = -8154749515870756082L;

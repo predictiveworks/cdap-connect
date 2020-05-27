@@ -1,4 +1,4 @@
-package de.kp.works.connect.iot.mqtt;
+package de.kp.works.connect.core;
 /*
  * Copyright (c) 2020 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -23,7 +23,7 @@ import java.util.Set;
 
 import co.cask.cdap.etl.api.streaming.StreamingContext;
 
-public class BaseMqttUtil {
+public class BaseStreamUtil {
 	/*
 	 * A helper method to set streaming properties danymically
 	 */

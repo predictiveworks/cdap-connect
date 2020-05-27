@@ -4,21 +4,26 @@
 "display-name": "OrientDB Sink",
  "configuration-groups": [
     {
-      "label": "Server Configuration",
+      "label": "Plugin Configuration",
       "properties": [
         {
           "widget-type": "textbox",
           "label": "Reference Name",
           "name": "referenceName"
-        },
+        }
+ 	    ]
+    },
+    {
+      "label": "Endpoint Configuration",
+      "properties": [
         {
           "widget-type": "textbox",
-          "label": "OrientDB Host",
+          "label": "Host",
           "name": "host"
         },
         {
           "widget-type": "textbox",
-          "label": "OrientDB Port",
+          "label": "Port",
           "name": "port"
         }
       ]

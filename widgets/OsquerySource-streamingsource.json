@@ -4,13 +4,18 @@
 "display-name": "Osquery Source",
  "configuration-groups": [
     {
-      "label": "Kafka Configuration",
+      "label": "Plugin Configuration",
       "properties": [
         {
           "widget-type": "textbox",
           "label": "Reference Name",
           "name": "referenceName"
-        },
+        }
+ 	    ]
+    },
+    {
+      "label": "Broker Configuration",
+      "properties": [
         {
           "widget-type": "csv",
           "label": "Brokers",
@@ -25,8 +30,8 @@
           "name": "kafkaProperties",
           "widget-attributes": {
             "showDelimiter": "false",
-            "key-placeholder": "Kafka property",
-            "value-placeholder": "Kafka property value"
+            "key-placeholder": "Consumer property",
+            "value-placeholder": "Consumer property value"
           }
         },
         {

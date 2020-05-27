@@ -4,21 +4,26 @@
 "display-name": "Crate Source",
  "configuration-groups": [
     {
-      "label": "Server Configuration",
+      "label": "Plugin Configuration",
       "properties": [
         {
           "widget-type": "textbox",
           "label": "Reference Name",
           "name": "referenceName"
-        },
+        }
+ 	  ]
+    },
+    {
+      "label": "Endpoint Configuration",
+      "properties": [
         {
           "widget-type": "textbox",
-          "label": "Crate Host",
+          "label": "Host",
           "name": "host"
         },
         {
           "widget-type": "textbox",
-          "label": "Crate Port",
+          "label": "Port",
           "name": "port"
         }
       ]

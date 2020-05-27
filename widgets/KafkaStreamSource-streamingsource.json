@@ -4,16 +4,21 @@
 "display-name": "Kafka Stream Source",
  "configuration-groups": [
     {
-      "label": "Kafka Configuration",
+      "label": "Plugin Configuration",
       "properties": [
         {
           "widget-type": "textbox",
           "label": "Reference Name",
           "name": "referenceName"
-        },
+        }
+ 	    ]
+    },
+    {
+      "label": "Broker Configuration",
+      "properties": [
         {
           "widget-type": "csv",
-          "label": "Kafka Brokers",
+          "label": "Brokers",
           "name": "brokers",
           "widget-attributes": {
             "delimiter": ","
@@ -21,17 +26,17 @@
         },
         {
           "widget-type": "keyvalue",
-          "label": "Kafka Consumer Properties",
+          "label": "Consumer Properties",
           "name": "kafkaProperties",
           "widget-attributes": {
             "showDelimiter": "false",
-            "key-placeholder": "Kafka consumer property",
-            "value-placeholder": "Kafka consumer property value"
+            "key-placeholder": "Consumer property",
+            "value-placeholder": "Consumer property value"
           }
         },
         {
           "widget-type": "textbox",
-          "label": "Kafka Topic",
+          "label": "Topic",
           "name": "topic"
         },
         {

@@ -1,16 +1,21 @@
 {
 "metadata": {"spec-version": "1.5"},
 
-"display-name": "Ditto Stream Source",
+"display-name": "Ditto Source",
  "configuration-groups": [
     {
-      "label": "Connection",
+      "label": "Plugin Configuration",
       "properties": [
         {
           "widget-type": "textbox",
           "label": "Reference Name",
           "name": "referenceName"
-        },
+        }
+ 	  ]
+    },
+    {
+      "label": "Endpoint Configuration",
+      "properties": [
         {
           "widget-type": "textbox",
           "label": "Endpoint",

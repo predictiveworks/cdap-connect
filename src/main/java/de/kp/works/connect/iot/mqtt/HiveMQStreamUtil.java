@@ -26,12 +26,12 @@ import org.apache.spark.storage.StorageLevel;
 
 import co.cask.cdap.api.data.format.StructuredRecord;
 import co.cask.cdap.etl.api.streaming.StreamingContext;
-
+import de.kp.works.connect.core.BaseStreamUtil;
 import de.kp.works.stream.mqtt.HiveMQUtils;
 import de.kp.works.stream.mqtt.MqttResult;
 import de.kp.works.stream.ssl.*;
 
-public class HiveMQStreamUtil extends BaseMqttUtil {
+public class HiveMQStreamUtil extends BaseStreamUtil {
 
 	static JavaDStream<StructuredRecord> getStructuredRecordJavaDStream(StreamingContext context,HiveMQConfig mqttConfig, Map<String, String> mqttSecure) {
 

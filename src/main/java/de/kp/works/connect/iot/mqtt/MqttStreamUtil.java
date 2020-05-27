@@ -27,9 +27,10 @@ import co.cask.cdap.api.data.format.StructuredRecord;
 import co.cask.cdap.etl.api.streaming.StreamingContext;
 
 import de.kp.works.stream.ssl.*;
+import de.kp.works.connect.core.BaseStreamUtil;
 import de.kp.works.stream.mqtt.*;
 
-public class MqttStreamUtil extends BaseMqttUtil {
+public class MqttStreamUtil extends BaseStreamUtil {
 
 	public static JavaDStream<StructuredRecord> getStructuredRecordJavaDStream(StreamingContext context, MqttConfig mqttConfig, Map<String,String> mqttSecure) {
 
@@ -43,7 +44,7 @@ public class MqttStreamUtil extends BaseMqttUtil {
 		
 		JavaDStream<MqttResult> stream = MqttUtils.createStream(context.getSparkStreamingContext(), mqttConfig.mqttBroker,
 				topics, mqttConfig.mqttUser, mqttConfig.mqttPass, sslOptions, null, true, qos);
-						  		
+		
 		return stream.transform(new DefaultTransform(format, topics));
 		
 	}
