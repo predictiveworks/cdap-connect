@@ -26,30 +26,30 @@ import org.apache.spark.streaming.api.java.JavaDStream;
 import com.google.api.client.auth.oauth2.Credential;
 
 import co.cask.cdap.api.data.format.StructuredRecord;
-import co.cask.cdap.api.data.schema.Schema;
 import co.cask.cdap.etl.api.streaming.StreamingContext;
-
 import de.kp.works.connect.core.BaseStreamUtil;
-import de.kp.works.stream.pubsub.*;
+import de.kp.works.stream.pubsub.GCPCredentialsProvider;
+import de.kp.works.stream.pubsub.PubSubResult;
+import de.kp.works.stream.pubsub.PubSubUtils;
 
-public class PubSubStreamUtil extends BaseStreamUtil {
+public class KolideStreamUtil extends BaseStreamUtil {
 
 	public static JavaDStream<StructuredRecord> getStructuredRecordJavaDStream(StreamingContext context,
-			PubSubConfig pubSubConfig, Map<String,String> pubSubSecure, Schema schema) {
+			KolideConfig kolideConfig, Map<String,String> kolideSecure) {
 
-		setSparkStreamingConf(context, getSparkStreamingProperties(pubSubConfig));
+		setSparkStreamingConf(context, getSparkStreamingProperties(kolideConfig));
 
 		/* Credentials */
-		String serviceAccountFilePath = pubSubConfig.getServiceFilePath(pubSubSecure);
+		String serviceAccountFilePath = kolideConfig.getServiceFilePath(kolideSecure);
 
 		GCPCredentialsProvider provider = new GCPCredentialsProvider(serviceAccountFilePath);
 		Credential credential = provider.getCredential();
 
 		/* Project, subscription & topic */
-		String project = pubSubConfig.project;
-		String subscription = pubSubConfig.subscription;
+		String project = kolideConfig.project;
+		String subscription = kolideConfig.subscription;
 
-		String topic = pubSubConfig.topic;
+		String topic = kolideConfig.topic;
 
 		JavaDStream<PubSubResult> stream = null;
 		if (topic == null) {
@@ -60,7 +60,7 @@ public class PubSubStreamUtil extends BaseStreamUtil {
 
 		}
 		
-		return stream.transform(new DefaultTransform(schema));
+		return stream.transform(new KolideTransform());
 
 	}
 
@@ -68,7 +68,7 @@ public class PubSubStreamUtil extends BaseStreamUtil {
 	 * This method is used to add Spark Streaming specific parameters from
 	 * configuration
 	 */
-	private static Properties getSparkStreamingProperties(PubSubConfig config) {
+	private static Properties getSparkStreamingProperties(KolideConfig config) {
 
 		Properties properties = new Properties();
 		return properties;
