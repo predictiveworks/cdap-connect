@@ -1,4 +1,4 @@
-package de.kp.works.connect.iot.mqtt;
+package de.kp.works.connect.iot.hivemq;
 /*
  * Copyright (c) 2020 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -39,9 +39,9 @@ public class HiveMQSource extends StreamingSource<StructuredRecord> {
 
 	private static final long serialVersionUID = 1416177275229321806L;
 
-	private HiveMQConfig config;
+	private HiveMQSourceConfig config;
 	
-	public HiveMQSource(HiveMQConfig config) {
+	public HiveMQSource(HiveMQSourceConfig config) {
 		this.config = config;
 	}
 

@@ -1,4 +1,4 @@
-package de.kp.works.connect.netflow;
+package de.kp.works.connect.iot.hivemq;
 /*
  * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -18,10 +18,8 @@ package de.kp.works.connect.netflow;
  * 
  */
 
-import co.cask.cdap.api.data.format.StructuredRecord;
+public class HiveMQSinkConfig extends HiveMQConfig {
 
-public abstract class NetflowMessage {
+	private static final long serialVersionUID = 64085442003752050L;
 
-	public abstract StructuredRecord toRecord() throws Exception;
-	
 }

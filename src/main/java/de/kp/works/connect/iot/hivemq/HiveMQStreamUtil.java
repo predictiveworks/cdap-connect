@@ -1,4 +1,4 @@
-package de.kp.works.connect.iot.mqtt;
+package de.kp.works.connect.iot.hivemq;
 /*
  * Copyright (c) 2020 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -27,13 +27,15 @@ import org.apache.spark.storage.StorageLevel;
 import co.cask.cdap.api.data.format.StructuredRecord;
 import co.cask.cdap.etl.api.streaming.StreamingContext;
 import de.kp.works.connect.core.BaseStreamUtil;
+import de.kp.works.connect.iot.mqtt.DefaultTransform;
+import de.kp.works.connect.iot.mqtt.MqttVersion;
 import de.kp.works.stream.mqtt.HiveMQUtils;
 import de.kp.works.stream.mqtt.MqttResult;
 import de.kp.works.stream.ssl.*;
 
 public class HiveMQStreamUtil extends BaseStreamUtil {
 
-	static JavaDStream<StructuredRecord> getStructuredRecordJavaDStream(StreamingContext context,HiveMQConfig mqttConfig, Map<String, String> mqttSecure) {
+	static JavaDStream<StructuredRecord> getStructuredRecordJavaDStream(StreamingContext context,HiveMQSourceConfig mqttConfig, Map<String, String> mqttSecure) {
 
 		setSparkStreamingConf(context, getSparkStreamingProperties(mqttConfig));		
 		SSLOptions sslOptions = mqttConfig.getMqttSsl(mqttSecure);
@@ -75,7 +77,7 @@ public class HiveMQStreamUtil extends BaseStreamUtil {
 	 * This method is used to add Spark Streaming specific
 	 * parameters from configuration
 	 */
-	private static Properties getSparkStreamingProperties(HiveMQConfig config) {
+	private static Properties getSparkStreamingProperties(HiveMQSourceConfig config) {
 		
 		Properties properties = new Properties();
 		return properties;

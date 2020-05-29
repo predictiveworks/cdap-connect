@@ -69,6 +69,7 @@ public class OsquerySource extends StreamingSource<StructuredRecord> {
 	
 	@Override
 	public JavaDStream<StructuredRecord> getStream(StreamingContext context) throws Exception {
-		return OsqueryStreamUtil.getStructuredRecordJavaDStream(context, config);			}
+		return OsqueryStreamUtil.getStructuredRecordJavaDStream(context, config);			
+	}
 
 }

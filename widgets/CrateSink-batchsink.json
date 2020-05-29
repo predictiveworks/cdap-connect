@@ -11,7 +11,7 @@
           "label": "Reference Name",
           "name": "referenceName"
         }
- 	  ]
+ 	    ]
     },
     {
       "label": "Endpoint Configuration",
@@ -29,7 +29,7 @@
       ]
     },
     {
-      "label": "Table Configuration",
+      "label": "Data Configuration",
       "properties": [
         {
           "widget-type": "textbox",

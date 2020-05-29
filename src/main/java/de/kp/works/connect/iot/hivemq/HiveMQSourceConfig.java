@@ -1,6 +1,6 @@
-package de.kp.works.connect.netflow.v9;
+package de.kp.works.connect.iot.hivemq;
 /*
- * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
+ * Copyright (c) 2020 Dr. Krusche & Partner PartG. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -18,6 +18,8 @@ package de.kp.works.connect.netflow.v9;
  * 
  */
 
-public enum FlowKind {
-	FLOWSET, OPTIONS
+public class HiveMQSourceConfig extends HiveMQConfig {
+
+	private static final long serialVersionUID = 3127652226872012920L;
+
 }

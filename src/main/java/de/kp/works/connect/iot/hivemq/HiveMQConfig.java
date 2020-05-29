@@ -1,4 +1,4 @@
-package de.kp.works.connect.iot.mqtt;
+package de.kp.works.connect.iot.hivemq;
 /*
  * Copyright (c) 2020 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -25,6 +25,8 @@ import com.google.common.base.Strings;
 
 import co.cask.cdap.api.annotation.Description;
 import co.cask.cdap.api.annotation.Macro;
+import de.kp.works.connect.iot.mqtt.BaseMqttConfig;
+import de.kp.works.connect.iot.mqtt.MqttVersion;
 
 public class HiveMQConfig extends BaseMqttConfig implements Serializable {
 
@@ -38,7 +40,7 @@ public class HiveMQConfig extends BaseMqttConfig implements Serializable {
 	@Macro
 	public Integer mqttPort;
 
-	@Description("The MQTT topic to listen to.")
+	@Description("The MQTT topic to subscribe or publish to.")
 	@Macro
 	public String mqttTopic;
 
@@ -78,3 +80,4 @@ public class HiveMQConfig extends BaseMqttConfig implements Serializable {
 
 	}
 }
+
