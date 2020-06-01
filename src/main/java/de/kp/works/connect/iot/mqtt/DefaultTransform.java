@@ -49,13 +49,13 @@ public class DefaultTransform extends MqttTransform {
 	}
 	
 	@Override
-	public JavaRDD<StructuredRecord> call(JavaRDD<MqttResult> input) throws Exception {
+	public JavaRDD<StructuredRecord> call(JavaRDD<MqttEvent> input) throws Exception {
 		
 		if (input.isEmpty())
 			return input.map(new EmptyMqttTransform());
 
 		/*
-		 * We transform [MqttResult] into generic [JsonObjects]
+		 * We transform [MqttEvent] into generic [JsonObjects]
 		 * and filter those that are NULL
 		 */
 		JavaRDD<JsonObject> json = input.map(new JsonTransform()).filter(new JsonFilter());

@@ -25,13 +25,13 @@ import org.apache.spark.streaming.api.java.JavaDStream;
 
 import co.cask.cdap.etl.api.streaming.StreamingContext;
 import de.kp.works.connect.core.BaseStreamUtil;
-import de.kp.works.stream.mqtt.MqttResult;
+import de.kp.works.stream.mqtt.MqttEvent;
 import de.kp.works.stream.mqtt.MqttUtils;
 import de.kp.works.stream.ssl.SSLOptions;
 
 public class BaseMqttStreamUtil extends BaseStreamUtil {
 	
-	protected static JavaDStream<MqttResult> createStream(StreamingContext context, MqttConfig mqttConfig, Map<String,String> mqttSecure) {
+	protected static JavaDStream<MqttEvent> createStream(StreamingContext context, MqttConfig mqttConfig, Map<String,String> mqttSecure) {
 
 		setSparkStreamingConf(context, getSparkStreamingProperties(mqttConfig));		
 		SSLOptions sslOptions = mqttConfig.getMqttSsl(mqttSecure);
@@ -39,7 +39,7 @@ public class BaseMqttStreamUtil extends BaseStreamUtil {
 		String[] topics = mqttConfig.getTopics();
 		int qos = mqttConfig.getMqttQoS().ordinal();
 		
-		JavaDStream<MqttResult> stream = MqttUtils.createStream(context.getSparkStreamingContext(), mqttConfig.mqttBroker,
+		JavaDStream<MqttEvent> stream = MqttUtils.createStream(context.getSparkStreamingContext(), mqttConfig.mqttBroker,
 				topics, mqttConfig.mqttUser, mqttConfig.mqttPass, sslOptions, null, true, qos);
 		
 		return stream;

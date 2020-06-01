@@ -25,7 +25,7 @@ import org.apache.spark.streaming.api.java.JavaDStream;
 import co.cask.cdap.api.data.format.StructuredRecord;
 import co.cask.cdap.etl.api.streaming.StreamingContext;
 import de.kp.works.connect.iot.mqtt.DefaultTransform;
-import de.kp.works.stream.mqtt.MqttResult;
+import de.kp.works.stream.mqtt.MqttEvent;
 
 public class HiveMQStreamUtil extends BaseHiveMQStreamUtil {
 
@@ -33,7 +33,7 @@ public class HiveMQStreamUtil extends BaseHiveMQStreamUtil {
 
 		String[] topics = mqttConfig.getTopics();
 		
-		JavaDStream<MqttResult> stream = createStream(context, mqttConfig, mqttSecure);
+		JavaDStream<MqttEvent> stream = createStream(context, mqttConfig, mqttSecure);
 
 		String format = "default";
 		return stream.transform(new DefaultTransform(format, topics));

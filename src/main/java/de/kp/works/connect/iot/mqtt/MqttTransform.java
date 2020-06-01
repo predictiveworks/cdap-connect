@@ -31,9 +31,9 @@ import com.google.gson.JsonParser;
 
 import co.cask.cdap.api.data.format.StructuredRecord;
 import co.cask.cdap.api.data.schema.Schema;
-import de.kp.works.stream.mqtt.MqttResult;
+import de.kp.works.stream.mqtt.MqttEvent;
 
-public abstract class MqttTransform implements Function<JavaRDD<MqttResult>, JavaRDD<StructuredRecord>> {
+public abstract class MqttTransform implements Function<JavaRDD<MqttEvent>, JavaRDD<StructuredRecord>> {
 
 	private static final long serialVersionUID = 5511944788990345893L;
 
@@ -114,12 +114,12 @@ public abstract class MqttTransform implements Function<JavaRDD<MqttResult>, Jav
 	 * This method transforms an empty stream batch into
 	 * a dummy structured record
 	 */
-	public class EmptyMqttTransform implements Function<MqttResult, StructuredRecord> {
+	public class EmptyMqttTransform implements Function<MqttEvent, StructuredRecord> {
 
 		private static final long serialVersionUID = -2582275414113323812L;
 
 		@Override
-		public StructuredRecord call(MqttResult in) throws Exception {
+		public StructuredRecord call(MqttEvent in) throws Exception {
 
 			List<Schema.Field> schemaFields = new ArrayList<>();
 			Schema schema = Schema.recordOf("mqttSchema", schemaFields);
@@ -153,16 +153,16 @@ public abstract class MqttTransform implements Function<JavaRDD<MqttResult>, Jav
 	}
 	/**
 	 * The initial transformation stage to
-	 * turn [MqttResult] into [JsonObject]
+	 * turn [MqttEvent] into [JsonObject]
 	 */
-	public class JsonTransform implements Function<MqttResult, JsonObject> {
+	public class JsonTransform implements Function<MqttEvent, JsonObject> {
 		
 		private static final long serialVersionUID = 2152957637609061446L;
 
 		public JsonTransform() {}
 
 		@Override
-		public JsonObject call(MqttResult in) throws Exception {
+		public JsonObject call(MqttEvent in) throws Exception {
 			
 			JsonObject jsonObject = new JsonObject();
 

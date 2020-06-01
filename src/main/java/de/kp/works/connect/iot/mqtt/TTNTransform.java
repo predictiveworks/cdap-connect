@@ -28,7 +28,7 @@ import com.google.gson.JsonObject;
 import co.cask.cdap.api.data.format.StructuredRecord;
 import co.cask.cdap.api.data.schema.Schema;
 import co.cask.cdap.format.StructuredRecordStringConverter;
-import de.kp.works.stream.mqtt.MqttResult;
+import de.kp.works.stream.mqtt.MqttEvent;
 
 /**
  * This transformer supports The Things Network uplink messages, 
@@ -48,13 +48,13 @@ public class TTNTransform extends MqttTransform {
 	}
 
 	@Override
-	public JavaRDD<StructuredRecord> call(JavaRDD<MqttResult> input) throws Exception {
+	public JavaRDD<StructuredRecord> call(JavaRDD<MqttEvent> input) throws Exception {
 		
 		if (input.isEmpty())
 			return input.map(new EmptyMqttTransform());
 
 		/*
-		 * We transform [MqttResult] into generic [JsonObjects]
+		 * We transform [MqttEvent] into generic [JsonObjects]
 		 * and filter those that are NULL
 		 */
 		JavaRDD<JsonObject> json = input.map(new JsonTransform()).filter(new JsonFilter());

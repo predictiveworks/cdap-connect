@@ -28,12 +28,12 @@ import co.cask.cdap.etl.api.streaming.StreamingContext;
 import de.kp.works.connect.core.BaseStreamUtil;
 import de.kp.works.connect.iot.mqtt.MqttVersion;
 import de.kp.works.stream.mqtt.HiveMQUtils;
-import de.kp.works.stream.mqtt.MqttResult;
+import de.kp.works.stream.mqtt.MqttEvent;
 import de.kp.works.stream.ssl.SSLOptions;
 
 public class BaseHiveMQStreamUtil extends BaseStreamUtil {
 
-	protected static JavaDStream<MqttResult> createStream(StreamingContext context,HiveMQSourceConfig mqttConfig, Map<String, String> mqttSecure) {
+	protected static JavaDStream<MqttEvent> createStream(StreamingContext context,HiveMQSourceConfig mqttConfig, Map<String, String> mqttSecure) {
 
 		setSparkStreamingConf(context, getSparkStreamingProperties(mqttConfig));		
 		SSLOptions sslOptions = mqttConfig.getMqttSsl(mqttSecure);
@@ -55,7 +55,7 @@ public class BaseHiveMQStreamUtil extends BaseStreamUtil {
 
 		String[] topics = mqttConfig.getTopics();
 		
-		JavaDStream<MqttResult> stream = HiveMQUtils.createStream(
+		JavaDStream<MqttEvent> stream = HiveMQUtils.createStream(
 				context.getSparkStreamingContext(), 
 				StorageLevel.MEMORY_AND_DISK_SER_2(), 
 				topics,

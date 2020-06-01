@@ -31,7 +31,7 @@ public class MqttStreamUtil extends BaseMqttStreamUtil {
 
 	public static JavaDStream<StructuredRecord> getStructuredRecordJavaDStream(StreamingContext context, MqttConfig mqttConfig, Map<String,String> mqttSecure) {
 
-		JavaDStream<MqttResult> stream = createStream(context, mqttConfig, mqttSecure);
+		JavaDStream<MqttEvent> stream = createStream(context, mqttConfig, mqttSecure);
 		
 		String format = mqttConfig.getFormat().name().toLowerCase();
 		String[] topics = mqttConfig.getTopics();
