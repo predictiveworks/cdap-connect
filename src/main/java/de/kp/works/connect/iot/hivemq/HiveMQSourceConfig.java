@@ -18,8 +18,42 @@ package de.kp.works.connect.iot.hivemq;
  * 
  */
 
+import com.google.common.base.Strings;
+
+import co.cask.cdap.api.annotation.Description;
+import co.cask.cdap.api.annotation.Macro;
+
 public class HiveMQSourceConfig extends HiveMQConfig {
 
 	private static final long serialVersionUID = 3127652226872012920L;
 
+	@Description("The comma-separated list of MQTT topics to listen to.")
+	@Macro
+	public String mqttTopics;
+
+	public void validate() {
+		super.validate();
+
+		String className = this.getClass().getName();
+		
+		if (Strings.isNullOrEmpty(mqttTopics)) {
+			throw new IllegalArgumentException(
+					String.format("[%s] The MQTT topics must not be empty.", className));
+		}
+		
+	}
+	
+	public String[] getTopics() {
+		
+		String[] tokens = mqttTopics.split(",");
+		String[]topics = new String[tokens.length];
+		
+		for (int i = 0; i < tokens.length; i++) {
+			topics[i] = tokens[i].trim();
+		}
+		
+		return topics;
+		
+	}
+	
 }

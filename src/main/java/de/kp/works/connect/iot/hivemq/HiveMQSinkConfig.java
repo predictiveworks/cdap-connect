@@ -18,8 +18,29 @@ package de.kp.works.connect.iot.hivemq;
  * 
  */
 
+import com.google.common.base.Strings;
+
+import co.cask.cdap.api.annotation.Description;
+import co.cask.cdap.api.annotation.Macro;
+
 public class HiveMQSinkConfig extends HiveMQConfig {
 
 	private static final long serialVersionUID = 64085442003752050L;
+
+	@Description("The MQTT topic to publish to.")
+	@Macro
+	public String mqttTopic;
+
+	public void validate() {
+		super.validate();
+
+		String className = this.getClass().getName();
+		
+		if (Strings.isNullOrEmpty(mqttTopic)) {
+			throw new IllegalArgumentException(
+					String.format("[%s] The MQTT topic must not be empty.", className));
+		}
+		
+	}
 
 }

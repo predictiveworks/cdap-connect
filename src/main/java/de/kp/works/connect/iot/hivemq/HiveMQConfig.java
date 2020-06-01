@@ -40,10 +40,6 @@ public class HiveMQConfig extends BaseMqttConfig implements Serializable {
 	@Macro
 	public Integer mqttPort;
 
-	@Description("The MQTT topic to subscribe or publish to.")
-	@Macro
-	public String mqttTopic;
-
 	@Description("The version of MQTT protocol.")
 	@Macro
 	public String mqttVersion;
@@ -71,11 +67,6 @@ public class HiveMQConfig extends BaseMqttConfig implements Serializable {
 		if (mqttPort < 1) {
 			throw new IllegalArgumentException(
 					String.format("[%s] The MQTT port must be positive.", className));
-		}
-		
-		if (Strings.isNullOrEmpty(mqttTopic)) {
-			throw new IllegalArgumentException(
-					String.format("[%s] The MQTT topic must not be empty.", className));
 		}
 
 	}

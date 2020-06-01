@@ -40,6 +40,10 @@ import co.cask.cdap.etl.api.batch.BatchSinkContext;
 @Description("Batch sink plugin to send messages to a HiveMQ MQTT server.")
 public class HiveMQSink extends BatchSink<StructuredRecord, Void, Void> {
 
+	/*
+	 * CDAP (real-time) pipelines 
+	 */
+	
 	private HiveMQSinkConfig config;
 	private HiveMQUtil hiveMQUtil;
 	

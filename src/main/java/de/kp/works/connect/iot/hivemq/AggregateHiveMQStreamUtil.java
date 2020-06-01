@@ -24,20 +24,18 @@ import org.apache.spark.streaming.api.java.JavaDStream;
 
 import co.cask.cdap.api.data.format.StructuredRecord;
 import co.cask.cdap.etl.api.streaming.StreamingContext;
-import de.kp.works.connect.iot.mqtt.DefaultTransform;
+import de.kp.works.connect.iot.mqtt.AggregateTransform;
 import de.kp.works.stream.mqtt.MqttResult;
 
-public class HiveMQStreamUtil extends BaseHiveMQStreamUtil {
+public class AggregateHiveMQStreamUtil extends BaseHiveMQStreamUtil {
 
 	static JavaDStream<StructuredRecord> getStructuredRecordJavaDStream(StreamingContext context,HiveMQSourceConfig mqttConfig, Map<String, String> mqttSecure) {
 
 		String[] topics = mqttConfig.getTopics();
 		
 		JavaDStream<MqttResult> stream = createStream(context, mqttConfig, mqttSecure);
-
-		String format = "default";
-		return stream.transform(new DefaultTransform(format, topics));
-	
+		return stream.transform(new AggregateTransform(topics));
+		
 	}
 
 }

@@ -19,43 +19,25 @@ package de.kp.works.connect.iot.mqtt;
  */
 
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.spark.streaming.api.java.JavaDStream;
 
 import co.cask.cdap.api.data.format.StructuredRecord;
 import co.cask.cdap.etl.api.streaming.StreamingContext;
 
-import de.kp.works.stream.ssl.*;
-import de.kp.works.connect.core.BaseStreamUtil;
 import de.kp.works.stream.mqtt.*;
 
-public class MqttStreamUtil extends BaseStreamUtil {
+public class MqttStreamUtil extends BaseMqttStreamUtil {
 
 	public static JavaDStream<StructuredRecord> getStructuredRecordJavaDStream(StreamingContext context, MqttConfig mqttConfig, Map<String,String> mqttSecure) {
 
-		setSparkStreamingConf(context, getSparkStreamingProperties(mqttConfig));		
-		SSLOptions sslOptions = mqttConfig.getMqttSsl(mqttSecure);
+		JavaDStream<MqttResult> stream = createStream(context, mqttConfig, mqttSecure);
 		
 		String format = mqttConfig.getFormat().name().toLowerCase();
 		String[] topics = mqttConfig.getTopics();
 		
-		int qos = mqttConfig.getMqttQoS().ordinal();
-		
-		JavaDStream<MqttResult> stream = MqttUtils.createStream(context.getSparkStreamingContext(), mqttConfig.mqttBroker,
-				topics, mqttConfig.mqttUser, mqttConfig.mqttPass, sslOptions, null, true, qos);
-		
 		return stream.transform(new DefaultTransform(format, topics));
 		
 	}
-	/*
-	 * This method is used to add Spark Streaming specific
-	 * parameters from configuration
-	 */
-	private static Properties getSparkStreamingProperties(MqttConfig config) {
-		
-		Properties properties = new Properties();
-		return properties;
-		
-	}
+
 }
