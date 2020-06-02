@@ -30,7 +30,7 @@ public class AerospikeClientSingleton {
 		if (instance == null) {
 			synchronized (AerospikeClientSingleton.class) {
 				if (instance == null) {
-					instance = new AerospikeClient(host, port);
+					instance = new AerospikeClient(policy, host, port);
 				}
 			}
 		}

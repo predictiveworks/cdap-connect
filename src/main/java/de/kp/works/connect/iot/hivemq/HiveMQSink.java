@@ -35,7 +35,7 @@ import co.cask.cdap.etl.api.PipelineConfigurer;
 import co.cask.cdap.etl.api.batch.BatchSink;
 import co.cask.cdap.etl.api.batch.BatchSinkContext;
 
-@Plugin(type = "batchsink")
+@Plugin(type = BatchSink.PLUGIN_TYPE)
 @Name("HiveMQSink")
 @Description("Batch sink plugin to send messages to a HiveMQ MQTT server.")
 public class HiveMQSink extends BatchSink<StructuredRecord, Void, Void> {

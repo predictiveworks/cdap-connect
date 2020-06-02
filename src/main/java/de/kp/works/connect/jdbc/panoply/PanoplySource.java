@@ -27,13 +27,14 @@ import org.slf4j.LoggerFactory;
 import co.cask.cdap.api.annotation.Description;
 import co.cask.cdap.api.annotation.Name;
 import co.cask.cdap.api.annotation.Plugin;
-import de.kp.works.connect.jdbc.JdbcSource;
+import co.cask.cdap.etl.api.batch.BatchSource;
+import de.kp.works.connect.jdbc.redshift.RedshiftSource;
 import de.kp.works.connect.jdbc.redshift.RedshiftSourceConfig;
 
-@Plugin(type = "batchsource")
+@Plugin(type = BatchSource.PLUGIN_TYPE)
 @Name("PanoplySource")
 @Description("A batch source to read structured records from a Panoply data warehouse.")
-public class PanoplySource extends JdbcSource {
+public class PanoplySource extends RedshiftSource {
 
 	// TODO SSL
 
@@ -49,11 +50,9 @@ public class PanoplySource extends JdbcSource {
 	 */
 	protected static final String JDBC_PLUGIN_TYPE = "jdbc";
 	protected static final String JDBC_PLUGIN_NAME = "redshift";
-
-	protected RedshiftSourceConfig config;
 	
 	public PanoplySource(RedshiftSourceConfig config) {
-		this.config = config;
+		super(config);
 	}
 
 	@Override

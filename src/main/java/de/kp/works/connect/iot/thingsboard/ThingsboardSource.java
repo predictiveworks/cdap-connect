@@ -70,8 +70,7 @@ public class ThingsboardSource extends StreamingSource<StructuredRecord> {
 	
 	@Override
 	public JavaDStream<StructuredRecord> getStream(StreamingContext context) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		return ThingsboardStreamUtil.getStructuredRecordJavaDStream(context, config);
 	}
 
 }
