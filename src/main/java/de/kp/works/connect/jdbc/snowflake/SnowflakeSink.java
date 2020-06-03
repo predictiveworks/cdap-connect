@@ -41,11 +41,12 @@ import co.cask.cdap.api.data.format.StructuredRecord;
 import co.cask.cdap.api.data.schema.Schema;
 import co.cask.cdap.api.dataset.lib.KeyValue;
 import co.cask.cdap.etl.api.Emitter;
+import co.cask.cdap.etl.api.batch.BatchSink;
 import co.cask.cdap.etl.api.batch.BatchSinkContext;
 import de.kp.works.connect.jdbc.JdbcSink;
 import joptsimple.internal.Strings;
 
-@Plugin(type = "batchsink")
+@Plugin(type = BatchSink.PLUGIN_TYPE)
 @Name("SnowflakeSink")
 @Description("A batch sink to write structured records to a Snowflake database.")
 public class SnowflakeSink extends JdbcSink<SnowflakeWritable> {

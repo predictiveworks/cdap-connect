@@ -25,12 +25,7 @@ import co.cask.cdap.api.data.schema.Schema;
 import co.cask.cdap.api.spark.sql.DataFrames;
 import co.cask.cdap.etl.api.streaming.StreamingContext;
 
-import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.PartitionInfo;
-import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.serialization.ByteArrayDeserializer;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
@@ -42,50 +37,30 @@ import org.apache.spark.sql.types.StructField;
 import org.apache.spark.sql.types.StructType;
 import org.apache.spark.streaming.Time;
 import org.apache.spark.streaming.api.java.JavaDStream;
-
-import org.apache.spark.streaming.kafka010.ConsumerStrategies;
-import org.apache.spark.streaming.kafka010.KafkaUtils;
-import org.apache.spark.streaming.kafka010.LocationStrategies;
+import org.apache.spark.streaming.api.java.JavaInputDStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import de.kp.works.connect.EmptyFunction;
 
-final class KafkaStreamUtil {
+final class KafkaStreamUtil extends BaseKafkaStreamUtil {
+	
 	private static final Logger LOG = LoggerFactory.getLogger(KafkaStreamUtil.class);
 
 	static JavaDStream<StructuredRecord> getStructuredRecordJavaDStream(StreamingContext context, KafkaConfig config) {
 
-		Map<String, Object> kafkaParams =  KafkaParams.buildParams(config, context.getPipelineName());
-		Properties properties = KafkaParams.buildProperties(config, kafkaParams);
-		
-		try (Consumer<byte[], byte[]> consumer = new KafkaConsumer<>(properties, new ByteArrayDeserializer(),
-				new ByteArrayDeserializer())) {
-			/*
-			 * KafkaUtils doesn't understand -1 and -2 as smallest offset and 
-			 * latest offset. So we have to replace them with the actual smallest 
-			 * and latest.
-			 */
-			Map<TopicPartition, Long> offsets = config
-					.getInitialPartitionOffsets(getPartitions(consumer, config));
+		JavaInputDStream<ConsumerRecord<byte[], byte[]>> stream = createStream(context.getSparkStreamingContext(),
+				context.getPipelineName(), config);
 
-			KafkaHelpers.validateOffsets(offsets, consumer);
-			LOG.info("Using initial offsets {}", offsets);
-			
-			return KafkaUtils.createDirectStream(context.getSparkStreamingContext(),
-					LocationStrategies.PreferConsistent(), ConsumerStrategies
-							.<byte[], byte[]>Subscribe(Collections.singleton(config.getTopic()), kafkaParams, offsets))
-					.transform(new RecordTransform(config));
-		}
+		return stream.transform(new RecordTransform(config));
+
 	}
 	/**
 	 * __KUP__
@@ -197,20 +172,6 @@ final class KafkaStreamUtil {
 			}
 
 		}
-	}
-
-	private static Set<Integer> getPartitions(Consumer<byte[], byte[]> consumer, KafkaConfig conf) {
-		Set<Integer> partitions = conf.getPartitions();
-
-		if (!partitions.isEmpty()) {
-			return partitions;
-		}
-
-		partitions = new HashSet<>();
-		for (PartitionInfo partitionInfo : consumer.partitionsFor(conf.getTopic())) {
-			partitions.add(partitionInfo.partition());
-		}
-		return partitions;
 	}
 
 	private static class StringFunction implements Function<ConsumerRecord<byte[], byte[]>, String> {

@@ -18,73 +18,23 @@ package de.kp.works.connect.kafka.osquery;
  * 
  */
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 
-import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.PartitionInfo;
-import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.serialization.ByteArrayDeserializer;
 import org.apache.spark.streaming.api.java.JavaDStream;
-import org.apache.spark.streaming.kafka010.ConsumerStrategies;
-import org.apache.spark.streaming.kafka010.KafkaUtils;
-import org.apache.spark.streaming.kafka010.LocationStrategies;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import org.apache.spark.streaming.api.java.JavaInputDStream;
 import co.cask.cdap.api.data.format.StructuredRecord;
 import co.cask.cdap.etl.api.streaming.StreamingContext;
-import de.kp.works.connect.kafka.KafkaHelpers;
-import de.kp.works.connect.kafka.KafkaParams;
+import de.kp.works.connect.kafka.BaseKafkaStreamUtil;
 
-final class OsqueryStreamUtil {
-	
-	private static final Logger LOG = LoggerFactory.getLogger(OsqueryStreamUtil.class);
+final class OsqueryStreamUtil extends BaseKafkaStreamUtil {
 
-	static JavaDStream<StructuredRecord> getStructuredRecordJavaDStream(StreamingContext context, OsqueryConfig config) {
+	public static JavaDStream<StructuredRecord> getStructuredRecordJavaDStream(StreamingContext context,
+			OsqueryConfig config) {
 
-		Map<String, Object> kafkaParams =  KafkaParams.buildParams(config, context.getPipelineName());
-		Properties properties = KafkaParams.buildProperties(config, kafkaParams);
-		
-		try (Consumer<byte[], byte[]> consumer = new KafkaConsumer<>(properties, new ByteArrayDeserializer(),
-				new ByteArrayDeserializer())) {
-			/*
-			 * KafkaUtils doesn't understand -1 and -2 as smallest offset and 
-			 * latest offset. So we have to replace them with the actual smallest 
-			 * and latest.
-			 */
-			Map<TopicPartition, Long> offsets = config
-					.getInitialPartitionOffsets(getPartitions(consumer, config));
+		JavaInputDStream<ConsumerRecord<byte[], byte[]>> stream = createStream(context.getSparkStreamingContext(),
+				context.getPipelineName(), config);
+		return stream.transform(new OsqueryTransform(config));
 
-			KafkaHelpers.validateOffsets(offsets, consumer);
-			LOG.info("Using initial offsets {}", offsets);
-			
-			return KafkaUtils.createDirectStream(context.getSparkStreamingContext(),
-					LocationStrategies.PreferConsistent(), ConsumerStrategies
-							.<byte[], byte[]>Subscribe(Collections.singleton(config.getTopic()), kafkaParams, offsets))
-					.transform(new OsqueryTransform(config));
-		}
-		
-	}
-
-	private static Set<Integer> getPartitions(Consumer<byte[], byte[]> consumer, OsqueryConfig conf) {
-		Set<Integer> partitions = conf.getPartitions();
-
-		if (!partitions.isEmpty()) {
-			return partitions;
-		}
-
-		partitions = new HashSet<>();
-		for (PartitionInfo partitionInfo : consumer.partitionsFor(conf.getTopic())) {
-			partitions.add(partitionInfo.partition());
-		}
-		
-		return partitions;
-		
 	}
 
 }

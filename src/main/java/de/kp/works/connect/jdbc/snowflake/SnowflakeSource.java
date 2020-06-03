@@ -26,10 +26,11 @@ import org.slf4j.LoggerFactory;
 import co.cask.cdap.api.annotation.Description;
 import co.cask.cdap.api.annotation.Name;
 import co.cask.cdap.api.annotation.Plugin;
+import co.cask.cdap.etl.api.batch.BatchSource;
 import de.kp.works.connect.jdbc.JdbcSource;
 import joptsimple.internal.Strings;
 
-@Plugin(type = "batchsource")
+@Plugin(type = BatchSource.PLUGIN_TYPE)
 @Name("SnowflakeSource")
 @Description("A batch source to read structured records from a Snowflake database.")
 public class SnowflakeSource extends JdbcSource {

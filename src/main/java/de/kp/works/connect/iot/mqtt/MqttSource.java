@@ -34,7 +34,7 @@ import co.cask.cdap.etl.api.streaming.StreamingSource;
 
 @Plugin(type = StreamingSource.PLUGIN_TYPE)
 @Name("MQTTSource")
-@Description("An MQTT streaming source that listens to an MQTT broker and subscribes to a given topic.")
+@Description("An MQTT streaming source that listens to an MQTT 3.1.1 broker and subscribes to a given topic.")
 public class MqttSource extends StreamingSource<StructuredRecord> {
 
 	private static final long serialVersionUID = -8515614253262827164L;

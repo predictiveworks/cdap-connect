@@ -45,9 +45,11 @@ import co.cask.hydrator.common.batch.JobUtils;
 @Plugin(type = BatchSource.PLUGIN_TYPE)
 @Name("AerospikeSource")
 @Description("A batch connector plugin to read data records from Aerospike namespaces and "
-	      + "sets and transform into structured pipeline records.")
+	      + "sets and to transform into structured pipeline records.")
 public class AerospikeSource extends BatchSource<AerospikeEntry.Key, AerospikeEntry.Record, StructuredRecord> {
-
+	/*
+	 * [AerospikeSource] supports PredictiveWorks. low latency strategy.
+	 */
 	private static final Logger LOG = LoggerFactory.getLogger(AerospikeSource.class);
 	/*
 	 * Reference to the inferred schema

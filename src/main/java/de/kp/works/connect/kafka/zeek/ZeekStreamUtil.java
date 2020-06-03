@@ -18,14 +18,24 @@ package de.kp.works.connect.kafka.zeek;
  * 
  */
 
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.spark.streaming.api.java.JavaDStream;
+import org.apache.spark.streaming.api.java.JavaInputDStream;
 
 import co.cask.cdap.api.data.format.StructuredRecord;
 import co.cask.cdap.etl.api.streaming.StreamingContext;
-final class ZeekStreamUtil {
+import de.kp.works.connect.kafka.BaseKafkaStreamUtil;
 
-	static JavaDStream<StructuredRecord> getStructuredRecordJavaDStream(StreamingContext context, ZeekConfig config) {
-		return null;
+final class ZeekStreamUtil extends BaseKafkaStreamUtil {
+
+	public static JavaDStream<StructuredRecord> getStructuredRecordJavaDStream(StreamingContext context,
+			ZeekConfig config) {
+
+		JavaInputDStream<ConsumerRecord<byte[], byte[]>> stream = createStream(context.getSparkStreamingContext(),
+				context.getPipelineName(), config);
+
+		return stream.transform(new ZeekTransform(config));
+
 	}
 
 }
