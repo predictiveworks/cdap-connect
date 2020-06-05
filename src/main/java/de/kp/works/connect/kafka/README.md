@@ -8,6 +8,6 @@ CDAP Connect supports multiple Kafka-based streaming sources. The [StreamingSour
 
 * **ThingsBoard.** ThingsBoard is an open-source IoT platforms and supports Kafka forwarding of telemetry events. In this use case, the event schema is predefined and the respective ThingsBoard connector automatically transforms Kafka events into associated structured records. 
 
-* **Zeek.** The Zeek (formerly Bro) network monitor publishes a variety of different network events as Kafka topic. In this use case, the event schema is predefined for each event type. The Zeek connector automatically transforms Kafaka events into associated structured records.
+* **Zeek.** The Zeek (formerly Bro) network monitor publishes a variety of different network events as Kafka topic. In this use case, the event schema is predefined for each event type. The Zeek connector automatically transforms Kafka events into associated structured records.
 
 <img src="https://github.com/predictiveworks/cdap-connect/blob/master/images/kafka-connect.png" width="800" alt="Kafka Connect">
