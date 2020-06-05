@@ -137,6 +137,48 @@ public final class KafkaHelpers {
 		return offsets;
 	}
 
+	/********** KAFKA SECURITY **********/
+	
+	/*
+	 * Since 0.9.x Kafka supports the following security features:
+	 * 
+	 * 1. 
+	 * 
+	 * Authentication of connections to brokers from clients (producers & consumers), 
+	 * other brokers and tools, using either SSL or SASL (Kerberos). 
+	 * 
+	 * SASL/PLAIN can also be used from release 0.10.0.0 onwards
+	 * 
+	 * 2.
+	 * 
+	 * Authentication of connections from brokers to ZooKeeper
+	 * 
+	 * 3. 
+	 * 
+	 * Encryption of data transferred between brokers and clients, between brokers, 
+	 * or between brokers and tools using SSL (Note that there is a performance 
+	 * degradation when SSL is enabled, the magnitude of which depends on the CPU 
+	 * type and the JVM implementation)
+	 * 
+	 * 4.
+	 * 
+	 * Authorization of read / write operations by clients. Authorization is pluggable 
+	 * and integration with external authorization services is supported
+	 * 
+	 * 
+	 * Client authentication via SASL
+	 * ------------------------------
+	 * 
+	 * Kafka brokers supports client authentication via SASL. Multiple SASL mechanisms 
+	 * can be enabled on the broker simultaneously while each client has to choose one 
+	 * mechanism. 
+	 * 
+	 * The currently supported mechanisms are GSSAPI (Kerberos) and PLAIN.
+	 *  
+	 */
+
+	
+	
 	/**
 	 * Adds the JAAS conf to the Kafka configuration object for Kafka client login,
 	 * if needed. The JAAS conf is not added if either the principal or the keytab
@@ -153,11 +195,16 @@ public final class KafkaHelpers {
 			@Nullable String keytabLocation) {
 		if (principal != null && keytabLocation != null) {
 			LOG.debug("Adding Kerberos login conf to Kafka for principal {} and keytab {}", principal, keytabLocation);
-			conf.put(SASL_JAAS_CONFIG, String.format(
-					"com.sun.security.auth.module.Krb5LoginModule required \n" + "        useKeyTab=true \n"
-							+ "        storeKey=true  \n" + "        useTicketCache=false  \n"
-							+ "        renewTicket=true  \n" + "        keyTab=\"%s\" \n" + "        principal=\"%s\";",
-					keytabLocation, principal));
+			
+		     conf.put(SASL_JAAS_CONFIG, String.format("com.sun.security.auth.module.Krb5LoginModule required \n" +
+                     "        useKeyTab=true \n" +
+                     "        storeKey=true  \n" +
+                     "        useTicketCache=false  \n" +
+                     "        renewTicket=true  \n" +
+                     "        keyTab=\"%s\" \n" +
+                     "        principal=\"%s\";",
+                   keytabLocation, principal));
+
 		} else {
 			LOG.debug("Not adding Kerberos login conf to Kafka since either the principal {} or the keytab {} is null",
 					principal, keytabLocation);

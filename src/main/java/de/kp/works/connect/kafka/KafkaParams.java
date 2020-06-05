@@ -42,7 +42,7 @@ public class KafkaParams implements Serializable {
 	
 		kafkaParams.put("key.deserializer", ByteArrayDeserializer.class.getCanonicalName());
 		kafkaParams.put("value.deserializer", ByteArrayDeserializer.class.getCanonicalName());
-	
+		
 		KafkaHelpers.setupKerberosLogin(kafkaParams, config.getPrincipal(), config.getKeytabLocation());
 		/*
 		 * Create a unique string for the group.id using the pipeline name and the topic;
