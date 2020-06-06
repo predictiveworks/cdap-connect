@@ -20,9 +20,9 @@ package de.kp.works.connect.iot.thingsboard;
 
 import com.google.common.base.Strings;
 
-import co.cask.cdap.api.annotation.Description;
-import co.cask.cdap.api.annotation.Macro;
-import co.cask.cdap.api.annotation.Name;
+import io.cdap.cdap.api.annotation.Description;
+import io.cdap.cdap.api.annotation.Macro;
+import io.cdap.cdap.api.annotation.Name;
 import de.kp.works.connect.BaseConfig;
 
 public class ThingsboardSinkConfig extends BaseConfig {

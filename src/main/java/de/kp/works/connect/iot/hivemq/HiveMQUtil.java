@@ -19,10 +19,11 @@ package de.kp.works.connect.iot.hivemq;
  */
 
 import java.io.IOException;
-import java.util.Map;
+import java.util.List;
 
-import co.cask.cdap.api.data.format.StructuredRecord;
-import co.cask.cdap.format.StructuredRecordStringConverter;
+import io.cdap.cdap.api.data.format.StructuredRecord;
+import io.cdap.cdap.api.security.store.SecureStoreMetadata;
+import io.cdap.cdap.format.StructuredRecordStringConverter;
 import de.kp.works.connect.iot.mqtt.MqttVersion;
 
 import de.kp.works.stream.ssl.SSLOptions;
@@ -33,7 +34,7 @@ public class HiveMQUtil {
 
 	private HiveMQClient client;
 
-	public HiveMQUtil(HiveMQSinkConfig config, Map<String, String> mqttSecure) {
+	public HiveMQUtil(HiveMQSinkConfig config, List<SecureStoreMetadata> mqttSecure) {
 
 		SSLOptions sslOptions = config.getMqttSsl(mqttSecure);
 

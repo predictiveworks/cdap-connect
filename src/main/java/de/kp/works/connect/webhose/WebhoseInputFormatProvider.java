@@ -22,7 +22,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import co.cask.cdap.api.data.batch.InputFormatProvider;
+import io.cdap.cdap.api.data.batch.InputFormatProvider;
 
 import java.util.Map;
 

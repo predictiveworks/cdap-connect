@@ -20,8 +20,8 @@ package de.kp.works.connect.jdbc.crate;
 
 import java.util.Locale;
 
-import co.cask.cdap.api.annotation.Description;
-import co.cask.cdap.api.annotation.Macro;
+import io.cdap.cdap.api.annotation.Description;
+import io.cdap.cdap.api.annotation.Macro;
 import de.kp.works.connect.jdbc.JdbcSinkConfig;
 
 public class CrateSinkConfig extends JdbcSinkConfig {

@@ -25,7 +25,7 @@ import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.streaming.Time;
 
-import co.cask.cdap.api.data.format.StructuredRecord;
+import io.cdap.cdap.api.data.format.StructuredRecord;
 import de.kp.works.connect.EmptyFunction;
 /*
  * [ZeekTransform] is the main class for transforming

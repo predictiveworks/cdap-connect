@@ -25,9 +25,9 @@ import org.apache.spark.api.java.function.Function;
 
 import com.google.gson.JsonObject;
 
-import co.cask.cdap.api.data.format.StructuredRecord;
-import co.cask.cdap.api.data.schema.Schema;
-import co.cask.cdap.format.StructuredRecordStringConverter;
+import io.cdap.cdap.api.data.format.StructuredRecord;
+import io.cdap.cdap.api.data.schema.Schema;
+import io.cdap.cdap.format.StructuredRecordStringConverter;
 import de.kp.works.stream.mqtt.MqttEvent;
 
 /**

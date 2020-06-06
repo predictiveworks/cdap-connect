@@ -20,10 +20,10 @@ package de.kp.works.connect;
 
 import com.google.common.base.Strings;
 
-import co.cask.cdap.api.annotation.Description;
-import co.cask.cdap.api.annotation.Name;
-import co.cask.cdap.api.plugin.PluginConfig;
-import co.cask.hydrator.common.Constants;
+import io.cdap.cdap.api.annotation.Description;
+import io.cdap.cdap.api.annotation.Name;
+import io.cdap.cdap.api.plugin.PluginConfig;
+import io.cdap.plugin.common.Constants;
 
 public class BaseConfig extends PluginConfig {
 

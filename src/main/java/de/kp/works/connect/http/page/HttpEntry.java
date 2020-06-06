@@ -18,8 +18,8 @@ package de.kp.works.connect.http.page;
  * 
  */
 
-import co.cask.cdap.api.data.format.StructuredRecord;
-import co.cask.cdap.etl.api.InvalidEntry;
+import io.cdap.cdap.api.data.format.StructuredRecord;
+import io.cdap.cdap.etl.api.InvalidEntry;
 import de.kp.works.connect.http.error.ErrorStrategy;
 
 public class HttpEntry {

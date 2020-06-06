@@ -23,8 +23,8 @@ import java.util.stream.Stream;
 
 import com.google.common.base.Strings;
 
-import co.cask.cdap.api.annotation.Description;
-import co.cask.cdap.api.annotation.Macro;
+import io.cdap.cdap.api.annotation.Description;
+import io.cdap.cdap.api.annotation.Macro;
 import de.kp.works.connect.iot.mqtt.BaseMqttConfig;
 import de.kp.works.connect.iot.mqtt.MqttVersion;
 

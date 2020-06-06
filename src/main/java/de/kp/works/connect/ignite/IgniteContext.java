@@ -35,7 +35,7 @@ import org.apache.ignite.client.SslMode;
 import org.apache.ignite.configuration.ClientConfiguration;
 import org.apache.ignite.ssl.IgniteSslContextFactory;
 
-import co.cask.cdap.api.data.schema.Schema;
+import io.cdap.cdap.api.data.schema.Schema;
 
 public class IgniteContext {
 	/*

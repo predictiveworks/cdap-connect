@@ -18,18 +18,19 @@ package de.kp.works.connect.iot.mqtt;
  * 
  */
 
-import java.util.Map;
+import java.util.List;
 
 import org.apache.spark.streaming.api.java.JavaDStream;
 
-import co.cask.cdap.api.data.format.StructuredRecord;
-import co.cask.cdap.etl.api.streaming.StreamingContext;
+import io.cdap.cdap.api.data.format.StructuredRecord;
+import io.cdap.cdap.api.security.store.SecureStoreMetadata;
+import io.cdap.cdap.etl.api.streaming.StreamingContext;
 
 import de.kp.works.stream.mqtt.*;
 
 public class MqttStreamUtil extends BaseMqttStreamUtil {
 
-	public static JavaDStream<StructuredRecord> getStructuredRecordJavaDStream(StreamingContext context, MqttConfig mqttConfig, Map<String,String> mqttSecure) {
+	public static JavaDStream<StructuredRecord> getStructuredRecordJavaDStream(StreamingContext context, MqttConfig mqttConfig, List<SecureStoreMetadata> mqttSecure) {
 
 		JavaDStream<MqttEvent> stream = createStream(context, mqttConfig, mqttSecure);
 		

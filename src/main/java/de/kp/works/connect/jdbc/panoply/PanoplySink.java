@@ -18,9 +18,9 @@ package de.kp.works.connect.jdbc.panoply;
  * 
  */
 
-import co.cask.cdap.api.annotation.Description;
-import co.cask.cdap.api.annotation.Name;
-import co.cask.cdap.api.annotation.Plugin;
+import io.cdap.cdap.api.annotation.Description;
+import io.cdap.cdap.api.annotation.Name;
+import io.cdap.cdap.api.annotation.Plugin;
 import de.kp.works.connect.jdbc.redshift.RedshiftSink;
 import de.kp.works.connect.jdbc.redshift.RedshiftSinkConfig;
 

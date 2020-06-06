@@ -37,9 +37,9 @@ import org.apache.ignite.client.IgniteClient;
 
 import com.google.common.base.Strings;
 
-import co.cask.cdap.api.annotation.Description;
-import co.cask.cdap.api.annotation.Macro;
-import co.cask.cdap.api.data.schema.Schema;
+import io.cdap.cdap.api.annotation.Description;
+import io.cdap.cdap.api.annotation.Macro;
+import io.cdap.cdap.api.data.schema.Schema;
 import de.kp.works.connect.SslConfig;
 
 public class IgniteConfig extends SslConfig {

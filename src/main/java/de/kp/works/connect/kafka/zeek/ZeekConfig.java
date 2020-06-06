@@ -20,8 +20,8 @@ package de.kp.works.connect.kafka.zeek;
 
 import java.util.stream.Stream;
 
-import co.cask.cdap.api.annotation.Description;
-import co.cask.cdap.api.annotation.Macro;
+import io.cdap.cdap.api.annotation.Description;
+import io.cdap.cdap.api.annotation.Macro;
 import de.kp.works.connect.kafka.KafkaConfig;
 
 public class ZeekConfig extends KafkaConfig{

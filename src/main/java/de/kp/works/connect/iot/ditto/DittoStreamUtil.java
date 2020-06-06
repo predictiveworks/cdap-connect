@@ -20,9 +20,9 @@ package de.kp.works.connect.iot.ditto;
 
 import org.apache.spark.streaming.api.java.JavaDStream;
 import org.apache.spark.streaming.ws.*;
-import co.cask.cdap.api.data.format.StructuredRecord;
-import co.cask.cdap.api.data.schema.Schema;
-import co.cask.cdap.etl.api.streaming.StreamingContext;
+import io.cdap.cdap.api.data.format.StructuredRecord;
+import io.cdap.cdap.api.data.schema.Schema;
+import io.cdap.cdap.etl.api.streaming.StreamingContext;
 
 import com.google.gson.*;
 

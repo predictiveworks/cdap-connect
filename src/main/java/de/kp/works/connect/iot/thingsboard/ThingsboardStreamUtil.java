@@ -22,8 +22,8 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.spark.streaming.api.java.JavaDStream;
 import org.apache.spark.streaming.api.java.JavaInputDStream;
 
-import co.cask.cdap.api.data.format.StructuredRecord;
-import co.cask.cdap.etl.api.streaming.StreamingContext;
+import io.cdap.cdap.api.data.format.StructuredRecord;
+import io.cdap.cdap.etl.api.streaming.StreamingContext;
 import de.kp.works.connect.kafka.BaseKafkaStreamUtil;
 
 public class ThingsboardStreamUtil extends BaseKafkaStreamUtil {

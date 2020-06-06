@@ -25,7 +25,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import co.cask.cdap.api.data.format.StructuredRecord;
+import io.cdap.cdap.api.data.format.StructuredRecord;
 
 public class LogTransform implements Function<ConsumerRecord<byte[], byte[]>, StructuredRecord> {
 

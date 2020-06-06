@@ -18,8 +18,8 @@ package de.kp.works.connect.shopify;
  * 
  */
 
-import co.cask.cdap.api.annotation.Description;
-import co.cask.cdap.api.annotation.Macro;
+import io.cdap.cdap.api.annotation.Description;
+import io.cdap.cdap.api.annotation.Macro;
 import de.kp.works.connect.BaseConfig;
 
 public class ShopifyConfig extends BaseConfig {

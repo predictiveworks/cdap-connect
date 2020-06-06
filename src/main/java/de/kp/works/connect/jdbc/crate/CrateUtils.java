@@ -18,7 +18,7 @@ package de.kp.works.connect.jdbc.crate;
  * 
  */
 
-import co.cask.cdap.api.data.schema.Schema;
+import io.cdap.cdap.api.data.schema.Schema;
 import de.kp.works.connect.jdbc.JdbcUtils;
 
 import com.google.common.collect.Lists;

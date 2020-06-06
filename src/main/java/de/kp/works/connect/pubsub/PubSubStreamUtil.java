@@ -18,16 +18,17 @@ package de.kp.works.connect.pubsub;
  * 
  */
 
-import java.util.Map;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.spark.streaming.api.java.JavaDStream;
 
 import com.google.api.client.auth.oauth2.Credential;
 
-import co.cask.cdap.api.data.format.StructuredRecord;
-import co.cask.cdap.api.data.schema.Schema;
-import co.cask.cdap.etl.api.streaming.StreamingContext;
+import io.cdap.cdap.api.data.format.StructuredRecord;
+import io.cdap.cdap.api.data.schema.Schema;
+import io.cdap.cdap.api.security.store.SecureStoreMetadata;
+import io.cdap.cdap.etl.api.streaming.StreamingContext;
 
 import de.kp.works.connect.core.BaseStreamUtil;
 import de.kp.works.stream.pubsub.*;
@@ -35,7 +36,7 @@ import de.kp.works.stream.pubsub.*;
 public class PubSubStreamUtil extends BaseStreamUtil {
 
 	public static JavaDStream<StructuredRecord> getStructuredRecordJavaDStream(StreamingContext context,
-			PubSubConfig pubSubConfig, Map<String,String> pubSubSecure, Schema schema) {
+			PubSubConfig pubSubConfig, List<SecureStoreMetadata> pubSubSecure, Schema schema) {
 
 		setSparkStreamingConf(context, getSparkStreamingProperties(pubSubConfig));
 

@@ -18,12 +18,13 @@ package de.kp.works.connect.iot.mqtt;
  * 
  */
 
-import java.util.Map;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.spark.streaming.api.java.JavaDStream;
 
-import co.cask.cdap.etl.api.streaming.StreamingContext;
+import io.cdap.cdap.api.security.store.SecureStoreMetadata;
+import io.cdap.cdap.etl.api.streaming.StreamingContext;
 import de.kp.works.connect.core.BaseStreamUtil;
 import de.kp.works.stream.mqtt.MqttEvent;
 import de.kp.works.stream.mqtt.MqttUtils;
@@ -31,7 +32,7 @@ import de.kp.works.stream.ssl.SSLOptions;
 
 public class BaseMqttStreamUtil extends BaseStreamUtil {
 	
-	protected static JavaDStream<MqttEvent> createStream(StreamingContext context, MqttConfig mqttConfig, Map<String,String> mqttSecure) {
+	protected static JavaDStream<MqttEvent> createStream(StreamingContext context, MqttConfig mqttConfig, List<SecureStoreMetadata> mqttSecure) {
 
 		setSparkStreamingConf(context, getSparkStreamingProperties(mqttConfig));		
 		SSLOptions sslOptions = mqttConfig.getMqttSsl(mqttSecure);

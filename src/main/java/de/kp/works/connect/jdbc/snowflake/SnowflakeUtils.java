@@ -23,7 +23,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import co.cask.cdap.api.data.schema.Schema;
+import io.cdap.cdap.api.data.schema.Schema;
 import de.kp.works.connect.jdbc.JdbcUtils;
 
 public class SnowflakeUtils extends JdbcUtils {

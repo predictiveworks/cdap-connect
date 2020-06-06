@@ -21,7 +21,7 @@ package de.kp.works.connect.core;
 import java.util.Properties;
 import java.util.Set;
 
-import co.cask.cdap.etl.api.streaming.StreamingContext;
+import io.cdap.cdap.etl.api.streaming.StreamingContext;
 
 public class BaseStreamUtil {
 	/*

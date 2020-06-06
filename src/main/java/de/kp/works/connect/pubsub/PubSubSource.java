@@ -20,19 +20,19 @@ package de.kp.works.connect.pubsub;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.spark.streaming.api.java.JavaDStream;
 
-import co.cask.cdap.api.annotation.Description;
-import co.cask.cdap.api.annotation.Name;
-import co.cask.cdap.api.annotation.Plugin;
-import co.cask.cdap.api.data.format.StructuredRecord;
-import co.cask.cdap.api.data.schema.Schema;
-import co.cask.cdap.api.security.store.SecureStore;
-import co.cask.cdap.etl.api.PipelineConfigurer;
-import co.cask.cdap.etl.api.streaming.StreamingContext;
-import co.cask.cdap.etl.api.streaming.StreamingSource;
+import io.cdap.cdap.api.annotation.Description;
+import io.cdap.cdap.api.annotation.Name;
+import io.cdap.cdap.api.annotation.Plugin;
+import io.cdap.cdap.api.data.format.StructuredRecord;
+import io.cdap.cdap.api.data.schema.Schema;
+import io.cdap.cdap.api.security.store.SecureStore;
+import io.cdap.cdap.api.security.store.SecureStoreMetadata;
+import io.cdap.cdap.etl.api.PipelineConfigurer;
+import io.cdap.cdap.etl.api.streaming.StreamingContext;
+import io.cdap.cdap.etl.api.streaming.StreamingSource;
 
 @Plugin(type = StreamingSource.PLUGIN_TYPE)
 @Name("PubSubSource")
@@ -60,7 +60,7 @@ public class PubSubSource extends StreamingSource<StructuredRecord> {
 	public JavaDStream<StructuredRecord> getStream(StreamingContext context) throws Exception {
 		
 		SecureStore secureStore = context.getSparkExecutionContext().getSecureStore();
-		Map<String,String> secureData = secureStore.listSecureData(context.getNamespace());
+		List<SecureStoreMetadata> secureData = secureStore.list(context.getNamespace());
 		
 		return PubSubStreamUtil.getStructuredRecordJavaDStream(context, config, secureData, getSchema());			
 

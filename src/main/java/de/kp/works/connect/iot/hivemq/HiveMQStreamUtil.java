@@ -18,18 +18,19 @@ package de.kp.works.connect.iot.hivemq;
  * 
  */
 
-import java.util.Map;
+import java.util.List;
 
 import org.apache.spark.streaming.api.java.JavaDStream;
 
-import co.cask.cdap.api.data.format.StructuredRecord;
-import co.cask.cdap.etl.api.streaming.StreamingContext;
+import io.cdap.cdap.api.data.format.StructuredRecord;
+import io.cdap.cdap.api.security.store.SecureStoreMetadata;
+import io.cdap.cdap.etl.api.streaming.StreamingContext;
 import de.kp.works.connect.iot.mqtt.DefaultTransform;
 import de.kp.works.stream.mqtt.MqttEvent;
 
 public class HiveMQStreamUtil extends BaseHiveMQStreamUtil {
 
-	static JavaDStream<StructuredRecord> getStructuredRecordJavaDStream(StreamingContext context,HiveMQSourceConfig mqttConfig, Map<String, String> mqttSecure) {
+	static JavaDStream<StructuredRecord> getStructuredRecordJavaDStream(StreamingContext context,HiveMQSourceConfig mqttConfig, List<SecureStoreMetadata> mqttSecure) {
 
 		String[] topics = mqttConfig.getTopics();
 		

@@ -29,8 +29,8 @@ import org.apache.spark.api.java.function.Function;
 
 import com.google.cloud.Timestamp;
 
-import co.cask.cdap.api.data.format.StructuredRecord;
-import co.cask.cdap.api.data.schema.Schema;
+import io.cdap.cdap.api.data.format.StructuredRecord;
+import io.cdap.cdap.api.data.schema.Schema;
 import de.kp.works.stream.pubsub.PubSubResult;
 
 public class DefaultTransform extends PubSubTransform {

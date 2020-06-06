@@ -20,8 +20,8 @@ package de.kp.works.connect.jdbc.snowflake;
 
 import java.util.List;
 
-import co.cask.cdap.api.data.format.StructuredRecord;
-import co.cask.cdap.api.data.schema.Schema;
+import io.cdap.cdap.api.data.format.StructuredRecord;
+import io.cdap.cdap.api.data.schema.Schema;
 import de.kp.works.connect.jdbc.JdbcWritable;
 
 public class SnowflakeWritable extends JdbcWritable {

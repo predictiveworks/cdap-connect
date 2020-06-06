@@ -38,8 +38,8 @@ import com.aerospike.client.Key;
 import com.aerospike.client.policy.WritePolicy;
 import com.google.gson.Gson;
 
-import co.cask.cdap.api.data.format.StructuredRecord;
-import co.cask.cdap.api.data.schema.Schema;
+import io.cdap.cdap.api.data.format.StructuredRecord;
+import io.cdap.cdap.api.data.schema.Schema;
 
 public class AerospikeRecordWritable implements Writable, AerospikeWritable, Configurable {
 

@@ -22,8 +22,8 @@ import java.util.Properties;
 
 import javax.annotation.Nullable;
 
-import co.cask.cdap.api.annotation.Description;
-import co.cask.cdap.api.annotation.Macro;
+import io.cdap.cdap.api.annotation.Description;
+import io.cdap.cdap.api.annotation.Macro;
 
 import com.google.common.base.Strings;
 

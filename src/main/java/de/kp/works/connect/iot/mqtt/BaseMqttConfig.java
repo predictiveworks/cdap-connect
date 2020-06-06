@@ -18,14 +18,14 @@ package de.kp.works.connect.iot.mqtt;
  * 
  */
 
-import java.util.Map;
+import java.util.List;
 import java.util.stream.Stream;
 
 import com.google.common.base.Strings;
 
-import co.cask.cdap.api.annotation.Description;
-import co.cask.cdap.api.annotation.Macro;
-
+import io.cdap.cdap.api.annotation.Description;
+import io.cdap.cdap.api.annotation.Macro;
+import io.cdap.cdap.api.security.store.SecureStoreMetadata;
 import de.kp.works.connect.SslConfig;
 import de.kp.works.stream.ssl.*;
 
@@ -173,7 +173,7 @@ public class BaseMqttConfig extends SslConfig {
 
 	}
 
-	public SSLOptions getMqttSsl(Map<String,String> mqttSecure) {
+	public SSLOptions getMqttSsl(List<SecureStoreMetadata> mqttSecure) {
 
 		/*
 		 * This methods supports retrieval of secure information, e.g. passwords,

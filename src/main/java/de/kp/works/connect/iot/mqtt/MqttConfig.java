@@ -23,8 +23,8 @@ import java.util.stream.Stream;
 
 import com.google.common.base.Strings;
 
-import co.cask.cdap.api.annotation.Description;
-import co.cask.cdap.api.annotation.Macro;
+import io.cdap.cdap.api.annotation.Description;
+import io.cdap.cdap.api.annotation.Macro;
 
 public class MqttConfig extends BaseMqttConfig implements Serializable {
 

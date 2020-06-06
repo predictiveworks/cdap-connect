@@ -18,14 +18,15 @@ package de.kp.works.connect.pubsub;
  * 
  */
 
-import java.util.Map;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
 import com.google.common.base.Strings;
 
-import co.cask.cdap.api.annotation.Description;
-import co.cask.cdap.api.annotation.Macro;
+import io.cdap.cdap.api.annotation.Description;
+import io.cdap.cdap.api.annotation.Macro;
+import io.cdap.cdap.api.security.store.SecureStoreMetadata;
 import de.kp.works.connect.BaseConfig;
 
 public class PubSubConfig extends BaseConfig {
@@ -85,7 +86,7 @@ public class PubSubConfig extends BaseConfig {
 		
 	}
 	
-	public String getServiceFilePath(Map<String, String> secureData) {
+	public String getServiceFilePath(List<SecureStoreMetadata> secureData) {
 		
 		// TODO retrieve parameters from secureData		
 		return serviceFilePath;

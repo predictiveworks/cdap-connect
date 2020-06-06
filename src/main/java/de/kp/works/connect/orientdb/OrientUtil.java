@@ -19,7 +19,7 @@ package de.kp.works.connect.orientdb;
  */
 
 import com.orientechnologies.orient.core.metadata.schema.OType;
-import co.cask.cdap.api.data.schema.Schema;
+import io.cdap.cdap.api.data.schema.Schema;
 
 public class OrientUtil {
 

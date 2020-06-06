@@ -30,8 +30,8 @@ import org.apache.hadoop.io.Writable;
 import org.influxdb.InfluxDB;
 import org.influxdb.dto.Point;
 
-import co.cask.cdap.api.data.format.StructuredRecord;
-import co.cask.cdap.api.data.schema.Schema;
+import io.cdap.cdap.api.data.format.StructuredRecord;
+import io.cdap.cdap.api.data.schema.Schema;
 import de.kp.works.core.SchemaUtil;
 
 public class InfluxPointWritable implements Writable, InfluxWritable, Configurable {

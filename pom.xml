@@ -36,7 +36,7 @@
 
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-      <app.parents>system:cdap-data-pipeline[5.1.1,5.1.1],system:cdap-data-streams[5.1.1,5.1.1]</app.parents>
+      <app.parents>system:cdap-data-pipeline[6.2.0,6.2.0],system:cdap-data-streams[6.2.0,6.2.0]</app.parents>
       <main.basedir>${project.basedir}</main.basedir>
 
       <docs.dir>docs</docs.dir>
@@ -44,12 +44,15 @@
 
 	  <aerospike.version>4.4.9</aerospike.version>
  	  <awaitility.version>3.1.6</awaitility.version>
-      <bouncycastle.version>1.52</bouncycastle.version>
-      <cdap.version>5.1.1</cdap.version>    
-      <hadoop.version>2.8.0</hadoop.version>   
+ 	  
+ 	  <!-- CDAP v6.2.0 compliant -->
+      <bouncycastle.version>1.60</bouncycastle.version>
+      <cdap.version>6.2.0</cdap.version>    
+      <hadoop.version>2.8.0</hadoop.version>
+         
 	  <ignite.version>2.7.6</ignite.version>       
       <influx.version>2.17</influx.version>
-      <kafka.version>0.10.0.1</kafka.version>
+      <kafka.version>0.10.2.0</kafka.version>
 	  <orient.version>3.0.26</orient.version>
 	  
 	  <!-- MQTT client -->      
@@ -101,7 +104,7 @@
 	  <!-- CDAP dependencies -->
 
 	  <dependency>
-    	    <groupId>co.cask.cdap</groupId>
+    	    <groupId>io.cdap.cdap</groupId>
     		<artifactId>cdap-common</artifactId>
     		<version>${cdap.version}</version>
         <scope>provided</scope>
@@ -109,28 +112,28 @@
 
       <dependency>
       
-        <groupId>co.cask.cdap</groupId>
+        <groupId>io.cdap.cdap</groupId>
         <artifactId>cdap-etl-api</artifactId>
         <version>${cdap.version}</version>
         <scope>provided</scope>
       </dependency>
 
       <dependency>
-        <groupId>co.cask.cdap</groupId>
+        <groupId>io.cdap.cdap</groupId>
         <artifactId>cdap-api</artifactId>
         <version>${cdap.version}</version>
         <scope>provided</scope>
       </dependency>
 
       <dependency>
-        <groupId>co.cask.cdap</groupId>
+        <groupId>io.cdap.cdap</groupId>
         <artifactId>cdap-etl-api-spark</artifactId>
         <version>${cdap.version}</version>
         <scope>provided</scope>
       </dependency>
 
 	  <dependency>
-    		<groupId>co.cask.cdap</groupId>
+    		<groupId>io.cdap.cdap</groupId>
     		<artifactId>cdap-api-spark2_2.11</artifactId>
     		<version>${cdap.version}</version>
 	  </dependency>

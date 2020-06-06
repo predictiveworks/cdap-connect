@@ -20,9 +20,9 @@ package de.kp.works.connect.jdbc.crate;
 
 import java.util.Properties;
 
-import co.cask.cdap.api.annotation.Description;
-import co.cask.cdap.api.annotation.Name;
-import co.cask.cdap.api.annotation.Plugin;
+import io.cdap.cdap.api.annotation.Description;
+import io.cdap.cdap.api.annotation.Name;
+import io.cdap.cdap.api.annotation.Plugin;
 import de.kp.works.connect.jdbc.JdbcSource;
 
 @Plugin(type = "batchsource")

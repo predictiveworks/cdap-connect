@@ -31,10 +31,11 @@ import org.apache.kafka.common.TopicPartition;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 
-import co.cask.cdap.api.annotation.Description;
-import co.cask.cdap.api.annotation.Macro;
-import co.cask.cdap.api.dataset.lib.KeyValue;
-import co.cask.hydrator.common.KeyValueListParser;
+import io.cdap.cdap.api.annotation.Description;
+import io.cdap.cdap.api.annotation.Macro;
+import io.cdap.cdap.api.dataset.lib.KeyValue;
+import io.cdap.plugin.common.KeyValueListParser;
+
 import de.kp.works.connect.BaseConfig;
 
 public class KafkaConfig extends BaseConfig implements Serializable {

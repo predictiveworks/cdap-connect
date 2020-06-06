@@ -18,15 +18,16 @@ package de.kp.works.connect.pubsub;
  * 
  */
 
-import java.util.Map;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.spark.streaming.api.java.JavaDStream;
 
 import com.google.api.client.auth.oauth2.Credential;
 
-import co.cask.cdap.api.data.format.StructuredRecord;
-import co.cask.cdap.etl.api.streaming.StreamingContext;
+import io.cdap.cdap.api.data.format.StructuredRecord;
+import io.cdap.cdap.api.security.store.SecureStoreMetadata;
+import io.cdap.cdap.etl.api.streaming.StreamingContext;
 import de.kp.works.connect.core.BaseStreamUtil;
 import de.kp.works.stream.pubsub.GCPCredentialsProvider;
 import de.kp.works.stream.pubsub.PubSubResult;
@@ -35,7 +36,7 @@ import de.kp.works.stream.pubsub.PubSubUtils;
 public class KolideStreamUtil extends BaseStreamUtil {
 
 	public static JavaDStream<StructuredRecord> getStructuredRecordJavaDStream(StreamingContext context,
-			KolideConfig kolideConfig, Map<String,String> kolideSecure) {
+			KolideConfig kolideConfig, List<SecureStoreMetadata> kolideSecure) {
 
 		setSparkStreamingConf(context, getSparkStreamingProperties(kolideConfig));
 

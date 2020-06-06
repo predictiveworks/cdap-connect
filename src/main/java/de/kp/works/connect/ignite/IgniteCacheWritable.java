@@ -26,8 +26,8 @@ import org.apache.ignite.binary.BinaryObjectBuilder;
 import org.apache.ignite.client.ClientCache;
 import org.apache.parquet.Strings;
 
-import co.cask.cdap.api.data.format.StructuredRecord;
-import co.cask.cdap.api.data.schema.Schema;
+import io.cdap.cdap.api.data.format.StructuredRecord;
+import io.cdap.cdap.api.data.schema.Schema;
 
 public class IgniteCacheWritable implements IgniteWritable {
 

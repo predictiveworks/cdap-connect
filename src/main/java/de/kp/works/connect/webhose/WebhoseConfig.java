@@ -20,8 +20,8 @@ package de.kp.works.connect.webhose;
 
 import java.util.stream.Stream;
 
-import co.cask.cdap.api.annotation.Description;
-import co.cask.cdap.api.annotation.Macro;
+import io.cdap.cdap.api.annotation.Description;
+import io.cdap.cdap.api.annotation.Macro;
 import de.kp.works.connect.BaseConfig;
 
 public class WebhoseConfig extends BaseConfig {
