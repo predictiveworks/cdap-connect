@@ -1,51 +1,107 @@
 # CDAP-Connect
-Purpose-built data connectors for Google CDAP data pipelines
 
-Google CDAP provides a wide range of out-of-the-box data connectors for data integration purposes. The list of connectors (far from complete) offer access to cloud solutions and platforms such as 
+Purpose-built data connectors to extend Google CDAP (Cloud Data Fusion). 
 
-* Facebook
-* HubSpot
-* Marketo
-* Salesforce
-* SAP
-* SendGrid
-* Snowflake
-* Splunk
-* Zendesk
-* Zuora
+Google CDAP provides a wide range of out-of-the-box connectors for common databases and warehouses, cloud platforms and services, and popular streaming platforms.
 
-and more.
+**CDAP-Connect** complements these common purpose connectors by adding e.g. connectors to low latency datastores, streaming platforms with real-time events especially referring to Cyber defense and Internet of Things data sources and sinks.
 
-**CDAP-Connect** complements this list and offers data connectors that either improve ease-of-use of existing ones or appends connectors for business areas such as cyber defense and internet-of-things.
+**CDAP-Connect** is built with CDAP API v6.2.0 and its connectors are open-sourced by Dr. Krusche & Partner.
 
-## Use Cases
+## Data Stores
 
-### Internet-of-Things & Sensors
+### Aerospike
 
-Stream millions of sensor readings per second into a [Crate](https://crate.io) database and query them in real-time, or, train deep learning & machine learning models, or more.
+### Apache Ignite
 
-The image illustrates how readings from devices & sensors in an Internet-Of-Things environment can be streamed to a **Crate** database, and from there, connected to deep learning, machine learning or time series analysis.
+### Crate DB
 
-<img src="https://github.com/predictiveworks/cdap-connect/blob/master/images/crate-sink.png" width="800" alt="Crate Sink">
+### Influx DB
 
-This setting requires CDAP Connect's [Apache Kafka](https://kafka.apache.org) plugin to consume device and sensor readings from an IoT platform such as [ThingsBoard](https://thingsboard.io).
+### SAP Hana
 
-The Kafka plugin can be complemented by CDAP-Spark's query or rule plugin if intermediate event processing is necessary and finally sends the readings to CDAP Connect's [Crate](https://crate.io) plugin to persist this time series.
+## Data Streaming
 
-Either leverage [Google CDAP's](https://cdap.io) built-in user interface or [Predictive Works](https://predictiveworks.eu) more advanced pipeline interface to *visually* connect and configure these plugins (from Kafka to Crate) and millions of device and sensor readings are made available for subsequent analytics.
+**CDAP-Connect** supports events streaming with respect to Kafka, MQTT, PubSub and WebSocket sources and sinks.
 
->Remainder: Data integration (e.g. connecting Crate Database with readings from ThingsBoard IoT platform) is not an end in itself. It is an important **but first step** towards data analytics to learn what these device & sensor readings tell about a manufacturer's production line or any other technical infrastructure.
+### Kafka
 
-**CDAP Spark** is the gateway to the world of data analytics, and, it is just another set of Google CDAP plugins.
+CDAP-Connect leverages Apache Spark Streaming to connect to Kafka based event streams. 
 
-Suppose trends within sensor readings have to be detected (e.g. a constant rise in the temperature of a certain machine), then **Works TS**, a module of CDAP Spark for time series analysis, can be used to extract trends in time series data. 
+#### Default
 
-**Works TS** ships with an STL decomposition plugin for CDAP data pipelines. STL is short for *Seasonal and Trend decomposition using Loess* and is a proven algorithm to decompose a time signal into its seasonality, trend and remainder components.
+CDAP-Connect supports automatic schema inference for *default* Kafka topics. Default topics originate from any Kafka source. The Apache Spark SQL inference mechanism is used to transform JSON topics into structured records for further processing in CDAP pipeline stages.
 
-<img src="https://github.com/predictiveworks/cdap-connect/blob/master/images/iot-by-sample.png" width="800" alt="IoT by Sample">
+**Use case**: Processing event streams originating from Kafka brokers.
 
-The STL plugin is accompanied by various other time series specific plugins, and trend detection is a first example.
+#### Osquery
 
-### Endpoint Security & osquery
+Osquery daemons (endpoint agents) can be configured to forward query results as Kafka topics. Osquery shops with a pre-defined JSON format. CDAP-Connect provides automatic transformation of Osquery results into structured records.
 
-*to be continued*
+**Use case**: Endpoint monitoring & event processing based on scheduled osquery events.
+
+#### ThingsBoard
+
+ThingsBoard can be configured to forward telemetry events (sensor readings) as Kafka topics. CDAP-Connect supports automatic schema inference for *ThingsBoard* Kafka topics. The Apache Spark SQL inference mechanism is used to transform JSON topics into structured records for further processing in CDAP pipeline stages.
+
+**Use case**: Event processing of telemetry data originating from ThingsBoard.
+
+#### Zeek
+
+Zeek (former Bro) network monitor forwards a wide variety of network as Kafka topics. Each Zeek event type (DNS, HTTP, SNMP etc.) comes with pre-defined JSON format. CDAP-Connect provides automatic transformation of Zeek events, specified by a wide variety of event types, into structured records.
+
+**Use case***: Network monitoring & event processing based on Zeek network monitor events.
+
+### MQTT
+
+CDAP-Connect leverages Apache Spark Streaming to connect to MQTT v3.1.x & v5 based event streams. 
+
+#### Default
+
+CDAP-Connect supports automatic schema inference for *default* MQTT topics. Default topics originate from any MQTT v3.1.x and v5 source. The current implementation supports two different MQTT clients: Eclipse Paho and HiveMQ.
+
+* Eclipse Paho is an MQTT v3.1.x client and works best with Eclipse Mosquitto.
+
+* HiveMQ is an advanced MQTT v3.1.x and v5 client and works best with HiveMQ brokers.
+
+**Use case**: Processing event streams originating from MQTT brokers.
+
+#### TheThings Network (TNN)
+
+TheThings Network provides a LoRAWAN network server that exposes itself as an MQTT v3.1.x broker. CDAP-Connect supports uplink messages (topics) from this LoRaWAN server and provides automatic transformation of uplink events into structured records.
+
+**Use case**: Event processing of uplink events originating from TheThings Network.
+
+### PubSub
+
+CDAP-Connect leverages Apache Spark Streaming to connect to Google PubSub based event streams. 
+
+#### Default
+
+Default PubSub events originate from any Google PubSource source with any further information about the associated schema. CDAP-Connect transforms this events into structured records by leveraging a simple (raw) message format. It is up to subsequent pipeline stages to extract more meaningful information from a PubSub message.
+
+**Use case**: Processing event streams originating from Google PubSub.
+
+#### Kolide
+
+Kolide (Osquery) fleet management can be configured to forward Osquery results to Google PubSub. Kolide works as an event or log aggregator for its associated fleet of osquery daemons, and provides an alternative approach to connect to endpoint events.
+
+**Use case**: Endpoint monitoring & event processing based on scheduled osquery events.
+
+### WebSocket
+
+CDAP-Connect leverages Apache Spark Streaming to connect to WebSocket based event streams. Support is currently restricted to events originating from Eclipse Ditto. 
+
+**Use case**: Event processing based on Internet-of-Things platforms that support Eclipse Ditto service (e.g. Bosch IoT Suite).
+
+## Data Warehouses
+
+### Panoply
+
+### Redshift
+
+### Snowflake
+
+## Graph Databases
+
+### OrientDB

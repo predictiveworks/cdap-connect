@@ -61,8 +61,6 @@ public class DittoStreamSource extends StreamingSource<StructuredRecord>{
 
 	@Override
 	public JavaDStream<StructuredRecord> getStream(StreamingContext context) throws Exception {
-		
-		context.registerLineage(config.referenceName);
 		return DittoStreamUtil.getStructuredRecordJavaDStream(context, config);
 		
 	}
