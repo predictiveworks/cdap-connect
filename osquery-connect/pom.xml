@@ -50,6 +50,14 @@
             <version>0.4.0</version>
         </dependency>
 
+        <!-- WORKS-FLEET-STREAM
+        -->
+        <dependency>
+            <groupId>de.kp.works</groupId>
+            <artifactId>works-fleet-stream</artifactId>
+            <version>0.4.0</version>
+        </dependency>
+
         <!-- WORKS-PUBSUB-STREAM
         -->
         <dependency>

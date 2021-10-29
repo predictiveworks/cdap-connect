@@ -59,7 +59,7 @@ public class OsqueryUtil {
 		fields.add(Schema.Field.of(X_WORKS_FORMAT,    Schema.of(Schema.Type.STRING)));
 
 		fields.add(Schema.Field.of(X_WORKS_LOG,Schema.of(Schema.Type.STRING)));
-		return Schema.recordOf("FleetLogSchema", fields);
+		return Schema.recordOf("OsqueryLogSchema", fields);
 
 	}
 
@@ -75,7 +75,7 @@ public class OsqueryUtil {
 		JsonElement jsonElement = JsonParser.parseString(event);
 		if (!jsonElement.isJsonObject())
 			throw new Exception(
-					String.format("[%s] Fleet events must be JSON objects.", className));
+					String.format("[%s] Osquery events must be JSON objects.", className));
 
 		JsonObject eventObj = jsonElement.getAsJsonObject();
 		JsonObject recordObj = new JsonObject();

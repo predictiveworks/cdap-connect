@@ -37,9 +37,9 @@ public class CTIStreamUtil {
 	 * mqttSecure is currently unused
 	 */
 	public static JavaDStream<StructuredRecord> getStructuredRecordJavaDStream(
-			StreamingContext context, CTIConfig pahoConfig, List<SecureStoreMetadata> mqttSecure) {
+			StreamingContext context, CTIConfig ctiConfig, List<SecureStoreMetadata> mqttSecure) {
 
-		Properties properties = pahoConfig.toProperties();
+		Properties properties = ctiConfig.toProperties();
 		StorageLevel storageLevel = StorageLevel.MEMORY_ONLY_SER();
 
 		return CTIStream.createDirectStream(context.getSparkStreamingContext(), properties, storageLevel)
