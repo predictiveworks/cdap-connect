@@ -29,6 +29,26 @@
 
     </properties>
 
+    <dependencies>
+
+        <!-- COMMON-CONNECT
+        -->
+        <dependency>
+            <groupId>de.kp.works</groupId>
+            <artifactId>common-connect</artifactId>
+            <version>0.4.0</version>
+        </dependency>
+
+        <!-- WORKS-OPENCTI-STREAM
+        -->
+        <dependency>
+            <groupId>de.kp.works</groupId>
+            <artifactId>works-opencti-stream</artifactId>
+            <version>0.4.0</version>
+        </dependency>
+
+    </dependencies>
+
     <build>
         <pluginManagement>
             <plugins>
