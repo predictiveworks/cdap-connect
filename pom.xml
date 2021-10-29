@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
 
- ~ Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
+ ~ Copyright (c) 2019 - 2021 Dr. Krusche & Partner PartG. All rights reserved.
  ~ 
  ~ Licensed under the Apache License, Version 2.0 (the "License"); you may not
  ~ use this file except in compliance with the License. You may obtain a copy of
@@ -24,9 +24,32 @@
   	<modelVersion>4.0.0</modelVersion>
   	<groupId>de.kp.works</groupId>
   	<artifactId>cdap-connect</artifactId>
-  	<version>0.4.0</version>
+    <packaging>pom</packaging>
+    <version>0.4.0</version>
+    <modules>
+        <module>aerospike-connect</module>
+        <module>common-connect</module>
+        <module>crate-connect</module>
+        <module>ditto-connect</module>
+        <module>fiware-connect</module>
+        <module>hivemq-connect</module>
+        <module>ignite-connect</module>
+        <module>influx-connect</module>
+        <module>orient-connect</module>
+        <module>osquery-connect</module>
+        <module>paho-connect</module>
+        <module>saphana-connect</module>
+        <module>snowflake-connect</module>
+        <module>webhose-connect</module>
+        <module>zeek-connect</module>
+        <module>redshift-connect</module>
+        <module>opencti-connect</module>
+        <module>catalyst-connect</module>
+        <module>things-connect</module>
+        <module>shopify-connect</module>
+    </modules>
 
-  	<properties>
+    <properties>
 
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -36,35 +59,11 @@
 
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-      <app.parents>system:cdap-data-pipeline[6.2.0,6.2.0],system:cdap-data-streams[6.2.0,6.2.0]</app.parents>
-      <main.basedir>${project.basedir}</main.basedir>
-
-      <docs.dir>docs</docs.dir>
-      <widgets.dir>widgets</widgets.dir>
-
-	  <aerospike.version>4.4.9</aerospike.version>
- 	  <awaitility.version>3.1.6</awaitility.version>
- 	  
  	  <!-- CDAP v6.2.0 compliant -->
-      <bouncycastle.version>1.60</bouncycastle.version>
-      <cdap.version>6.2.0</cdap.version>    
+      <cdap.version>6.2.0</cdap.version>
       <hadoop.version>2.8.0</hadoop.version>
-         
-	  <ignite.version>2.7.6</ignite.version>       
-      <influx.version>2.17</influx.version>
-      <kafka.version>0.10.2.0</kafka.version>
-	  <orient.version>3.0.26</orient.version>
-	  
-	  <!-- MQTT client -->      
-	  <paho.client.version>1.2.2</paho.client.version>
-	  
-	  <!-- JDBC databases -->
+      <plugin.version>2.4.0</plugin.version>
 
-      <crate-jdbc.version>2.2.0</crate-jdbc.version>	  
-	  <redshift-jdbc.version>1.2.41.1065</redshift-jdbc.version>
-	  <saphana-jdbc.version>2.4.76</saphana-jdbc.version>
-	  <snowflake-jdbc.version>3.12.4</snowflake-jdbc.version>
-	  
 	  <!-- Apache Spark 
 	  	  
 	  This version is for development purposes and relevant when
@@ -78,23 +77,8 @@
       <spark.version>2.1.3</spark.version>   
 
 	</properties>
-	
-	<repositories>
 
-  	  <repository>
-  	    <id>crate-jdbc</id>
-  	    <name>crate-jdbc</name>
-  	    <url>http://repo.spring.io/plugins-release</url>
-  	  </repository>
-
-      <repository>
-        <id>redshift</id>
-        <url>https://s3.amazonaws.com/redshift-maven-repository/release</url>
-      </repository>
-      		
-	</repositories>
-	
-	<!-- 
+	<!--
 	
 	CDAP dependencies contain Apache Spark 1 and Scala 2.10 dependencies. They are currently 
 	not excluded here (and will cause issues when doing naive testing).
@@ -109,213 +93,75 @@
 
 	<dependencies>
 	
-	  <!-- CDAP dependencies -->
-
-	  <dependency>
-    	    <groupId>io.cdap.cdap</groupId>
-    		<artifactId>cdap-common</artifactId>
-    		<version>${cdap.version}</version>
-        <scope>provided</scope>
-    	  </dependency>
-
-      <dependency>
-      
-        <groupId>io.cdap.cdap</groupId>
-        <artifactId>cdap-etl-api</artifactId>
-        <version>${cdap.version}</version>
-        <scope>provided</scope>
-      </dependency>
-
-      <dependency>
-        <groupId>io.cdap.cdap</groupId>
-        <artifactId>cdap-api</artifactId>
-        <version>${cdap.version}</version>
-        <scope>provided</scope>
-      </dependency>
-
-      <dependency>
-        <groupId>io.cdap.cdap</groupId>
-        <artifactId>cdap-etl-api-spark</artifactId>
-        <version>${cdap.version}</version>
-        <scope>provided</scope>
-      </dependency>
-
-	  <dependency>
-    		<groupId>io.cdap.cdap</groupId>
-    		<artifactId>cdap-api-spark2_2.11</artifactId>
-    		<version>${cdap.version}</version>
-	  </dependency>
-
-      <dependency>
-        <groupId>org.apache.hadoop</groupId>
-        <artifactId>hadoop-common</artifactId>
-        <version>${hadoop.version}</version>
-        <scope>provided</scope>
-      </dependency>
-
-	  <!-- Spark core dependencies -->
-	  
-  	  <dependency>
-	    <groupId>org.apache.spark</groupId>
-	    <artifactId>spark-core_2.11</artifactId>
-	    <version>${spark.version}</version>
- 	  </dependency>
-		
-	  <!-- Spark streaming dependencies -->
-	  
-  	  <dependency>
-	    <groupId>org.apache.spark</groupId>
-	    <artifactId>spark-streaming_2.11</artifactId>
-	    <version>${spark.version}</version>
- 	  </dependency>
-
-	  <!-- Spark Streaming (Kafka) dependencies -->   
-	  
-      <dependency>
-        <groupId>org.apache.spark</groupId>
-        <artifactId>spark-streaming-kafka-0-10_2.11</artifactId>
-        <version>${spark.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka-clients</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.spark</groupId>
-            <artifactId>spark-tags_2.11</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-	  <!-- 
-	  <dependency>
-		<groupId>org.apache.spark</groupId>
-		<artifactId>spark-sql-kafka-0-10_2.11</artifactId>
-		<version>${spark.version}</version>		
-	  </dependency>
+	  <!-- CDAP
 	  -->
-	  <!--  Kafka dependencies -->
-	  
-      <dependency>
-        <groupId>org.apache.kafka</groupId>
-        <artifactId>kafka-clients</artifactId>
-        <version>${kafka.version}</version>
-      </dependency>
-
-	  <!-- CDAP Spark dependencies -->   
-	  
-      <dependency>
-        <groupId>de.kp.works</groupId>
-        <artifactId>works-core</artifactId>
-        <version>0.3.0</version>
-      </dependency>
-	  
-      <dependency>
-        <groupId>de.kp.works</groupId>
-        <artifactId>works-ditto</artifactId>
-        <version>0.3.0</version>
-      </dependency>
-	  
-      <dependency>
-        <groupId>de.kp.works</groupId>
-        <artifactId>works-stream</artifactId>
-        <version>0.3.0</version>
-      </dependency>
-	  
-	  <!-- Aerospike dependencies -->
-	  
 	  <dependency>
-	    <groupId>com.aerospike</groupId>
-		<artifactId>aerospike-client</artifactId>
-		<version>${aerospike.version}</version>
-	  </dependency>	  
+          <groupId>io.cdap.cdap</groupId>
+          <artifactId>cdap-common</artifactId>
+          <version>${cdap.version}</version>
+          <scope>provided</scope>
+      </dependency>
 
-	  <!-- Awaitility dependencies 
-	  
-	  This library is e.g. used to control access to Http endpoints
+      <dependency>
+          <groupId>io.cdap.cdap</groupId>
+          <artifactId>cdap-etl-api</artifactId>
+          <version>${cdap.version}</version>
+          <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+          <groupId>io.cdap.cdap</groupId>
+          <artifactId>cdap-api</artifactId>
+          <version>${cdap.version}</version>
+          <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+          <groupId>io.cdap.cdap</groupId>
+          <artifactId>cdap-etl-api-spark</artifactId>
+          <version>${cdap.version}</version>
+          <scope>provided</scope>
+      </dependency>
+
+	  <dependency>
+          <groupId>io.cdap.cdap</groupId>
+          <artifactId>cdap-api-spark2_2.11</artifactId>
+          <version>${cdap.version}</version>
+	  </dependency>
+
+      <!-- HADOOP COMMON
+      -->
+      <dependency>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-common</artifactId>
+          <version>${hadoop.version}</version>
+          <scope>provided</scope>
+      </dependency>
+
+      <!-- CDAP HYDRATOR
+      -->
+      <dependency>
+          <groupId>io.cdap.plugin</groupId>
+          <artifactId>hydrator-common</artifactId>
+          <version>${plugin.version}</version>
+      </dependency>
+
+	  <!-- SPARK CORE
 	  -->
-	  
-    	  <dependency>
-        <groupId>org.awaitility</groupId>
-        <artifactId>awaitility</artifactId>
-        <version>${awaitility.version}</version>
-      </dependency>
-	  
-      <!--  Bouncycastle dependencies -->  
-      
-      <dependency>
-        <groupId>org.bouncycastle</groupId>
-        <artifactId>bcpkix-jdk15on</artifactId>
-        <version>${bouncycastle.version}</version>
-      </dependency>
-         
-    	  <!-- Eclipse Paho (MQTT) dependencies -->
+  	  <dependency>
+	      <groupId>org.apache.spark</groupId>
+	      <artifactId>spark-core_2.11</artifactId>
+	      <version>${spark.version}</version>
+ 	  </dependency>
 
-      <dependency>
-        <groupId>org.eclipse.paho</groupId>
-        <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
-        <version>${paho.client.version}</version>
-      </dependency>
-    
-    	  <!--  Crate DB dependencies -->
-        
-      <dependency>
-        <groupId>io.crate</groupId>
-        <artifactId>crate-jdbc</artifactId>
-        <version>${crate-jdbc.version}</version>      
-      </dependency>
-    
-	  <!-- Apache Ignite dependencies -->
+	  <!-- SPARK STREAMING
+	  -->
+  	  <dependency>
+	      <groupId>org.apache.spark</groupId>
+	      <artifactId>spark-streaming_2.11</artifactId>
+	      <version>${spark.version}</version>
+ 	  </dependency>
 
-	  <dependency>
-	    <groupId>org.apache.ignite</groupId>
-	    <artifactId>ignite-core</artifactId>
-	    <version>${ignite.version}</version>
-	  </dependency>
-
-	  <dependency>
-		<groupId>org.apache.ignite</groupId>
-	    <artifactId>ignite-indexing</artifactId>
-	    <version>${ignite.version}</version>
-	  </dependency>
-    
-    	  <!-- InfluxDB Dependencies -->
-    	  
-	  <dependency>
-        <groupId>org.influxdb</groupId>
-        <artifactId>influxdb-java</artifactId>
-        <version>${influx.version}</version>
-      </dependency>    
-
-	  <!-- OrientDB dependencies -->
-	  
-      <dependency>
-        <groupId>com.orientechnologies</groupId>
-        <artifactId>orientdb-graphdb</artifactId>
-        <version>${orient.version}</version>
-      </dependency>
-
-	  <!-- Panoply & Amazon Redshift dependencies -->
-	  
-	  <dependency>
-        <groupId>com.amazon.redshift</groupId>
-        <artifactId>redshift-jdbc42</artifactId>
-        <version>${redshift-jdbc.version}</version>
-      </dependency>
-	  
-	  <!-- SAP Hana dependencies -->
-	  <dependency>
-        <groupId>com.sap.cloud.db.jdbc</groupId>
-        <artifactId>ngdbc</artifactId>
-        <version>${saphana-jdbc.version}</version>
-      </dependency>
-	  
-	  <!-- Snowflake dependencies -->
-	  <dependency>
-        <groupId>net.snowflake</groupId>
-        <artifactId>snowflake-jdbc</artifactId>
-        <version>${snowflake-jdbc.version}</version>
-      </dependency>
-	  
 	</dependencies>
    
   <build>
@@ -350,169 +196,10 @@
             </execution>
           </executions>
         </plugin>            
-        <!-- maven surefire -->
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.14.1</version>
-          <configuration>
-            <argLine>-Xmx2048m -Djava.awt.headless=true</argLine>
-            <redirectTestOutputToFile>${surefire.redirectTestOutputToFile}</redirectTestOutputToFile>
-            <reuseForks>false</reuseForks>
-            <reportFormat>plain</reportFormat>
-            <systemPropertyVariables>
-              <java.io.tmpdir>${project.build.directory}</java.io.tmpdir>
-            </systemPropertyVariables>
-          </configuration>
-        </plugin>
-        <!-- maven bundle -->
-        <plugin>
-          <groupId>org.apache.felix</groupId>
-          <artifactId>maven-bundle-plugin</artifactId>
-          <version>3.3.0</version>
-          <extensions>true</extensions>
-          <configuration>
-            <instructions>
-              <Embed-Dependency>*;inline=false;scope=compile</Embed-Dependency>
-              <Embed-Transitive>true</Embed-Transitive>
-              <Embed-Directory>lib</Embed-Directory>
-              <!--Only @Plugin classes in the export packages will be included as plugin-->
-              <_exportcontents>de.kp.works.*</_exportcontents>
-            </instructions>
-          </configuration>
-          <executions>
-            <execution>
-              <phase>package</phase>
-              <goals>
-                <goal>bundle</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-        <!-- maven antrum -->
-       	<plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-antrun-plugin</artifactId>
-          <version>1.7</version>
-          <executions>
-            <!-- Create the config file for artifacts which can be used to deploy the artifact.
-                 Sets the parents field to system:cdap-etl-batch and system:cdap-etl-realtime with whatever
-                 version range is set in the etl.versionRange property.
-                 also sets a widget and doc property for each file contained in the widgets and docs directories. -->
-            <execution>
-              <id>create-artifact-config</id>
-              <phase>prepare-package</phase>
-              <configuration>
-                <target>
-                  <script language="javascript"> <![CDATA[
-
-                  // for some reason, project.basedir evaluates to null if we just get the property here.
-                  // so we set main.basedir to project.basedir in the pom properties, then main.basedir is used here
-                  // where it evaluates correctly for whatever reason
-                  var baseDir = project.getProperty("main.basedir");
-                  var targetDir = project.getProperty("project.build.directory");
-                  var artifactId = project.getProperty("project.artifactId");
-                  var version = project.getProperty("project.version");
-
-                  var cfgFile = new java.io.File(targetDir, artifactId + "-" + version + ".json");
-                  if (!cfgFile.exists()) {
-                    cfgFile.createNewFile();
-                  }
-                  
-                  var parents = project.getProperty("app.parents").split(",");
-                  var config = {
-                    "parents": [ ],
-                    "plugins": [
-                    	  // The Crate DB JDBC driver configuration
-                      {
-                        "name": "crate",
-                        "type": "jdbc",
-                        "className": "io.crate.client.jdbc.CrateDriver"
-                      },
-                      // The Amazon Redshift JDBC driver configuration
-                      {
-                        "name": "redshift",
-                        "type": "jdbc",
-                        "className": "com.amazon.redshift.jdbc42.Driver"
-                      },
-                      // The SAP Hana JDBC driver configuration
-                      {
-                        "name": "saphana",
-                        "type": "jdbc",
-                        "className": "com.sap.db.jdbc.Driver"
-                      },
-                      // The Snowflake JDBC driver configuration
-                      {
-                        "name": "snowflake",
-                        "type": "jdbc",
-                        "className": "com.snowflake.client.jdbc.SnowflakeDriver"
-                      }
-                      
-                   ],
-                    "properties": {}
-                  }
-                  
-                  for (i = 0; i < parents.length; i+=2) {
-                    // because name1[lo,hi],name2[lo,hi] gets split into "name1[lo", "hi]", "name2[lo", "hi]"
-                    // so we have to combine them again
-                    config.parents.push(parents[i] + "," + parents[i+1]);
-                  }
-
-                  // look in widgets directory for widget config for each plugin
-                  var widgetsDir = new java.io.File(baseDir, project.getProperty("widgets.dir"));
-                  if (widgetsDir.isDirectory()) {
-                    var widgetsFiles = widgetsDir.listFiles();
-                    for (i = 0; i < widgetsFiles.length; i++) {
-                      var widgetsFile = widgetsFiles[i];
-                      if (widgetsFile.isFile()) {
-                        var propertyName = "widgets." + widgetsFile.getName();
-                        // if the filename ends with .json
-                        if (propertyName.indexOf(".json", propertyName.length - 5) !== -1) {
-                          // strip the .json
-                          propertyName = propertyName.slice(0, -5);
-                          var contents = new java.lang.String(java.nio.file.Files.readAllBytes(widgetsFile.toPath()), java.nio.charset.StandardCharsets.UTF_8);
-                          var contentsAsJson = JSON.parse(contents);
-                          config.properties[propertyName] = JSON.stringify(contentsAsJson);
-                        }
-                      }
-                    }
-                  }
-
-                  // look in the docs directory for docs for each plugin
-                  var docsDir = new java.io.File(baseDir, project.getProperty("docs.dir"));
-                  if (docsDir.isDirectory()) {
-                    var docFiles = docsDir.listFiles();
-                    for (i = 0; i < docFiles.length; i++) {
-                      var docFile = docFiles[i];
-                      if (docFile.isFile()) {
-                        var propertyName = "doc." + docFile.getName();
-                        // if the filename ends with .md
-                        if (propertyName.indexOf(".md", propertyName.length - 3) !== -1) {
-                          // strip the extension
-                          propertyName = propertyName.slice(0, -3);
-                          var contents = new java.lang.String(java.nio.file.Files.readAllBytes(docFile.toPath()), java.nio.charset.StandardCharsets.UTF_8);
-                          config.properties[propertyName] = contents + "";
-                        }
-                      }
-                    }
-                  }
-
-                  var fw = new java.io.BufferedWriter(new java.io.FileWriter(cfgFile.getAbsoluteFile()));
-                  fw.write(JSON.stringify(config, null, 2));
-                  fw.close();
-                  ]]></script>
-                </target>
-              </configuration>
-              <goals>
-                <goal>run</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>        
       </plugins>
      </pluginManagement>
   	<plugins>
-    	   <!-- scala maven -->
+       <!-- scala maven -->
        <plugin>
          <groupId>net.alchim31.maven</groupId>
          <artifactId>scala-maven-plugin</artifactId>
@@ -534,19 +221,7 @@
            </execution>
          </executions>
        </plugin>  	
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-      </plugin>
-  	</plugins>
+ 	</plugins>
   </build>
 
 	<name>CDAP Connect</name>
