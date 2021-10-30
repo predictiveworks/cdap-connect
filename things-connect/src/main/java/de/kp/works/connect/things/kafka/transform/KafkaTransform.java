@@ -39,8 +39,6 @@ import java.util.*;
 public class KafkaTransform
 		implements Function2<JavaRDD<ConsumerRecord<byte[], byte[]>>, Time, JavaRDD<StructuredRecord>> {
 
-	private static final long serialVersionUID = 3245612492744637050L;
-
 	private final KafkaConfig config;
 	/*
 	 * This variable specifies the output schema that has been inferred from the

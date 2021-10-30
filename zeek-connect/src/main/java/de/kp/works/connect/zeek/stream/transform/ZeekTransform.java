@@ -62,7 +62,7 @@ public class ZeekTransform implements Function<JavaRDD<String>, JavaRDD<Structur
 
     private Schema getSchema(String event) throws Exception {
 
-        JsonElement jsonElement = new JsonParser().parse(event);
+        JsonElement jsonElement = JsonParser.parseString(event);
 
         if (!jsonElement.isJsonObject())
             throw new Exception(

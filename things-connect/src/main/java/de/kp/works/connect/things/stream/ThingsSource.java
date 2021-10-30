@@ -1,4 +1,4 @@
-package de.kp.works.connect.zeek.stream;
+package de.kp.works.connect.things.stream;
 /*
  * Copyright (c) 2019 - 2021 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -33,13 +33,15 @@ import org.apache.spark.streaming.api.java.JavaDStream;
 import java.util.List;
 
 @Plugin(type = StreamingSource.PLUGIN_TYPE)
-@Name("ZeekSource")
-@Description("A Works Stream streaming source that supports real-time events that originate from Zeek.")
-public class ZeekSource extends StreamingSource<StructuredRecord> {
+@Name("ThingsSource")
+@Description("A Works Stream streaming source that supports real-time events that originate from a ThingsBoard gateway.")
+public class ThingsSource extends StreamingSource<StructuredRecord> {
 
-	private final ZeekConfig config;
-	
-	public ZeekSource(ZeekConfig config) {
+	private static final long serialVersionUID = -8515614253262827164L;
+
+	private final ThingsConfig config;
+
+	public ThingsSource(ThingsConfig config) {
 		this.config = config;			
 	}
 
@@ -66,7 +68,7 @@ public class ZeekSource extends StreamingSource<StructuredRecord> {
 		SecureStore secureStore = context.getSparkExecutionContext().getSecureStore();
 		List<SecureStoreMetadata> secureData = secureStore.list(context.getNamespace());
 		
-		return ZeekStreamUtil.getStructuredRecordJavaDStream(context, config, secureData);
+		return ThingsStreamUtil.getStructuredRecordJavaDStream(context, config, secureData);
 
 	}
 

@@ -1,4 +1,4 @@
-package de.kp.works.connect.zeek.stream.transform;
+package de.kp.works.connect.things.stream;
 /*
  * Copyright (c) 2019 - 2021 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -13,28 +13,19 @@ package de.kp.works.connect.zeek.stream.transform;
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
  * License for the specific language governing permissions and limitations under
  * the License.
- * 
+ *
  * @author Stefan Krusche, Dr. Krusche & Partner PartG
- * 
+ *
  */
 
-import de.kp.works.connect.zeek.ZeekUtil;
-import io.cdap.cdap.api.data.format.StructuredRecord;
-import io.cdap.cdap.api.data.schema.Schema;
-import org.apache.spark.api.java.function.Function;
+import de.kp.works.connect.common.BaseConfig;
 
-public class LogTransform implements Function<String, StructuredRecord> {
+import java.util.Properties;
 
-	private final Schema schema;
+public class ThingsConfig extends BaseConfig {
 
-	public LogTransform(Schema schema) {
-		this.schema = schema;
-	}
-	
-	@Override
-	public StructuredRecord call(String input) throws Exception {
-		String origin = "stream";
-		return ZeekUtil.toRecord(input, origin, schema);
-	}
-
+    public Properties toProperties() {
+        Properties props = new Properties();
+        return props;
+    }
 }

@@ -50,11 +50,11 @@
             <version>0.4.0</version>
         </dependency>
 
-        <!-- WORKS-PUBSUB-STREAM
+        <!-- WORKS-THINGS-STREAM
         -->
         <dependency>
             <groupId>de.kp.works</groupId>
-            <artifactId>works-pubsub-stream</artifactId>
+            <artifactId>works-things-stream</artifactId>
             <version>0.4.0</version>
         </dependency>
 

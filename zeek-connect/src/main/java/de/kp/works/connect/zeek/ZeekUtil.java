@@ -48,7 +48,7 @@ public class ZeekUtil {
 		fields.add(Schema.Field.of(X_WORKS_FORMAT,Schema.of(Schema.Type.STRING)));
 		fields.add(Schema.Field.of(X_WORKS_LOG,Schema.of(Schema.Type.STRING)));
 
-		return Schema.recordOf("ZeekKafkaSchema", fields);
+		return Schema.recordOf("ZeekSchema", fields);
 
 	}
 	/*
@@ -64,7 +64,7 @@ public class ZeekUtil {
 
 	public static StructuredRecord toRecord(String event, String origin, Schema schema) throws Exception {
 
-		JsonElement jsonElement = new JsonParser().parse(event);
+		JsonElement jsonElement = JsonParser.parseString(event);
 		if (!jsonElement.isJsonObject())
 			throw new Exception(
 					String.format("[%s] Zeek events must be JSON objects.", className));

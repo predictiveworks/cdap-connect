@@ -38,7 +38,6 @@ import java.util.List;
 
 public class ThingsboardTransform implements Function2<JavaRDD<ConsumerRecord<byte[], byte[]>>, Time, JavaRDD<StructuredRecord>> {
 
-	private static final long serialVersionUID = 2636262566451373259L;
 	private final ThingsboardSourceConfig config;
 	/*
 	 * This variable specifies the output schema that has been inferred

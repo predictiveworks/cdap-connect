@@ -1,4 +1,4 @@
-package de.kp.works.connect.zeek.stream.transform;
+package de.kp.works.connect.things.stream.transform;
 /*
  * Copyright (c) 2019 - 2021 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -18,7 +18,7 @@ package de.kp.works.connect.zeek.stream.transform;
  * 
  */
 
-import de.kp.works.connect.zeek.ZeekUtil;
+import de.kp.works.connect.things.stream.ThingsUtil;
 import io.cdap.cdap.api.data.format.StructuredRecord;
 import io.cdap.cdap.api.data.schema.Schema;
 import org.apache.spark.api.java.function.Function;
@@ -33,8 +33,7 @@ public class LogTransform implements Function<String, StructuredRecord> {
 	
 	@Override
 	public StructuredRecord call(String input) throws Exception {
-		String origin = "stream";
-		return ZeekUtil.toRecord(input, origin, schema);
+		return ThingsUtil.toRecord(input, schema);
 	}
 
 }
