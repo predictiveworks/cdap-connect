@@ -1,5 +1,12 @@
 {
-"metadata": {"spec-version": "1.5"},
+  "metadata": {"spec-version": "1.5"},
 
-"display-name": "Things Source"
+  "display-name": "Things Source",
+
+  "icon": {
+    "arguments": {
+      "data": "data:image/png;base64,..."
+    },
+    "type": "inline"
+  }
 }

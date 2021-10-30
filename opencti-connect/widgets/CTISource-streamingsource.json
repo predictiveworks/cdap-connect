@@ -2,5 +2,12 @@
   "metadata": {
     "spec-version": "1.5"
   },
-  "display-name": "OpenCTI Source"
+  "display-name": "OpenCTI Source",
+
+  "icon": {
+    "arguments": {
+      "data": "data:image/png;base64,..."
+    },
+    "type": "inline"
+  }
 }

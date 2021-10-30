@@ -1,8 +1,16 @@
 {
-"metadata": {"spec-version": "1.5"},
+  "metadata": {"spec-version": "1.5"},
 
-"display-name": "Things Kafka Source",
- "configuration-groups": [
+  "display-name": "Things Kafka Source",
+
+  "icon": {
+    "arguments": {
+      "data": "data:image/png;base64,..."
+    },
+    "type": "inline"
+  },
+
+  "configuration-groups": [
     {
       "label": "Plugin Configuration",
       "properties": [

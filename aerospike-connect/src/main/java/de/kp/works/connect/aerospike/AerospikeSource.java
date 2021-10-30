@@ -123,6 +123,8 @@ public class AerospikeSource extends BatchSource<AerospikeEntry.Key, AerospikeEn
 		
 		/* Extract bins */
 		List<String> bins = new ArrayList<>();
+
+		assert outputSchema.getFields() != null;
 		for (Schema.Field field: outputSchema.getFields()) {
 			bins.add(field.getName());
 		}

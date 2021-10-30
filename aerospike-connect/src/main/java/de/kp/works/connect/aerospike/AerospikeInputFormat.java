@@ -1,6 +1,6 @@
 package de.kp.works.connect.aerospike;
 /*
- * Copyright (c) 2019 Dr. Krusche & Partner PartG. All rights reserved.
+ * Copyright (c) 2019 - 2021 Dr. Krusche & Partner PartG. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -99,7 +99,7 @@ public class AerospikeInputFormat extends InputFormat<AerospikeEntry.Key, Aerosp
 				throw new IOException("No Aerospike nodes found.");
 			}
 
-			/* SETP #3: Generate splits */
+			/* STEP #3: Generate splits */
 
 			AerospikeSplit[] splits = new AerospikeSplit[numNodes];
 			for (int i = 0; i < numNodes; i++) {
@@ -144,29 +144,18 @@ public class AerospikeInputFormat extends InputFormat<AerospikeEntry.Key, Aerosp
 				this.key = key;
 				this.record = record;
 			}
-			
-			public Key getKey() {
-				return key;
-			}
-			
-			public Record getRecord() {
-				return record;
-			}
+
 		}
 
 		/*
-		 * Thie record reader supports two different read 
+		 * This record reader supports two different read
 		 * operations to retrieve data from an Aerospike 
 		 * database
 		 */
 		private ScanReader scanReader = null;
 		private QueryReader queryReader = null;
-		/*
-		 * Flags to control the scan or query reader
-		 */
-		private boolean isFinished = false;
+
 		private boolean isError = false;
-		private boolean isRunning = false;
 
 		private final ArrayBlockingQueue<KeyRecord> queue = new ArrayBlockingQueue<>(16 * 1024);
 
@@ -239,7 +228,6 @@ public class AerospikeInputFormat extends InputFormat<AerospikeEntry.Key, Aerosp
 					QueryPolicy queryPolicy = new QueryPolicy();
 
 					try (RecordSet rs = client.queryNode(queryPolicy, stmt, client.getNode(node))) {
-						isRunning = true;
 
 						while (rs.next()) {
 
@@ -249,11 +237,8 @@ public class AerospikeInputFormat extends InputFormat<AerospikeEntry.Key, Aerosp
 
 						}
 
-					} finally {
-
-						isFinished = true;
 					}
-					
+
 				} catch (Exception e) {
 
 					isError = true;
@@ -291,17 +276,13 @@ public class AerospikeInputFormat extends InputFormat<AerospikeEntry.Key, Aerosp
 
 					String namespace = AerospikeUtil.getNamespace(conf);
 					String setName = AerospikeUtil.getSetName(conf);
-					
-					isRunning = true;
-					
+
 					String[] bins = AerospikeUtil.getBins(conf);
 					if (bins != null) {
 						client.scanNode(scanPolicy, client.getNode(node), namespace, setName, cb, bins);
 
 					} else
 						client.scanNode(scanPolicy, client.getNode(node), namespace, setName, cb);
-
-					isFinished = true;
 
 				} catch (Exception e) {
 					isError = true;
@@ -331,36 +312,22 @@ public class AerospikeInputFormat extends InputFormat<AerospikeEntry.Key, Aerosp
 
 		@Override
 		public boolean next(AerospikeEntry.Key key, AerospikeEntry.Record value) throws IOException {
-
-			final int waitMS = 1000;
-			int trials = 5;
+			/*
+			 * An exception occurred while trying to query
+			 * or scan data from an Aerospike instance
+			 */
+			if (isError) return false;
+			/*
+			 * Querying or scanning data from an Aerospike
+			 * instance is finished and no data have be
+			 * retrieved
+			 */
+			if (queue.size() == 0) return false;
 
 			try {
+
 				KeyRecord entry;
-				while (true) {
-					
-					if (isError) return false;
-
-					if (!isRunning) {
-						Thread.sleep(100);
-						continue;
-					}
-
-					if (!isFinished && queue.size() == 0) {
-						if (trials == 0) {
-							return false;
-						}
-						Thread.sleep(waitMS);
-						trials--;
-
-					} else if (isFinished && queue.size() == 0) {
-						return false;
-					
-					} else if (queue.size() != 0) {
-						entry = queue.take();
-						break;
-					}
-				}
+				entry = queue.take();
 
 				currentKey = setCurrentKey(currentKey, entry.key);
 				currentValue = setCurrentValue(currentValue, entry.record);
@@ -436,10 +403,7 @@ public class AerospikeInputFormat extends InputFormat<AerospikeEntry.Key, Aerosp
 
 		@Override
 		public float getProgress() {
-			if (isFinished)
-				return 1.0f;
-			else
-				return 0.0f;
+			return 0.0f;
 		}
 
 		@Override

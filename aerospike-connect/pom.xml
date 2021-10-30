@@ -27,7 +27,7 @@
         <docs.dir>docs</docs.dir>
         <widgets.dir>widgets</widgets.dir>
 
-        <aerospike.version>4.4.9</aerospike.version>
+        <aerospike.version>5.1.8</aerospike.version>
 
     </properties>
 

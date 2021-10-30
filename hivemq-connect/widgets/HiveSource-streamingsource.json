@@ -3,7 +3,7 @@
     "spec-version": "1.5"
   },
 
-  "display-name": "Zeek Source",
+  "display-name": "HiveMQ Source",
 
   "icon": {
     "arguments": {
@@ -11,4 +11,5 @@
     },
     "type": "inline"
   }
+
 }

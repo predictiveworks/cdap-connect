@@ -12,7 +12,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="common-connect" />
-    <orderEntry type="library" name="Maven: com.aerospike:aerospike-client:4.4.9" level="project" />
+    <orderEntry type="library" name="Maven: com.aerospike:aerospike-client:5.1.8" level="project" />
     <orderEntry type="library" name="Maven: org.gnu:gnu-crypto:2.0.1" level="project" />
     <orderEntry type="library" name="Maven: org.luaj:luaj-jse:3.0" level="project" />
     <orderEntry type="library" name="Maven: org.mindrot:jbcrypt:0.4" level="project" />

@@ -1,8 +1,16 @@
 {
-"metadata": {"spec-version": "1.5"},
+  "metadata": {"spec-version": "1.5"},
 
-"display-name": "Ignite Sink",
- "configuration-groups": [
+  "display-name": "Ignite Sink",
+
+  "icon": {
+    "arguments": {
+      "data": "data:image/png;base64,..."
+    },
+    "type": "inline"
+  },
+
+  "configuration-groups": [
      {
       "label": "Plugin Configuration",
       "properties": [

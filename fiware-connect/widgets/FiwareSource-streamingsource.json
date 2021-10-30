@@ -3,7 +3,7 @@
     "spec-version": "1.5"
   },
 
-  "display-name": "Zeek Source",
+  "display-name": "Fiware Source",
 
   "icon": {
     "arguments": {
