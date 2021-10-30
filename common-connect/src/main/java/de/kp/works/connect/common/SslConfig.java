@@ -40,7 +40,7 @@ public class SslConfig extends BaseConfig {
 
 	protected static final String KEYSTORE_PATH_DESC = "A path to a file which contains the client SSL keystore.";
 
-	protected static final String KEYSTORE_TYPE_DESC = "The format of the client SSL keystore. Suported values are 'JKS', "
+	protected static final String KEYSTORE_TYPE_DESC = "The format of the client SSL keystore. Supported values are 'JKS', "
 			+ "'JCEKS' and 'PKCS12'. Default is 'JKS'.";
 
 	protected static final String KEYSTORE_PASS_DESC = "The password of the client SSL keystore.";
