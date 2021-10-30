@@ -42,7 +42,7 @@ public class IgniteContext {
 	 * Reference to Apache Ignite that is transferred to the key value
 	 * store to enable cache operations
 	 */
-	private IgniteClient ignite;
+	private final IgniteClient ignite;
 
 	private static IgniteContext instance;
 

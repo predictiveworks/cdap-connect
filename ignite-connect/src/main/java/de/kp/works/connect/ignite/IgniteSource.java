@@ -77,7 +77,7 @@ public class IgniteSource extends BatchSource<NullWritable, BinaryObject, Struct
 			/*
 			 * Infer schema from dummy query request; this mechanism
 			 * also checks whether an Apache Ignite connection can be
-			 * established or not
+			 * established or not. This is done prior any data processing
 			 */
 			outputSchema = config.getSchema(config.fieldNames);
 			pipelineConfigurer.getStageConfigurer().setOutputSchema(outputSchema);
@@ -116,7 +116,10 @@ public class IgniteSource extends BatchSource<NullWritable, BinaryObject, Struct
 
 	@Override
 	public void transform(KeyValue<NullWritable, BinaryObject> input, Emitter<StructuredRecord> emitter) {
-
+		/*
+		 * Access to Apache Ignite exposes data as [BinaryObject]
+		 * and this method transforms each object into a CDAP record
+		 */
 		List<Object> values = input.getValue().getValues();
 		
 		StructuredRecord record = config.values2Record(values, outputSchema);
