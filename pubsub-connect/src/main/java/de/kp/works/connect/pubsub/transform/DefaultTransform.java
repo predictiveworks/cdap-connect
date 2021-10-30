@@ -1,4 +1,4 @@
-package de.kp.works.connect.osquery.pubsub.transform;
+package de.kp.works.connect.pubsub.transform;
 /*
  * Copyright (c) 2019 - 2021 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -18,20 +18,18 @@ package de.kp.works.connect.osquery.pubsub.transform;
  * 
  */
 
+import com.google.cloud.Timestamp;
+import de.kp.works.stream.pubsub.PubSubResult;
+import io.cdap.cdap.api.data.format.StructuredRecord;
+import io.cdap.cdap.api.data.schema.Schema;
+import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.function.Function;
+
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Map;
-
-import org.apache.spark.api.java.JavaRDD;
-import org.apache.spark.api.java.function.Function;
-
-import com.google.cloud.Timestamp;
-
-import io.cdap.cdap.api.data.format.StructuredRecord;
-import io.cdap.cdap.api.data.schema.Schema;
-import de.kp.works.stream.pubsub.PubSubResult;
 
 public class DefaultTransform extends PubSubTransform {
 

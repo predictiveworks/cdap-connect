@@ -1,0 +1,48 @@
+{
+"metadata": {"spec-version": "1.5"},
+
+"display-name": "Fleet PubSub Source",
+ "configuration-groups": [
+    {
+      "label": "Plugin Configuration",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "Reference Name",
+          "name": "referenceName"
+        }
+ 	  ]
+    },
+    {
+      "label": "Data Configuration",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "Project ID",
+          "name": "project"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Subscription",
+          "name": "subscription"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Topic",
+          "name": "topic"
+        }        
+ 	    ]
+    },
+    {
+      "label": "Authentication",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "Service Account File Path",
+          "name": "serviceFilePath"
+        }
+      ]
+    }
+ 	]
+
+}

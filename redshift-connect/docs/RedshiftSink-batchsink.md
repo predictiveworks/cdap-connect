@@ -1,0 +1,8 @@
+
+# Redshift Sink
+
+Description
+---
+
+Configuration
+---

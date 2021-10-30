@@ -48,6 +48,7 @@
         <module>things-connect</module>
         <module>shopify-connect</module>
         <module>kafka-connect</module>
+        <module>pubsub-connect</module>
     </modules>
 
     <properties>

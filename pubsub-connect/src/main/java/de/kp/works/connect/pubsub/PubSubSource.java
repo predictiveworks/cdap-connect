@@ -1,6 +1,6 @@
-package de.kp.works.connect.osquery.pubsub;
+package de.kp.works.connect.pubsub;
 /*
- * Copyright (c) 2020 Dr. Krusche & Partner PartG. All rights reserved.
+ * Copyright (c) 2019 - 2021 Dr. Krusche & Partner PartG. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -18,59 +18,66 @@ package de.kp.works.connect.osquery.pubsub;
  * 
  */
 
-import java.util.List;
-
-import org.apache.spark.streaming.api.java.JavaDStream;
-
 import io.cdap.cdap.api.annotation.Description;
 import io.cdap.cdap.api.annotation.Name;
 import io.cdap.cdap.api.annotation.Plugin;
 import io.cdap.cdap.api.data.format.StructuredRecord;
+import io.cdap.cdap.api.data.schema.Schema;
 import io.cdap.cdap.api.security.store.SecureStore;
 import io.cdap.cdap.api.security.store.SecureStoreMetadata;
 import io.cdap.cdap.etl.api.PipelineConfigurer;
-import io.cdap.cdap.etl.api.StageConfigurer;
 import io.cdap.cdap.etl.api.streaming.StreamingContext;
 import io.cdap.cdap.etl.api.streaming.StreamingSource;
+import org.apache.spark.streaming.api.java.JavaDStream;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Plugin(type = StreamingSource.PLUGIN_TYPE)
-@Name("FleetSource")
-@Description("A Fleet (DM) streaming source to read messages from Google PubSub.")
-public class FleetSource extends StreamingSource<StructuredRecord> {
+@Name("PubSubSource")
+@Description("A PubSub streaming source to read messages from Google PubSub.")
+public class PubSubSource extends StreamingSource<StructuredRecord> {
 
-	private static final long serialVersionUID = 424111438347307202L;
+	private static final long serialVersionUID = 5755422000062454135L;
 
-	private final FleetConfig config;
-	
-	public FleetSource(FleetConfig config) {
+	private final PubSubConfig config;
+
+	public PubSubSource(PubSubConfig config) {
 		this.config = config;
 	}
 
 	@Override
-	public void configurePipeline(PipelineConfigurer pipelineConfigurer) throws IllegalArgumentException {
+	public void configurePipeline(PipelineConfigurer pipelineConfigurer) {
 		super.configurePipeline(pipelineConfigurer);
-
+		
 		config.validate();
-
-		/*
-		 * __KUP__
-		 * 
-		 * We set the output schema explicitly to 'null' as the 
-		 * schema is inferred dynamically from the provided events
-		 */
-		StageConfigurer stageConfigurer = pipelineConfigurer.getStageConfigurer();
-		stageConfigurer.setOutputSchema(null);
+		pipelineConfigurer.getStageConfigurer().setOutputSchema(getSchema());
 
 	}
-	
+
 	@Override
 	public JavaDStream<StructuredRecord> getStream(StreamingContext context) throws Exception {
 		
 		SecureStore secureStore = context.getSparkExecutionContext().getSecureStore();
 		List<SecureStoreMetadata> secureData = secureStore.list(context.getNamespace());
 		
-		return FleetStreamUtil.getStructuredRecordJavaDStream(context, config, secureData);
+		return PubSubStreamUtil.getStructuredRecordJavaDStream(context, config, secureData, getSchema());			
 
 	}
 
+	private Schema getSchema() {
+
+		List<Schema.Field> fields = new ArrayList<>();
+
+		fields.add(Schema.Field.of("id", Schema.of(Schema.Type.STRING)));
+		fields.add(Schema.Field.of("timestamp", Schema.of(Schema.Type.LONG)));
+
+		fields.add(Schema.Field.of("attributes",
+				Schema.mapOf(Schema.of(Schema.Type.STRING), Schema.of(Schema.Type.STRING))));
+		fields.add(Schema.Field.of("message", Schema.of(Schema.Type.BYTES)));
+
+		return Schema.recordOf("pubSubSchema", fields);
+
+	}
+	
 }

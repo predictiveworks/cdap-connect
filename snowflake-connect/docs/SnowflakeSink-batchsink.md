@@ -1,0 +1,8 @@
+
+# Snowflake Sink
+
+Description
+---
+
+Configuration
+---

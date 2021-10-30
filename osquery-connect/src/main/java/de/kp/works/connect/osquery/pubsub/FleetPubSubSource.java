@@ -1,6 +1,6 @@
-package de.kp.works.connect.osquery.kafka;
+package de.kp.works.connect.osquery.pubsub;
 /*
- * Copyright (c) 2019 - 2021 Dr. Krusche & Partner PartG. All rights reserved.
+ * Copyright (c) 2020 Dr. Krusche & Partner PartG. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -18,39 +18,32 @@ package de.kp.works.connect.osquery.kafka;
  * 
  */
 
+import java.util.List;
+
 import org.apache.spark.streaming.api.java.JavaDStream;
 
 import io.cdap.cdap.api.annotation.Description;
 import io.cdap.cdap.api.annotation.Name;
 import io.cdap.cdap.api.annotation.Plugin;
 import io.cdap.cdap.api.data.format.StructuredRecord;
+import io.cdap.cdap.api.security.store.SecureStore;
+import io.cdap.cdap.api.security.store.SecureStoreMetadata;
 import io.cdap.cdap.etl.api.PipelineConfigurer;
 import io.cdap.cdap.etl.api.StageConfigurer;
 import io.cdap.cdap.etl.api.streaming.StreamingContext;
 import io.cdap.cdap.etl.api.streaming.StreamingSource;
 
-import java.util.HashMap;
-import java.util.Map;
-
-/**
- * __KUP__
- * 
- * This is an improvement of CDAP's implementation of a Kafka plugin
- * that is capable to infer the data schema from the events provided
- * 
- * Kafka Streaming source.
- */
 @Plugin(type = StreamingSource.PLUGIN_TYPE)
-@Name("KafkaStreamSource")
-@Description("An Apache Kafka streaming source that supports real-time events that refer to a single topic.")
-public class KafkaStreamSource extends StreamingSource<StructuredRecord> {
+@Name("FleetPubSubSource")
+@Description("A Fleet (DM) streaming source to read messages from Google PubSub.")
+public class FleetPubSubSource extends StreamingSource<StructuredRecord> {
 
-	private static final long serialVersionUID = -1344898376371260838L;
-	private final KafkaConfig config;
+	private static final long serialVersionUID = 424111438347307202L;
+
+	private final FleetConfig config;
 	
-	public KafkaStreamSource(KafkaConfig conf) {
-		this.config = conf;
-		
+	public FleetPubSubSource(FleetConfig config) {
+		this.config = config;
 	}
 
 	@Override
@@ -58,6 +51,7 @@ public class KafkaStreamSource extends StreamingSource<StructuredRecord> {
 		super.configurePipeline(pipelineConfigurer);
 
 		config.validate();
+
 		/*
 		 * __KUP__
 		 * 
@@ -66,21 +60,17 @@ public class KafkaStreamSource extends StreamingSource<StructuredRecord> {
 		 */
 		StageConfigurer stageConfigurer = pipelineConfigurer.getStageConfigurer();
 		stageConfigurer.setOutputSchema(null);
-		
-		if (config.getMaxRatePerPartition() != null && config.getMaxRatePerPartition() > 0) {
 
-			Map<String, String> pipelineProperties = new HashMap<>();
-
-			pipelineProperties.put("spark.streaming.kafka.maxRatePerPartition",
-					config.getMaxRatePerPartition().toString());
-			pipelineConfigurer.setPipelineProperties(pipelineProperties);
-
-		}
-	}
-
-	@Override
-	public JavaDStream<StructuredRecord> getStream(StreamingContext context) {
-		return KafkaStreamUtil.getStructuredRecordJavaDStream(context, config);		
 	}
 	
+	@Override
+	public JavaDStream<StructuredRecord> getStream(StreamingContext context) throws Exception {
+		
+		SecureStore secureStore = context.getSparkExecutionContext().getSecureStore();
+		List<SecureStoreMetadata> secureData = secureStore.list(context.getNamespace());
+		
+		return FleetStreamUtil.getStructuredRecordJavaDStream(context, config, secureData);
+
+	}
+
 }

@@ -1,4 +1,4 @@
-package de.kp.works.connect.osquery.pubsub;
+package de.kp.works.connect.pubsub;
 /*
  * Copyright (c) 2019 - 2021 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -18,21 +18,20 @@ package de.kp.works.connect.osquery.pubsub;
  * 
  */
 
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-
 import com.google.api.client.auth.oauth2.Credential;
-import de.kp.works.connect.osquery.pubsub.transform.DefaultTransform;
+import de.kp.works.connect.pubsub.transform.DefaultTransform;
 import de.kp.works.stream.pubsub.GCPCredentialsProvider;
 import de.kp.works.stream.pubsub.PubSubResult;
 import de.kp.works.stream.pubsub.PubSubStream;
-import org.apache.spark.streaming.api.java.JavaDStream;
-
 import io.cdap.cdap.api.data.format.StructuredRecord;
 import io.cdap.cdap.api.data.schema.Schema;
 import io.cdap.cdap.api.security.store.SecureStoreMetadata;
 import io.cdap.cdap.etl.api.streaming.StreamingContext;
+import org.apache.spark.streaming.api.java.JavaDStream;
+
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
 
 public class PubSubStreamUtil {
 
