@@ -30,8 +30,6 @@ import java.util.stream.Stream;
 
 public class PahoConfig extends SslConfig {
 
-	private static final long serialVersionUID = 1193310212809609121L;
-	
 	@Description("The address of the MQTT broker to connect to, including protocol and port.")
 	@Macro
 	public String mqttBroker;

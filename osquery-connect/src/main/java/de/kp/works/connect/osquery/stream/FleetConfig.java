@@ -18,16 +18,82 @@ package de.kp.works.connect.osquery.stream;
  * 
  */
 
+import com.google.common.base.Strings;
 import de.kp.works.connect.common.BaseConfig;
+import de.kp.works.stream.fleet.FleetNames;
+import io.cdap.cdap.api.annotation.Description;
+import io.cdap.cdap.api.annotation.Macro;
 
+import javax.annotation.Nullable;
 import java.util.Properties;
 
 public class FleetConfig extends BaseConfig {
 
-	private static final long serialVersionUID = -3811431404137878718L;
+	@Description("The file system folder used by the Fleet platform to persist log files.")
+	@Macro
+	public String fleetFolder;
+
+	@Description("The log file extension used by the Fleet platform . Default value is 'log'.")
+	@Macro
+	@Nullable
+	public String fleetExtension;
+
+	@Description("The buffer size used to cache Fleet log entries. Default value is '1000'.")
+	@Macro
+	@Nullable
+	public String fleetBufferSize;
+
+	@Description("The maximum number of bytes of a Fleet log entry. Default value is '8192'.")
+	@Macro
+	@Nullable
+	public String fleetLineSize;
+
+	@Description("The number of threads used to process Fleet log entries. Default value is '1'.")
+	@Macro
+	@Nullable
+	public String fleetNumThreads;
+
+	@Description("The polling interval in seconds to retrieve Fleet log entries. Default value is '1'.")
+	@Macro
+	@Nullable
+	public String fleetPolling;
+
+	public void validate() {
+
+		String className = this.getClass().getName();
+
+		if (Strings.isNullOrEmpty(fleetFolder)) {
+			throw new IllegalArgumentException(
+					String.format("[%s] The Fleet log folder must not be empty.", className));
+		}
+
+	}
 
 	public Properties toProperties() {
+
 		Properties props = new Properties();
+		props.setProperty(FleetNames.LOG_FOLDER(), fleetFolder);
+
+		if (!Strings.isNullOrEmpty(fleetExtension)) {
+			props.setProperty(FleetNames.LOG_POSTFIX(), fleetExtension);
+		}
+
+		if (!Strings.isNullOrEmpty(fleetBufferSize)) {
+			props.setProperty(FleetNames.MAX_BUFFER_SIZE(), fleetBufferSize);
+		}
+
+		if (!Strings.isNullOrEmpty(fleetLineSize)) {
+			props.setProperty(FleetNames.MAX_LINE_SIZE(), fleetLineSize);
+		}
+
+		if (!Strings.isNullOrEmpty(fleetNumThreads)) {
+			props.setProperty(FleetNames.NUM_THREADS(), fleetNumThreads);
+		}
+
+		if (!Strings.isNullOrEmpty(fleetPolling)) {
+			props.setProperty(FleetNames.POLLING_INTERVAL(), fleetPolling);
+		}
+
 		return props;
 	}
 }

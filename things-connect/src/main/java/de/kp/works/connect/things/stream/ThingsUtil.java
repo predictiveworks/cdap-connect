@@ -36,6 +36,21 @@ public class ThingsUtil {
 
         List<Schema.Field> fields = new ArrayList<>();
 
+        fields.add(Schema.Field.of("timestamp", Schema.of(Schema.Type.LONG)));
+        fields.add(Schema.Field.of("seconds", Schema.of(Schema.Type.LONG)));
+
+        fields.add(Schema.Field.of("topic", Schema.of(Schema.Type.STRING)));
+        fields.add(Schema.Field.of("qos", Schema.of(Schema.Type.INT)));
+
+        fields.add(Schema.Field.of("duplicate", Schema.of(Schema.Type.BOOLEAN)));
+        fields.add(Schema.Field.of("retained", Schema.of(Schema.Type.BOOLEAN)));
+
+        fields.add(Schema.Field.of("digest", Schema.of(Schema.Type.STRING)));
+        fields.add(Schema.Field.of("context", Schema.of(Schema.Type.STRING)));
+
+        fields.add(Schema.Field.of("dimension", Schema.of(Schema.Type.STRING)));
+        fields.add(Schema.Field.of("payload", Schema.of(Schema.Type.STRING)));
+
         return Schema.recordOf("ThingsSchema", fields);
 
     }
@@ -47,11 +62,15 @@ public class ThingsUtil {
             throw new Exception(
                     String.format("[%s] Things events must be JSON objects.", className));
 
+        /*
+         * The event format provided is compliant with the
+         * above schema definition; therefore, no additional
+         * transformation is needed.
+         */
         JsonObject eventObj = jsonElement.getAsJsonObject();
-        JsonObject recordObj = new JsonObject();
 
         /* Retrieve structured record */
-        String json = recordObj.toString();
+        String json = eventObj.toString();
         return StructuredRecordStringConverter.fromJsonString(json, schema);
 
     }
