@@ -35,17 +35,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Plugin(type = "batchsink")
-@Name("ThingsboardSink")
+@Name("ThingsHttpSink")
 @Description("Batch sink plugin to send messages to a Thingsboard server.")
-public class ThingsboardSink extends BatchSink<StructuredRecord, Void, Void> {
+public class ThingsHttpSink extends BatchSink<StructuredRecord, Void, Void> {
 
-	private final ThingsboardSinkConfig config;
-	private final ThingsboardClient client;
+	private final ThingsSinkConfig config;
+	private final ThingsClient client;
 
-	public ThingsboardSink(ThingsboardSinkConfig config) {
+	public ThingsHttpSink(ThingsSinkConfig config) {
 
 		this.config = config;
-		this.client = new ThingsboardClient(config);
+		this.client = new ThingsClient(config);
 
 	}
 

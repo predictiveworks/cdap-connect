@@ -18,7 +18,7 @@ package de.kp.works.connect.things.kafka;
  * 
  */
 
-public class ThingsboardSourceConfig extends KafkaConfig {
+public class ThingsSourceConfig extends KafkaConfig {
 
 	private static final long serialVersionUID = 1503845928729299131L;
 

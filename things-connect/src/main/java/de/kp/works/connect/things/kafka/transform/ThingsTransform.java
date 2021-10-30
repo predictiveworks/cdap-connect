@@ -22,7 +22,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import de.kp.works.connect.common.SchemaUtil;
-import de.kp.works.connect.things.kafka.ThingsboardSourceConfig;
+import de.kp.works.connect.things.kafka.ThingsSourceConfig;
 import io.cdap.cdap.api.data.format.StructuredRecord;
 import io.cdap.cdap.api.data.schema.Schema;
 import io.cdap.cdap.format.StructuredRecordStringConverter;
@@ -36,9 +36,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ThingsboardTransform implements Function2<JavaRDD<ConsumerRecord<byte[], byte[]>>, Time, JavaRDD<StructuredRecord>> {
+public class ThingsTransform implements Function2<JavaRDD<ConsumerRecord<byte[], byte[]>>, Time, JavaRDD<StructuredRecord>> {
 
-	private final ThingsboardSourceConfig config;
+	private final ThingsSourceConfig config;
 	/*
 	 * This variable specifies the output schema that has been inferred
 	 * from the incoming JavaRDD batch; note, we determine the data schema
@@ -47,7 +47,7 @@ public class ThingsboardTransform implements Function2<JavaRDD<ConsumerRecord<by
 	 */
 	private Schema schema;
 	
-	public ThingsboardTransform(ThingsboardSourceConfig config) {
+	public ThingsTransform(ThingsSourceConfig config) {
 		this.config = config;
 	}
 	
@@ -116,11 +116,11 @@ public class ThingsboardTransform implements Function2<JavaRDD<ConsumerRecord<by
 
 		private static final long serialVersionUID = 2383360793734551671L;
 
-		protected final ThingsboardSourceConfig config;
+		protected final ThingsSourceConfig config;
 
 		protected Schema schema;
 
-		public RecordTransform(ThingsboardSourceConfig config, Long batchTime, Schema schema) {
+		public RecordTransform(ThingsSourceConfig config, Long batchTime, Schema schema) {
 			this.config = config;
 			this.schema = schema;
 		}

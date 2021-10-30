@@ -18,22 +18,22 @@ package de.kp.works.connect.things.kafka;
  * 
  */
 
-import de.kp.works.connect.things.kafka.transform.ThingsboardTransform;
+import de.kp.works.connect.things.kafka.transform.ThingsTransform;
 import io.cdap.cdap.api.data.format.StructuredRecord;
 import io.cdap.cdap.etl.api.streaming.StreamingContext;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.spark.streaming.api.java.JavaDStream;
 import org.apache.spark.streaming.api.java.JavaInputDStream;
 
-public class ThingsboardStreamUtil extends BaseStreamUtil {
+public class ThingsStreamUtil extends BaseStreamUtil {
 
 	public static JavaDStream<StructuredRecord> getStructuredRecordJavaDStream(StreamingContext context,
-			ThingsboardSourceConfig config) {
+			ThingsSourceConfig config) {
 
 		JavaInputDStream<ConsumerRecord<byte[], byte[]>> stream = createStream(context.getSparkStreamingContext(),
 				context.getPipelineName(), config);
 
-		return stream.transform(new ThingsboardTransform(config));
+		return stream.transform(new ThingsTransform(config));
 
 	}
 

@@ -24,7 +24,7 @@ import io.cdap.cdap.api.annotation.Description;
 import io.cdap.cdap.api.annotation.Macro;
 import io.cdap.cdap.api.annotation.Name;
 
-public class ThingsboardSinkConfig extends BaseConfig {
+public class ThingsSinkConfig extends BaseConfig {
 
 	private static final long serialVersionUID = 1401383241435144467L;
 
@@ -82,7 +82,7 @@ public class ThingsboardSinkConfig extends BaseConfig {
 	@Macro
 	public String assetFeatures;
 
-	public ThingsboardSinkConfig() {
+	public ThingsSinkConfig() {
 		assetLimit = "1000";
 	}
 	/**

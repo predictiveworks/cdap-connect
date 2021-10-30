@@ -34,14 +34,6 @@
 
     <dependencies>
 
-        <!-- CATALYST-CONNECT
-        -->
-        <dependency>
-            <groupId>de.kp.works</groupId>
-            <artifactId>catalyst-connect</artifactId>
-            <version>0.4.0</version>
-        </dependency>
-
         <!-- COMMON-CONNECT
         -->
         <dependency>
@@ -56,14 +48,6 @@
             <groupId>de.kp.works</groupId>
             <artifactId>works-things-stream</artifactId>
             <version>0.4.0</version>
-        </dependency>
-
-        <!-- SPARK SQL
-        -->
-        <dependency>
-            <groupId>org.apache.spark</groupId>
-            <artifactId>spark-sql_2.11</artifactId>
-            <version>${spark.version}</version>
         </dependency>
 
         <!-- SPARK STREAMING KAFKA

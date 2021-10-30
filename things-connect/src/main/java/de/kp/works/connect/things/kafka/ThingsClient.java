@@ -40,11 +40,11 @@ import org.slf4j.LoggerFactory;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-public class ThingsboardClient {
+public class ThingsClient {
 
-	private static final Logger log = LoggerFactory.getLogger(ThingsboardClient.class);
+	private static final Logger log = LoggerFactory.getLogger(ThingsClient.class);
 
-	private final ThingsboardSinkConfig config;
+	private final ThingsSinkConfig config;
 
 	private Map<String, JsonObject> assetMap;
 
@@ -56,7 +56,7 @@ public class ThingsboardClient {
 	 */
 	private String token;
 
-	public ThingsboardClient(ThingsboardSinkConfig config) {
+	public ThingsClient(ThingsSinkConfig config) {
 
 		this.config = config;
 

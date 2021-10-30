@@ -32,15 +32,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Plugin(type = StreamingSource.PLUGIN_TYPE)
-@Name("ThingsboardSource")
+@Name("ThingsKafkaSource")
 @Description("An Apache Kafka streaming source that supports real-time events that originate from Thingsboard.")
-public class ThingsboardSource extends StreamingSource<StructuredRecord> {
+public class ThingsKafkaSource extends StreamingSource<StructuredRecord> {
 
 	private static final long serialVersionUID = 2853490513177740072L;
 
-	private final ThingsboardSourceConfig config;
+	private final ThingsSourceConfig config;
 	
-	public ThingsboardSource(ThingsboardSourceConfig config) {
+	public ThingsKafkaSource(ThingsSourceConfig config) {
 		this.config = config;
 	}
 
@@ -69,7 +69,7 @@ public class ThingsboardSource extends StreamingSource<StructuredRecord> {
 	
 	@Override
 	public JavaDStream<StructuredRecord> getStream(StreamingContext context) {
-		return ThingsboardStreamUtil.getStructuredRecordJavaDStream(context, config);
+		return ThingsStreamUtil.getStructuredRecordJavaDStream(context, config);
 	}
 
 }

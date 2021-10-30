@@ -1,7 +1,7 @@
 {
 "metadata": {"spec-version": "1.5"},
 
-"display-name": "ThingsBoard Source",
+"display-name": "Things Kafka Source",
  "configuration-groups": [
     {
       "label": "Plugin Configuration",

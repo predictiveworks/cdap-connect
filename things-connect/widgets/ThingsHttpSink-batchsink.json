@@ -1,7 +1,7 @@
 {
 "metadata": {"spec-version": "1.5"},
 
-"display-name": "ThingsBoard Sink",
+"display-name": "Things Http Sink",
  "configuration-groups": [
     {
       "label": "Plugin Configuration",
