@@ -37,13 +37,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-/*
+/**
  * [ZeekTransform] is the main class for transforming
- * Apache Kafka messages originating from Zeek sensor
+ * Apache Kafka messages originating from Zeek sensor.
+ *
+ * Different from plain Kafka messages, a pre-defined
+ * message schema is expected and used.
  */
 public class ZeekTransform implements Function2<JavaRDD<ConsumerRecord<byte[], byte[]>>, Time, JavaRDD<StructuredRecord>> {
-
-	private static final long serialVersionUID = -2256941762899970287L;
 
 	private Schema schema;
 
@@ -59,13 +60,7 @@ public class ZeekTransform implements Function2<JavaRDD<ConsumerRecord<byte[], b
 		if (schema == null) {
 			schema = getSchema(input.first());
 		}
-		/*
-		 * Schema strategy: The schema is inferred from the first record and then
-		 * assigned to the event transformer;
-		 *
-		 * this is a suitable strategy as the [osquery] schema is more or less static
-		 * due to its strong relationship to predefined queries.
-		 */
+
 		Function<ConsumerRecord<byte[], byte[]>, StructuredRecord> logTransform = new LogTransform(
 				batchTime.milliseconds(), schema);
 
@@ -80,21 +75,14 @@ public class ZeekTransform implements Function2<JavaRDD<ConsumerRecord<byte[], b
 
 		if (!jsonElement.isJsonObject())
 			throw new Exception(
-					String.format("[%s] Osquery events must be JSON objects.", ZeekTransform.class.getName()));
+					String.format("[%s] Zeek events must be JSON objects.", ZeekTransform.class.getName()));
 
 		JsonObject eventObject = jsonElement.getAsJsonObject();
 		return ZeekUtil.getSchema(eventObject);
 
 	}
 
-	/**
-	 * Transforms kafka key and message into a structured record when message format
-	 * is not given. Everything here should be serializable, as Spark Streaming will
-	 * serialize all functions.
-	 */
 	private static  class EmptyFunction implements Function<ConsumerRecord<byte[], byte[]>, StructuredRecord> {
-
-		private static final long serialVersionUID = -2582275414113323812L;
 
 		@Override
 		public StructuredRecord call(ConsumerRecord<byte[], byte[]> in) {

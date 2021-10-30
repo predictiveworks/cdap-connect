@@ -30,7 +30,6 @@ import java.util.Set;
 
 public class EventTransform implements Function<ConsumerRecord<byte[], byte[]>, StructuredRecord> {
 
-	private static final long serialVersionUID = -3134389609545459941L;
 	private final long ts;
 
 	protected final KafkaConfig config;

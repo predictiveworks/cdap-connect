@@ -24,8 +24,6 @@ import io.cdap.cdap.api.data.schema.Schema;
 import org.apache.spark.api.java.function.Function;
 
 public class LogTransform implements Function<String, StructuredRecord> {
-	
-	private static final long serialVersionUID = 8359331763631677218L;
 
 	private final Schema schema;
 

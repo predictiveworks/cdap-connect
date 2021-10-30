@@ -33,6 +33,8 @@ public class ZeekUtil {
 
 	static String className = ZeekUtil.class.getName();
 
+	static String X_WORKS_FORMAT    = "x_works_format";
+	static String X_WORKS_ORIGIN    = "x_works_origin";
 	static String X_WORKS_LOG       = "x_works_log";
 	static String X_WORKS_TIMESTAMP = "x_works_timestamp";
 
@@ -41,20 +43,26 @@ public class ZeekUtil {
 		List<Schema.Field> fields = new ArrayList<>();
 
 		fields.add(Schema.Field.of(X_WORKS_TIMESTAMP, Schema.of(Schema.Type.LONG)));
+		fields.add(Schema.Field.of(X_WORKS_ORIGIN, Schema.of(Schema.Type.STRING)));
+
+		fields.add(Schema.Field.of(X_WORKS_FORMAT,Schema.of(Schema.Type.STRING)));
 		fields.add(Schema.Field.of(X_WORKS_LOG,Schema.of(Schema.Type.STRING)));
 
-		return Schema.recordOf("ZeekLogSchema", fields);
+		return Schema.recordOf("ZeekKafkaSchema", fields);
 
 	}
-
-	public static StructuredRecord toRecord(byte[] event, Schema schema) throws Exception {
+	/*
+	 * Kafka based and stream based Zeek log events have different
+	 * format and are handled with different schemas
+	 */
+	public static StructuredRecord toRecord(byte[] event, String origin, Schema schema) throws Exception {
 
 		String json = new String(event, StandardCharsets.UTF_8);
-		return toRecord(json, schema);
+		return toRecord(json, origin, schema);
 
 	}
 
-	public static StructuredRecord toRecord(String event, Schema schema) throws Exception {
+	public static StructuredRecord toRecord(String event, String origin, Schema schema) throws Exception {
 
 		JsonElement jsonElement = new JsonParser().parse(event);
 		if (!jsonElement.isJsonObject())
@@ -67,7 +75,34 @@ public class ZeekUtil {
 		long timestamp = System.currentTimeMillis();
 		recordObj.addProperty(X_WORKS_TIMESTAMP, timestamp);
 
-		recordObj.addProperty(X_WORKS_LOG, eventObj.toString());
+		recordObj.addProperty(X_WORKS_ORIGIN, origin);
+		if (origin.equals("kafka")) {
+			/*
+			 * The event format is not provided with Zeek log events
+			 * that are published via Kafka
+			 */
+			recordObj.addProperty(X_WORKS_FORMAT, "");
+			recordObj.addProperty(X_WORKS_LOG, eventObj.toString());
+
+		}
+		else if (origin.equals("stream")) {
+			/*
+			 * Works Stream leverages an SSE-like event format and
+			 * provides the log file name (e.g. http.log) as event
+			 * type.
+			 */
+			String format = eventObj.get("type").getAsString();
+			recordObj.addProperty(X_WORKS_FORMAT, format);
+
+			String data = eventObj.get("data").getAsString();
+			recordObj.addProperty(X_WORKS_LOG, data);
+
+		}
+		else {
+			throw new Exception(
+					String.format("[%s] Zeek events have an unknown origin.", className));
+
+		}
 
 		/* Retrieve structured record */
 		String json = recordObj.toString();

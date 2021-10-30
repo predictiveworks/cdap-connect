@@ -34,7 +34,6 @@ import java.nio.charset.StandardCharsets;
 
 public class FleetTransform extends PubSubTransform {
 
-	private static final long serialVersionUID = 2899269164494726255L;
 	private Schema schema;
 
 	public FleetTransform() {
@@ -49,13 +48,7 @@ public class FleetTransform extends PubSubTransform {
 		if (schema == null) {
 			schema = getSchema(input.first());
 		}
-		/*
-		 * Schema strategy: The schema is inferred from the first record and then
-		 * assigned to the event transformer;
-		 * 
-		 * this is a suitable strategy as the [osquery] schema is more or less static
-		 * due to its strong relationship to predefined queries.
-		 */
+
 		return input.map(new ResultTransform(schema));
 
 	}

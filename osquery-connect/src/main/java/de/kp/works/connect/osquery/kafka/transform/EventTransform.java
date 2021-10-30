@@ -31,7 +31,6 @@ import io.cdap.cdap.api.data.schema.Schema;
 
 public class EventTransform implements Function<ConsumerRecord<byte[], byte[]>, StructuredRecord> {
 
-	private static final long serialVersionUID = -3134389609545459941L;
 	private final long ts;
 
 	protected final KafkaConfig config;

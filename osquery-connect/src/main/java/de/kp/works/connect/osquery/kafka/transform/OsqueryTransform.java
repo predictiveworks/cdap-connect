@@ -46,8 +46,6 @@ import java.util.List;
 public class OsqueryTransform
 		implements Function2<JavaRDD<ConsumerRecord<byte[], byte[]>>, Time, JavaRDD<StructuredRecord>> {
 
-	private static final long serialVersionUID = -2256941762899970287L;
-
 	private Schema schema;
 
 	public OsqueryTransform(OsqueryConfig config) {
@@ -63,13 +61,7 @@ public class OsqueryTransform
 		if (schema == null) {
 			schema = getSchema(input.first());
 		}
-		/*
-		 * Schema strategy: The schema is inferred from the first record and then
-		 * assigned to the event transformer;
-		 * 
-		 * this is a suitable strategy as the [osquery] schema is more or less static
-		 * due to its strong relationship to predefined queries.
-		 */
+
 		Function<ConsumerRecord<byte[], byte[]>, StructuredRecord> logTransform = new LogTransform(
 				batchTime.milliseconds(), schema);
 
@@ -97,8 +89,6 @@ public class OsqueryTransform
 	 * serialize all functions.
 	 */
 	private static  class EmptyFunction implements Function<ConsumerRecord<byte[], byte[]>, StructuredRecord> {
-
-		private static final long serialVersionUID = -2582275414113323812L;
 
 		@Override
 		public StructuredRecord call(ConsumerRecord<byte[], byte[]> in) {

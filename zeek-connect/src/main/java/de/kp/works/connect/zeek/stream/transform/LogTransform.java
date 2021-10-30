@@ -1,4 +1,4 @@
-package de.kp.works.connect.osquery.kafka.transform;
+package de.kp.works.connect.zeek.stream.transform;
 /*
  * Copyright (c) 2019 - 2021 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -18,24 +18,25 @@ package de.kp.works.connect.osquery.kafka.transform;
  * 
  */
 
-import de.kp.works.connect.osquery.OsqueryUtil;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.spark.api.java.function.Function;
-
+import de.kp.works.connect.zeek.ZeekUtil;
 import io.cdap.cdap.api.data.format.StructuredRecord;
 import io.cdap.cdap.api.data.schema.Schema;
+import org.apache.spark.api.java.function.Function;
 
-public class LogTransform implements Function<ConsumerRecord<byte[], byte[]>, StructuredRecord> {
+public class LogTransform implements Function<String, StructuredRecord> {
+
+	private static final long serialVersionUID = 4014403389657429566L;
 
 	private final Schema schema;
 
-	public LogTransform(Long batchTime, Schema schema) {
+	public LogTransform(Schema schema) {
 		this.schema = schema;
 	}
 	
 	@Override
-	public StructuredRecord call(ConsumerRecord<byte[], byte[]> input) throws Exception {
-		return OsqueryUtil.toRecord(input.value(), schema);
+	public StructuredRecord call(String input) throws Exception {
+		String origin = "stream";
+		return ZeekUtil.toRecord(input, origin, schema);
 	}
 
 }

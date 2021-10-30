@@ -50,6 +50,14 @@
             <version>0.4.0</version>
         </dependency>
 
+        <!-- WORKS-ZEEK-STREAM
+        -->
+        <dependency>
+            <groupId>de.kp.works</groupId>
+            <artifactId>works-zeek-stream</artifactId>
+            <version>0.4.0</version>
+        </dependency>
+
         <!-- SPARK SQL
         -->
         <dependency>

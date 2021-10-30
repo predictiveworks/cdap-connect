@@ -26,8 +26,6 @@ import org.apache.spark.api.java.function.Function;
 
 public class LogTransform implements Function<ConsumerRecord<byte[], byte[]>, StructuredRecord> {
 
-	private static final long serialVersionUID = 4014403389657429566L;
-
 	private final Schema schema;
 
 	public LogTransform(Long batchTime, Schema schema) {
@@ -36,7 +34,8 @@ public class LogTransform implements Function<ConsumerRecord<byte[], byte[]>, St
 	
 	@Override
 	public StructuredRecord call(ConsumerRecord<byte[], byte[]> input) throws Exception {
-		return ZeekUtil.toRecord(input.value(), schema);
+		String origin = "kafka";
+		return ZeekUtil.toRecord(input.value(), origin, schema);
 	}
 
 }

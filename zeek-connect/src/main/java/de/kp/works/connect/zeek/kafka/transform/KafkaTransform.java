@@ -35,11 +35,15 @@ import org.apache.spark.sql.types.StructType;
 import org.apache.spark.streaming.Time;
 
 import java.util.*;
-
+/**
+ * This transformer is built to support plain Kafka messages
+ * without any knowledge about the sender of the message.
+ *
+ * The schema is inferred from the JSON message payload and
+ * is accompanied with the selected Kafka topic.
+ */
 public class KafkaTransform
 		implements Function2<JavaRDD<ConsumerRecord<byte[], byte[]>>, Time, JavaRDD<StructuredRecord>> {
-
-	private static final long serialVersionUID = 3245612492744637050L;
 
 	private final KafkaConfig config;
 	/*

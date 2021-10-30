@@ -41,8 +41,6 @@ import io.cdap.cdap.api.spark.sql.DataFrames;
 public class KafkaTransform
 		implements Function2<JavaRDD<ConsumerRecord<byte[], byte[]>>, Time, JavaRDD<StructuredRecord>> {
 
-	private static final long serialVersionUID = 3245612492744637050L;
-
 	private final KafkaConfig config;
 	/*
 	 * This variable specifies the output schema that has been inferred from the
@@ -119,14 +117,7 @@ public class KafkaTransform
 
 	}
 
-	/**
-	 * Transforms kafka key and message into a structured record when message format
-	 * is not given. Everything here should be serializable, as Spark Streaming will
-	 * serialize all functions.
-	 */
 	private static  class EmptyFunction implements Function<ConsumerRecord<byte[], byte[]>, StructuredRecord> {
-
-		private static final long serialVersionUID = -2582275414113323812L;
 
 		@Override
 		public StructuredRecord call(ConsumerRecord<byte[], byte[]> in) {

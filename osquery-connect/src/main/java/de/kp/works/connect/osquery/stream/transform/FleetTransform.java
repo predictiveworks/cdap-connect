@@ -34,8 +34,6 @@ import java.util.List;
 public class FleetTransform
 		implements Function<JavaRDD<String>, JavaRDD<StructuredRecord>>  {
 
-	private static final long serialVersionUID = -2256941762899970287L;
-
 	private Schema schema;
 
 	public FleetTransform(FleetConfig config) {
@@ -51,13 +49,7 @@ public class FleetTransform
 		if (schema == null) {
 			schema = getSchema(input.first());
 		}
-		/*
-		 * Schema strategy: The schema is inferred from the first record and then
-		 * assigned to the event transformer;
-		 * 
-		 * this is a suitable strategy as the [osquery] schema is more or less static
-		 * due to its strong relationship to predefined queries.
-		 */
+
 		Function<String, StructuredRecord> logTransform = new LogTransform(schema);
 		return input.map(logTransform);
 

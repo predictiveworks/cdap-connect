@@ -30,8 +30,6 @@ import io.cdap.cdap.api.data.schema.Schema;
 import de.kp.works.stream.pubsub.*;
 
 public abstract class PubSubTransform implements Function<JavaRDD<PubSubResult>, JavaRDD<StructuredRecord>> {
-	
-	private static final long serialVersionUID = 2354453038164761737L;
 
 	/**
 	 * This method transforms an empty stream batch into
