@@ -44,7 +44,10 @@ public class IgniteInputFormat extends InputFormat<NullWritable, BinaryObject>
 		Configuration cfg = context.getConfiguration();
 		JobConf conf = cfg instanceof org.apache.hadoop.mapred.JobConf ? (org.apache.hadoop.mapred.JobConf) cfg
 				: new org.apache.hadoop.mapred.JobConf(cfg);
-
+		/*
+		 * This new API request is delegated to the
+		 * old API
+		 */
 		return Arrays.asList((InputSplit[]) getSplits(conf, conf.getNumMapTasks()));
 
 	}

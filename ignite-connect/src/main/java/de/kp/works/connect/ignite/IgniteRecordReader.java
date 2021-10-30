@@ -37,7 +37,6 @@ public class IgniteRecordReader extends RecordReader<NullWritable, BinaryObject>
 		implements org.apache.hadoop.mapred.RecordReader<NullWritable, BinaryObject> {
 
 	private Iterator<List<?>> iterator;
-	private int count = 0;
 
 	private NullWritable key;
 	private BinaryObject value;
@@ -49,7 +48,7 @@ public class IgniteRecordReader extends RecordReader<NullWritable, BinaryObject>
 	/* Constructor used by the OLD API */
 	public IgniteRecordReader(org.apache.hadoop.mapred.InputSplit split, Configuration job, Reporter reporter) {
 		reporter.setStatus(split.toString());
-		init((IgniteSplit) split, job);
+		prepare((IgniteSplit) split, job);
 	}
 
 	@Override
@@ -78,14 +77,16 @@ public class IgniteRecordReader extends RecordReader<NullWritable, BinaryObject>
 
 	@Override
 	public long getPos() {
-		return count;
+		return 0;
 	}
-
+	/**
+	 * This is the "new" API approach
+	 */
 	@Override
 	public void initialize(InputSplit split, TaskAttemptContext context) {
 
 		Configuration conf = context.getConfiguration();
-		init((IgniteSplit) split, conf);
+		prepare((IgniteSplit) split, conf);
 
 	}
 
@@ -120,10 +121,12 @@ public class IgniteRecordReader extends RecordReader<NullWritable, BinaryObject>
 	@Override
 	public void close() {
 		/* Do nothing */
-		;
 	}
-
-	private void init(IgniteSplit split, Configuration conf) {
+	/**
+	 * This method retrieves the data from an Apache Ignite
+	 * instance, compliant with the Split configuration
+	 */
+	private void prepare(IgniteSplit split, Configuration conf) {
 
 		/*
 		 * STEP #1: Retrieve cache; note, the current implementation is restricted to
