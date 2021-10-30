@@ -18,6 +18,11 @@ package de.kp.works.connect.zeek.kafka;
  * 
  */
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.spark.streaming.api.java.JavaDStream;
+
 import io.cdap.cdap.api.annotation.Description;
 import io.cdap.cdap.api.annotation.Name;
 import io.cdap.cdap.api.annotation.Plugin;
@@ -26,30 +31,17 @@ import io.cdap.cdap.etl.api.PipelineConfigurer;
 import io.cdap.cdap.etl.api.StageConfigurer;
 import io.cdap.cdap.etl.api.streaming.StreamingContext;
 import io.cdap.cdap.etl.api.streaming.StreamingSource;
-import org.apache.spark.streaming.api.java.JavaDStream;
 
-import java.util.HashMap;
-import java.util.Map;
-
-/**
- * __KUP__
- * 
- * This is an improvement of CDAP's implementation of a Kafka plugin
- * that is capable to infer the data schema from the events provided
- * 
- * Kafka Streaming source.
- */
 @Plugin(type = StreamingSource.PLUGIN_TYPE)
-@Name("KafkaStreamSource")
-@Description("An Apache Kafka streaming source that supports real-time events that refer to a single topic.")
-public class KafkaStreamSource extends StreamingSource<StructuredRecord> {
+@Name("ZeekKafkaSource")
+@Description("An Apache Kafka streaming source that supports real-time events that originate from Zeek.")
+public class ZeekKafkaSource extends StreamingSource<StructuredRecord> {
 
-	private static final long serialVersionUID = -1344898376371260838L;
-	private final KafkaConfig config;
+	private static final long serialVersionUID = -1768880702434233235L;
+	private final ZeekConfig config;
 	
-	public KafkaStreamSource(KafkaConfig conf) {
-		this.config = conf;
-		
+	public ZeekKafkaSource(ZeekConfig config) {
+		this.config = config;
 	}
 
 	@Override
@@ -58,10 +50,8 @@ public class KafkaStreamSource extends StreamingSource<StructuredRecord> {
 
 		config.validate();
 		/*
-		 * __KUP__
-		 * 
 		 * We set the output schema explicitly to 'null' as the 
-		 * schema is inferred dynamically from the provided events
+		 * schema is inferred dynamically from the provided format
 		 */
 		StageConfigurer stageConfigurer = pipelineConfigurer.getStageConfigurer();
 		stageConfigurer.setOutputSchema(null);
@@ -76,10 +66,9 @@ public class KafkaStreamSource extends StreamingSource<StructuredRecord> {
 
 		}
 	}
-
+	
 	@Override
 	public JavaDStream<StructuredRecord> getStream(StreamingContext context) {
-		return KafkaStreamUtil.getStructuredRecordJavaDStream(context, config);
-	}
-	
+		return ZeekStreamUtil.getStructuredRecordJavaDStream(context, config);			}
+
 }

@@ -1,4 +1,4 @@
-package de.kp.works.connect.zeek.kafka;
+package de.kp.works.connect.kafka;
 /*
  * Copyright (c) 2019 - 2021 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -18,11 +18,6 @@ package de.kp.works.connect.zeek.kafka;
  * 
  */
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.spark.streaming.api.java.JavaDStream;
-
 import io.cdap.cdap.api.annotation.Description;
 import io.cdap.cdap.api.annotation.Name;
 import io.cdap.cdap.api.annotation.Plugin;
@@ -31,17 +26,30 @@ import io.cdap.cdap.etl.api.PipelineConfigurer;
 import io.cdap.cdap.etl.api.StageConfigurer;
 import io.cdap.cdap.etl.api.streaming.StreamingContext;
 import io.cdap.cdap.etl.api.streaming.StreamingSource;
+import org.apache.spark.streaming.api.java.JavaDStream;
 
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * __KUP__
+ * 
+ * This is an improvement of CDAP's implementation of a Kafka plugin
+ * that is capable to infer the data schema from the events provided
+ * 
+ * Kafka Streaming source.
+ */
 @Plugin(type = StreamingSource.PLUGIN_TYPE)
-@Name("ZeekSource")
-@Description("An Apache Kafka streaming source that supports real-time events that originate from Zeek.")
-public class ZeekSource extends StreamingSource<StructuredRecord> {
+@Name("KafkaStreamSource")
+@Description("An Apache Kafka streaming source that supports real-time events that refer to a single topic.")
+public class KafkaStreamSource extends StreamingSource<StructuredRecord> {
 
-	private static final long serialVersionUID = -1768880702434233235L;
-	private final ZeekConfig config;
+	private static final long serialVersionUID = -1344898376371260838L;
+	private final KafkaConfig config;
 	
-	public ZeekSource(ZeekConfig config) {
-		this.config = config;
+	public KafkaStreamSource(KafkaConfig conf) {
+		this.config = conf;
+		
 	}
 
 	@Override
@@ -50,8 +58,10 @@ public class ZeekSource extends StreamingSource<StructuredRecord> {
 
 		config.validate();
 		/*
+		 * __KUP__
+		 * 
 		 * We set the output schema explicitly to 'null' as the 
-		 * schema is inferred dynamically from the provided format
+		 * schema is inferred dynamically from the provided events
 		 */
 		StageConfigurer stageConfigurer = pipelineConfigurer.getStageConfigurer();
 		stageConfigurer.setOutputSchema(null);
@@ -66,9 +76,10 @@ public class ZeekSource extends StreamingSource<StructuredRecord> {
 
 		}
 	}
-	
+
 	@Override
 	public JavaDStream<StructuredRecord> getStream(StreamingContext context) {
-		return ZeekStreamUtil.getStructuredRecordJavaDStream(context, config);			}
-
+		return KafkaStreamUtil.getStructuredRecordJavaDStream(context, config);
+	}
+	
 }

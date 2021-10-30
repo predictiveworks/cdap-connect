@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>zeek-connect</artifactId>
+    <artifactId>kafka-connect</artifactId>
 
     <properties>
 
@@ -34,6 +34,14 @@
 
     <dependencies>
 
+        <!-- CATALYST-CONNECT
+        -->
+        <dependency>
+            <groupId>de.kp.works</groupId>
+            <artifactId>catalyst-connect</artifactId>
+            <version>0.4.0</version>
+        </dependency>
+
         <!-- COMMON-CONNECT
         -->
         <dependency>
@@ -42,12 +50,12 @@
             <version>0.4.0</version>
         </dependency>
 
-        <!-- WORKS-ZEEK-STREAM
+        <!-- SPARK SQL
         -->
         <dependency>
-            <groupId>de.kp.works</groupId>
-            <artifactId>works-zeek-stream</artifactId>
-            <version>0.4.0</version>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-sql_2.11</artifactId>
+            <version>${spark.version}</version>
         </dependency>
 
         <!-- SPARK STREAMING KAFKA
@@ -285,7 +293,7 @@
         </plugins>
     </build>
 
-    <name>CDAP Zeek</name>
+    <name>CDAP Kafka</name>
     <organization>
         <name>Dr. Krusche &amp; Partner PartG</name>
         <url>https://www.dr-kruscheundpartner.de</url>

@@ -1,4 +1,4 @@
-package de.kp.works.connect.zeek.kafka;
+package de.kp.works.connect.kafka;
 
 /*
  * Copyright (c) 2019 - 2021 Dr. Krusche & Partner PartG. All rights reserved.
@@ -19,7 +19,7 @@ package de.kp.works.connect.zeek.kafka;
  * 
  */
 
-import de.kp.works.connect.zeek.kafka.transform.KafkaTransform;
+import de.kp.works.connect.kafka.transform.KafkaTransform;
 import io.cdap.cdap.api.data.format.StructuredRecord;
 import io.cdap.cdap.etl.api.streaming.StreamingContext;
 import org.apache.kafka.clients.consumer.ConsumerRecord;

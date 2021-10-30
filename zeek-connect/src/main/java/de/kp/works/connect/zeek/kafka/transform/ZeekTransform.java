@@ -71,7 +71,7 @@ public class ZeekTransform implements Function2<JavaRDD<ConsumerRecord<byte[], b
 	private Schema getSchema(ConsumerRecord<byte[], byte[]> record) throws Exception {
 
 		String event = new String(record.value(), StandardCharsets.UTF_8);
-		JsonElement jsonElement = new JsonParser().parse(event);
+		JsonElement jsonElement = JsonParser.parseString(event);
 
 		if (!jsonElement.isJsonObject())
 			throw new Exception(

@@ -1,0 +1,8 @@
+
+# InfluxDB Sink
+
+Description
+---
+
+Configuration
+---

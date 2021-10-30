@@ -47,6 +47,7 @@
         <module>catalyst-connect</module>
         <module>things-connect</module>
         <module>shopify-connect</module>
+        <module>kafka-connect</module>
     </modules>
 
     <properties>

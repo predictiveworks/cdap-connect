@@ -1,4 +1,4 @@
-package de.kp.works.connect.zeek.kafka.transform;
+package de.kp.works.connect.kafka.transform;
 /*
  * Copyright (c) 2019 - 2021 Dr. Krusche & Partner PartG. All rights reserved.
  *
@@ -18,7 +18,7 @@ package de.kp.works.connect.zeek.kafka.transform;
  * 
  */
 
-import de.kp.works.connect.zeek.kafka.KafkaConfig;
+import de.kp.works.connect.kafka.KafkaConfig;
 import io.cdap.cdap.api.data.format.StructuredRecord;
 import io.cdap.cdap.api.data.schema.Schema;
 import io.cdap.cdap.api.spark.sql.DataFrames;
@@ -35,6 +35,7 @@ import org.apache.spark.sql.types.StructType;
 import org.apache.spark.streaming.Time;
 
 import java.util.*;
+
 /**
  * This transformer is built to support plain Kafka messages
  * without any knowledge about the sender of the message.
