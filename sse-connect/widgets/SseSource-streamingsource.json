@@ -1,0 +1,14 @@
+{
+  "metadata": {
+    "spec-version": "1.5"
+  },
+
+  "display-name": "Zeek Source",
+
+  "icon": {
+    "arguments": {
+      "data": "data:image/png;base64,..."
+    },
+    "type": "inline"
+  }
+}

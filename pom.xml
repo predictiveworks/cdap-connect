@@ -49,6 +49,7 @@
         <module>shopify-connect</module>
         <module>kafka-connect</module>
         <module>pubsub-connect</module>
+        <module>sse-connect</module>
     </modules>
 
     <properties>
