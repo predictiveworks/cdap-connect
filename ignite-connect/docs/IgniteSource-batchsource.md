@@ -7,3 +7,5 @@ Apache Ignite is a distributed database for high-performance computing with in-m
 
 Configuration
 ---
+
+Reference Name: Name used to uniquely identify this source for lineage, annotating metadata, etc.

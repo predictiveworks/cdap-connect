@@ -41,6 +41,8 @@ public class FiwareConfig extends BaseConfig {
     @Macro
     public String brokerUrl;
 
+    // TODO JSON
+
     @Description("The Fiware Broker subscription(s).")
     @Macro
     public String brokerSubscriptions;

@@ -27,7 +27,8 @@ import io.cdap.cdap.api.annotation.Plugin;
 
 @Plugin(type = "batchsource")
 @Name("CrateSource")
-@Description("A batch source to read structured records from the Crate IoT scale database.")
+@Description("This is a batch connector plugin to read data records from a Crate database," +
+		" and to transform them into structured data flow records.")
 public class CrateSource extends JdbcSource {
 	
 	private static final String JDBC_DRIVER_NAME = "io.crate.client.jdbc.CrateDriver";

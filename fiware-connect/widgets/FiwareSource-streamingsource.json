@@ -10,5 +10,40 @@
       "data": "data:image/png;base64,..."
     },
     "type": "inline"
-  }
+  },
+
+  "configuration-groups": [
+    {
+      "label": "Plugin Configuration",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "Reference Name",
+          "name": "referenceName"
+        }
+      ]
+    },
+    {
+      "label": "Endpoint Configuration",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "Server Host",
+          "name": "serverHost"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Server Port",
+          "name": "serverPort"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Broker Url",
+          "name": "brokerUrl"
+        }
+
+      ]
+    }
+  ]
+
 }
