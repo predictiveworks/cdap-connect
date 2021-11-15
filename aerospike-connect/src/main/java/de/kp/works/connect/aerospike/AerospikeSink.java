@@ -37,7 +37,7 @@ import io.cdap.cdap.etl.api.batch.BatchSinkContext;
 
 @Plugin(type = BatchSink.PLUGIN_TYPE)
 @Name("AerospikeSink")
-@Description("A batch sink to write structured records to an Aerospike database. The Aerospike key "
+@Description("A Works batch connector for writing structured records to an Aerospike database. The Aerospike key "
 		+ "is derived from the record field values, and each bin of the Aerospike record represents a field.")
 public class AerospikeSink extends BatchSink<StructuredRecord, AerospikeRecordWritable, NullWritable> {
 

@@ -56,7 +56,7 @@ import io.cdap.cdap.etl.api.batch.BatchSinkContext;
 
 @Plugin(type = "batchsink")
 @Name("CrateSink")
-@Description("A batch sink to write structured records to a Crate database.")
+@Description("A Works batch connector for writing structured records to a Crate database.")
 public class CrateSink extends JdbcSink<CrateWritable> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CrateSink.class);

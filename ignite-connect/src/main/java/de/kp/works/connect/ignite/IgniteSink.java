@@ -39,7 +39,7 @@ import io.cdap.cdap.etl.api.batch.BatchSinkContext;
 
 @Plugin(type = BatchSink.PLUGIN_TYPE)
 @Name("IgniteSink")
-@Description("A batch sink to write structured records to an Apache Ignite cache.")
+@Description("A Works batch connector for writing structured records to Apache Ignite caches.")
 public class IgniteSink extends BatchSink<StructuredRecord, IgniteCacheWritable, NullWritable> {
 
 	private final IgniteSinkConfig config;

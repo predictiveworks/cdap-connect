@@ -43,8 +43,8 @@ import io.cdap.plugin.common.batch.JobUtils;
 
 @Plugin(type = BatchSource.PLUGIN_TYPE)
 @Name("IgniteSource")
-@Description("A batch connector plugin to read structured data records from Apache Ignite caches "
-		+ "and transform them into structured pipeline records.")
+@Description("A Works batch connector for reading structured data records from Apache Ignite caches,"
+		+ " and transforming them into structured pipeline records.")
 public class IgniteSource extends BatchSource<NullWritable, BinaryObject, StructuredRecord> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(IgniteSource.class);

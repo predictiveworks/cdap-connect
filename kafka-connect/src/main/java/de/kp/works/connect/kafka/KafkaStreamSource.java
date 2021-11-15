@@ -41,7 +41,8 @@ import java.util.Map;
  */
 @Plugin(type = StreamingSource.PLUGIN_TYPE)
 @Name("KafkaStreamSource")
-@Description("An Apache Kafka streaming source that supports real-time events that refer to a single topic.")
+@Description("A Works streaming source for reading real-time events from Apache Kafka that refer to"
+		+ " a single topic, and transforming them into structured data flow records.")
 public class KafkaStreamSource extends StreamingSource<StructuredRecord> {
 
 	private static final long serialVersionUID = -1344898376371260838L;

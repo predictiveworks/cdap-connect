@@ -34,7 +34,8 @@ import java.util.List;
 
 @Plugin(type = StreamingSource.PLUGIN_TYPE)
 @Name("FiwareSource")
-@Description("A Works Stream streaming source that supports real-time events that originate from a Fiware Context Broker.")
+@Description("A Works streaming source for reading real-time events from a Fiware notification server, "
+		+ "transforming them into structured data flow records.")
 public class FiwareSource extends StreamingSource<StructuredRecord> {
 
 	private final FiwareConfig config;

@@ -35,7 +35,8 @@ import io.cdap.cdap.etl.api.streaming.StreamingSource;
 
 @Plugin(type = StreamingSource.PLUGIN_TYPE)
 @Name("HiveSource")
-@Description("An MQTT streaming source that listens to a HiveMQ MQTT broker and subscribes to a given topic.")
+@Description("A Works streaming source for reading real-time events from a HiveMQ MQTT broker" +
+		" and subscribing to a given topic, and transforming them into structured data flow records.")
 public class HiveSource extends StreamingSource<StructuredRecord> {
 
 	private static final long serialVersionUID = 1416177275229321806L;

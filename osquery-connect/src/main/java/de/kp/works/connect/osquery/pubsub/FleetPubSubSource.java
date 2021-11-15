@@ -35,7 +35,9 @@ import io.cdap.cdap.etl.api.streaming.StreamingSource;
 
 @Plugin(type = StreamingSource.PLUGIN_TYPE)
 @Name("FleetPubSubSource")
-@Description("A Fleet (DM) streaming source to read messages from Google PubSub.")
+@Description("A Works streaming source, based on Google PubSub, for reading real-time events" +
+		" from a Fleet (Osquery) endpoint management platform, and transforming them into structured" +
+		" data flow records.")
 public class FleetPubSubSource extends StreamingSource<StructuredRecord> {
 
 	private static final long serialVersionUID = 424111438347307202L;

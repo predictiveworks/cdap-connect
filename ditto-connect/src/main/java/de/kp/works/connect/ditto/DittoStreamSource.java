@@ -30,7 +30,8 @@ import org.apache.spark.streaming.api.java.JavaDStream;
 
 @Plugin(type = StreamingSource.PLUGIN_TYPE)
 @Name("DittoSource")
-@Description("An Eclipse Ditto IoT streaming source that supports real-time websocket event streams.")
+@Description("A Works streaming source for reading real-time Web socket event streams from Eclipse Ditto," +
+		" and transforming them into structured data flow records.")
 public class DittoStreamSource extends StreamingSource<StructuredRecord>{
 
 	private static final long serialVersionUID = -8154749515870756082L;

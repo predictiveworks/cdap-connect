@@ -39,9 +39,9 @@ import io.cdap.cdap.etl.api.batch.BatchSinkContext;
 
 @Plugin(type = BatchSink.PLUGIN_TYPE)
 @Name("OrientSink")
-@Description("A batch connector to write structured records to an OrientDB graph database. "
+@Description("A Works batch connector for writing structured records to an OrientDB graph database. "
 		+ "A structured record either describes a graph vertex or an edge. Use cases where "
-		+ "records specify vertices and edges are supported by the GraphSink.")
+		+ "records specify vertices and edges are currently not supported by this plugin.")
 public class OrientSink extends BatchSink<StructuredRecord, OrientGraphWritable, NullWritable> {
 
 	private final OrientSinkConfig config;

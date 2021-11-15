@@ -3,7 +3,7 @@
 
 Description
 ---
-This is a batch sink to write structured records to a Crate database.
+This is a batch connector plugin for writing structured records to a Crate database.
 
 Crate is a distributed SQL database built on top of a NoSQL foundation. It combines 
 the familiarity of SQL with the scalability and data flexibility of NoSQL, enabling 

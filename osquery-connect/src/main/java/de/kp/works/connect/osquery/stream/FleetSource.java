@@ -34,7 +34,9 @@ import java.util.List;
 
 @Plugin(type = StreamingSource.PLUGIN_TYPE)
 @Name("FleetSource")
-@Description("A Fleet (DM) streaming source to read messages from Works Stream.")
+@Description("A Works streaming source for reading real-time events from Work Stream," +
+		" and transforming them into structured data flow records. The events originate" +
+		" from a Fleet (Osquery) endpoint management platform.")
 public class FleetSource extends StreamingSource<StructuredRecord> {
 
 	private static final long serialVersionUID = -8515614253262827164L;

@@ -38,8 +38,8 @@ import io.cdap.cdap.etl.api.batch.BatchSinkContext;
 
 @Plugin(type = BatchSink.PLUGIN_TYPE)
 @Name("InfluxSink")
-@Description("A batch connector to write data records to an InfluxDB time series database. "
-		+ "As structured data record is divided into numeric and other fields. Numeric field "
+@Description("A batch connector form writing data records to an InfluxDB time series database. "
+		+ "A structured data record is divided into numeric and other fields. Numeric field "
 		+ "values are transformed into Doubles and persisted as a measurement field. String "
 		+ "field values are persisted as tags, while all other fields are ignored.")
 public class InfluxSink extends BatchSink<StructuredRecord, InfluxPointWritable, NullWritable> {

@@ -44,8 +44,8 @@ import io.cdap.plugin.common.batch.JobUtils;
 
 @Plugin(type = BatchSource.PLUGIN_TYPE)
 @Name("AerospikeSource")
-@Description("A batch connector plugin to read data records from Aerospike namespaces and "
-	      + "sets and to transform into structured pipeline records.")
+@Description("A Works batch connector for reading data records from Aerospike namespaces and "
+	      + "sets, and transforming them into structured pipeline records.")
 public class AerospikeSource extends BatchSource<AerospikeEntry.Key, AerospikeEntry.Record, StructuredRecord> {
 	/*
 	 * [AerospikeSource] supports PredictiveWorks. low latency strategy.

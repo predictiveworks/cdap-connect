@@ -34,7 +34,9 @@ import io.cdap.cdap.etl.api.streaming.StreamingSource;
 
 @Plugin(type = StreamingSource.PLUGIN_TYPE)
 @Name("OsquerySource")
-@Description("An Apache Kafka streaming source that supports real-time events that originate from an Osquery agent.")
+@Description("A Works streaming source, based on Apache Kafka, for reading real-time events" +
+		" that originate from Osquery agents (endpoints), and transforming them into structured" +
+		" data flow records.")
 public class OsquerySource extends StreamingSource<StructuredRecord> {
 
 	private static final long serialVersionUID = -1768880702434233235L;

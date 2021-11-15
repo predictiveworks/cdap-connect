@@ -34,7 +34,8 @@ import java.util.List;
 
 @Plugin(type = StreamingSource.PLUGIN_TYPE)
 @Name("CTISource")
-@Description("A Threat Intelligence streaming source that listens to OpenCTI threat events.")
+@Description("A Works streaming source for reading real-time threat intelligence events from an OpenCTI platform," +
+		" and transforming them into structured data flow records.")
 public class CTISource extends StreamingSource<StructuredRecord> {
 
 	private static final long serialVersionUID = -8515614253262827164L;
@@ -51,12 +52,6 @@ public class CTISource extends StreamingSource<StructuredRecord> {
 		
 		config.validate();
 
-		/*
-		 * __KUP__
-		 * 
-		 * We set the output schema explicitly to 'null' as the 
-		 * schema is inferred dynamically from the provided events
-		 */
 		StageConfigurer stageConfigurer = pipelineConfigurer.getStageConfigurer();
 		stageConfigurer.setOutputSchema(null);
 

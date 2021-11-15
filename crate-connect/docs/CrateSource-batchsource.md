@@ -3,8 +3,8 @@
 
 Description
 ---
-This is a batch connector plugin to read data records from a Crate database,
-and to transform them into structured data flow records.
+This is a batch connector plugin to read data records from a Crate database, and to transform them 
+into structured data flow records.
 
 CrateDB is a distributed SQL database built on top of a NoSQL foundation. It combines the familiarity of SQL
 with the scalability and data flexibility of NoSQL, enabling users to:
