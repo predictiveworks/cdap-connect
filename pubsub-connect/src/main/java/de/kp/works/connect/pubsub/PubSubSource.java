@@ -35,7 +35,8 @@ import java.util.List;
 
 @Plugin(type = StreamingSource.PLUGIN_TYPE)
 @Name("PubSubSource")
-@Description("A PubSub streaming source to read messages from Google PubSub.")
+@Description("A Works streaming source for reading real-time events from Google PubSub," +
+			" and transforming them into structured data flow records.")
 public class PubSubSource extends StreamingSource<StructuredRecord> {
 
 	private static final long serialVersionUID = 5755422000062454135L;

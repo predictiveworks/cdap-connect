@@ -28,7 +28,9 @@ import java.util.Properties;
 
 @Plugin(type = BatchSource.PLUGIN_TYPE)
 @Name("PanoplySource")
-@Description("A batch source to read structured records from a Panoply data warehouse.")
+@Description("A Works batch connector for reading data records from a Panoply data warehouse," +
+		" and transforming them into structured pipeline records.")
+
 public class PanoplySource extends RedshiftSource {
 
 	protected static final String JDBC_DRIVER_NAME = "com.amazon.redshift.jdbc42.Driver";

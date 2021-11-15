@@ -31,7 +31,7 @@ import io.cdap.cdap.api.annotation.Plugin;
 
 @Plugin(type = "batchsource")
 @Name("RedshiftSource")
-@Description("A batch source to read structured records from an Amazon Redshift database.")
+@Description("A Works batch connector for reading structured records from an Amazon Redshift database.")
 public class RedshiftSource extends JdbcSource {
 
 	// TODO SSL

@@ -35,7 +35,8 @@ import io.cdap.cdap.etl.api.streaming.StreamingSource;
 
 @Plugin(type = StreamingSource.PLUGIN_TYPE)
 @Name("PahoSource")
-@Description("An MQTT streaming source that listens to an MQTT 3.1.1 broker and subscribes to a given topic.")
+@Description("A Works streaming source for reading real-time events from an MQTT v3.1 broker" +
+		" and subscribing to a given topic, and transforming them into structured data flow records.")
 public class PahoSource extends StreamingSource<StructuredRecord> {
 
 	private static final long serialVersionUID = -8515614253262827164L;
