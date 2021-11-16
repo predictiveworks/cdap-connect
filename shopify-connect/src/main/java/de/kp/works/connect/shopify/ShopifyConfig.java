@@ -42,7 +42,7 @@ public class ShopifyConfig extends BaseConfig {
 
 	@Description("Username for basic authentication.")
 	@Macro
-	public String username;
+	public String user;
 
 	@Description("Password for basic authentication.")
 	@Macro
@@ -53,6 +53,6 @@ public class ShopifyConfig extends BaseConfig {
 	}
 
 	public String getEndpoint() {
-		return String.format("https://%s:%s@%s.myshopify.com/admin/api/%s/", username, password, shopname, version);
+		return String.format("https://%s:%s@%s.myshopify.com/admin/api/%s/", user, password, shopname, version);
 	}
 }

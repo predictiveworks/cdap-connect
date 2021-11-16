@@ -18,8 +18,12 @@ package de.kp.works.connect.saphana;
  * 
  */
 
+import com.google.common.base.Strings;
 import de.kp.works.connect.common.jdbc.JdbcSinkConfig;
+import io.cdap.cdap.api.annotation.Description;
+import io.cdap.cdap.api.annotation.Macro;
 
+import javax.annotation.Nullable;
 import java.util.Locale;
 
 public class SAPHanaSinkConfig extends JdbcSinkConfig {
@@ -27,8 +31,16 @@ public class SAPHanaSinkConfig extends JdbcSinkConfig {
 	private static final long serialVersionUID = -343935437395444858L;
 	private static final Character ESCAPE_CHAR = '"';
 
+	@Description("Name of the database table to import data from.")
+	@Macro
+	@Nullable
+	public String database;
+
 	public String getEndpoint() {
-		return String.format(Locale.ENGLISH, "jdbc:sap://%s:%s/", host, port);
+		if (Strings.isNullOrEmpty(database))
+			return String.format(Locale.ENGLISH, "jdbc:sap://%s:%s/", host, port);
+		else
+			return String.format(Locale.ENGLISH, "jdbc:sap://%s:%s/?%s", host, port, database);
 	}
 	
 	public String getTableName() {

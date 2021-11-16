@@ -18,17 +18,17 @@ record, and a new schema-compliant table is created on the fly.
 ## Configuration
 **Reference Name**: Name used to uniquely identify this sink for lineage, annotating metadata, etc.
 
-## Endpoint Configuration
+### Endpoint Configuration
 **Host**: The host of the database.
 
 **Port**: The port of the database.
 
-## Data Configuration
+### Data Configuration
 **Table Name**: Name of the database table to export data to.
 
 **Primary Key**: Name of the primary key of the database table to export data to.
 
-## Authentication
+### Authentication
 **Username**: Name of a registered username. Required for databases that need authentication.
 Optional otherwise.
 

@@ -22,13 +22,22 @@ import java.util.Locale;
 
 import com.google.common.base.Strings;
 import de.kp.works.connect.common.jdbc.JdbcSourceConfig;
+import io.cdap.cdap.api.annotation.Description;
+import io.cdap.cdap.api.annotation.Macro;
+
+import javax.annotation.Nullable;
 
 public class SAPHanaSourceConfig extends JdbcSourceConfig {
 
 	private static final long serialVersionUID = 773492290391412814L;
 
 	private static final Character ESCAPE_CHAR = '"';
-	
+
+	@Description("Name of the database table to import data from.")
+	@Macro
+	@Nullable
+	public String database;
+
 	@Override
 	public String getInputQuery() {
 
@@ -64,7 +73,10 @@ public class SAPHanaSourceConfig extends JdbcSourceConfig {
 	}
 
 	public String getEndpoint() {
-		return String.format(Locale.ENGLISH, "jdbc:sap://%s:%s/", host, port);
+		if (Strings.isNullOrEmpty(database))
+			return String.format(Locale.ENGLISH, "jdbc:sap://%s:%s/", host, port);
+		else
+			return String.format(Locale.ENGLISH, "jdbc:sap://%s:%s/?%s", host, port, database);
 	}
 
 }

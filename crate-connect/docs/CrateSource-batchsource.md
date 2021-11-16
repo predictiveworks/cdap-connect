@@ -14,18 +14,18 @@ with the scalability and data flexibility of NoSQL, enabling users to:
 ## Configuration
 **Reference Name**: Name used to uniquely identify this source for lineage, annotating metadata, etc.
 
-## Endpoint Configuration
+### Endpoint Configuration
 **Host**: The host of the database.
 
 **Port**: The port of the database.
 
-## Data Configuration
+### Data Configuration
 **Table Name**: Name of the database table to import data from.
 
 **Import Query**: The SQL select statement to import data from the database. For example: 
 select * from <your table name>.
 
-## Authentication
+### Authentication
 **Username**: Name of a registered username. Required for databases that need authentication. 
 Optional otherwise.
 

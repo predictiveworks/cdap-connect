@@ -5,7 +5,7 @@
 
   "icon": {
     "arguments": {
-      "data": "data:image/png;base64,..."
+      "data": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAABHtJREFUaIHtmFtsFFUYgL8zl+1221q2rL24oa2kFImAaUAbjYYXXrxgTHixXl4kMRpefDMkjWliNERfQB8NaKKBkFgfNNoYIxGLWCSkgUXaEqTQUmqhu71t9zozx4ftDqzb3W1pS6fJfk8z58w55//m/GfmzEARZyHSBx0dUhnQRw4IS7YhlNWMqSACKSUcbzb8Bzs6hAWgpSsH9JEDAt5CUSdArl6UC0CiANa+K9oIwMcA9q1X4FVQHC+RQgJiUkBbusQWsSSutSFhIy1wpU+cvRgWQVHEaRRFnEZRxGkURZyGlquiRENxuVSRq341CEdNU+bYfOQU2bursubF1rJHViqoxXKyd3bsSNfUzVz1ayK1CknAGhBZiATkSa00piU51x+jbyhOOGrhrVCp9WrsaHbjrVDt63qvxpiYMQGor9Zp8qc2piPjBgPDcfs6RQgqyxSqvRp+X/7hFypRUGQybHLweJDh28msuq9+hvf2rmfnZjexhOTz70LEk6mV2Fir89G+agD6h+Ic7Zqct/9H63T2v1JFXVV2GIuRgAKp9c0vU7ZEeanC5g0uaucGra3SaNlUAsDZvqgtAXD93yRDc+3EPc89t0vgq1RR50YdHE1y6NtQ1lfQYiWgwIwEBu+mRPsbPjZU6wCMBg0ShkRVUlGeujCb1bb7YoTXd1dmlD35WCnv7PEyMWPSfvQOk2GTm3eS3Bo37DS7HwkoMCMu/e7t/PREkB97wkzPWtSt12ioSUmNTRhcGU4AsKWhBI871eWZv6OY1j1/N+7BW6FmrI+ZiLkkiYIizz9Vbh8Hp02O/TrF/sOjHOoMMRo0APj9QsROjdYtpbQ0uYHU+gpci2X0NzljcmkwzvdnZugfSs22AGq82pIkoEBqvdBaTkWpwonfpu0nkiXhXH+Uy9fjtL/pozsQSQUkYGezm4c8Cn9cSpV1ByJsbSyx+wsMxjPSNS3fezW2JImCIgDPbffwzFYPF6/FOH0xwl/9USwJszGLzzpDBKdTgt4KlbEJw17IAOevxNhY55q3X10T7HrCg3+9dnupEgVFJPDPSIImv4uWJjctTW6O/DTJyd7U4h4NGfa1oWmTD78ez2ifNCQ9fVH7fNvGEvY8XYGvUsVXqXLqQmTJM7EgkXP9UQ53hmio0amv0VEE9FyO5muSxbVbCfvYW67y+FyqLXVN/J+8Il1nwwDcGEtyYyzzpejSBYm5d0eT38XbL3nt1CovVfjgyztZ/aXfKcstAQVE3m/zcToQYWA4wfiUgZTw8DqNlk1uyksFo0EDXRM01ur4fZlbjndf9pIwMl91y/F0ui8Rt0uwe0cZu3eUzVu/fWPuts9u82SVrZQEPMDd70pKwAMSWWkJyJNanaemxn74M3x7OQaZiZjmcvSTj5wicQMrbqz4+MuG478QF0pRxGkURZxGUcRpFEWchi0ipEjO/8/DsQgF7K+2uzMi5DGwvGtDRoCU6yxpHkuX2HutZsN/cEAdkYqwXpOgr06AC0Mgkxbyi81m/SerHUuRXPwHnUvicsAow5oAAAAASUVORK5CYII="
     },
     "type": "inline"
   },
@@ -41,6 +41,11 @@
       "properties": [
         {
           "widget-type": "textbox",
+          "label": "Database Name",
+          "name": "database"
+        },
+        {
+          "widget-type": "textbox",
           "label": "Table Name",
           "name": "tableName"
         },
@@ -56,7 +61,7 @@
       "properties": [
         {
           "widget-type": "textbox",
-          "label": "User Name",
+          "label": "Username",
           "name": "user"
         },
         {

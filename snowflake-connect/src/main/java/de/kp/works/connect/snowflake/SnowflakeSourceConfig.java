@@ -34,7 +34,7 @@ public class SnowflakeSourceConfig extends JdbcSourceConfig {
 	@Macro
 	public String warehouse;
 
-	@Description("Name of the Jdbc database to import data from.")
+	@Description("Name of the database to import data from.")
 	@Macro
 	public String database;
 

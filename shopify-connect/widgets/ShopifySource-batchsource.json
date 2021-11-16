@@ -6,8 +6,50 @@
 
   "icon": {
     "arguments": {
-      "data": "data:image/png;base64,..."
+      "data": "data:image/png;base64,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"
     },
     "type": "inline"
-  }
+  },
+  "configuration-groups": [
+    {
+      "label": "Plugin Configuration",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "Reference Name",
+          "name": "referenceName"
+        }
+      ]
+    },
+    {
+      "label": "Data Configuration",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "Shop Name",
+          "name": "shopname"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "API Version",
+          "name": "version"
+        }
+      ]
+    },
+    {
+      "label": "Authentication",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "Username",
+          "name": "user"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Password",
+          "name": "password"
+        }
+      ]
+    }
+  ]
 }
