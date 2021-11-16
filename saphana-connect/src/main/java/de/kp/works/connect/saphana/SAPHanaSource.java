@@ -30,7 +30,8 @@ import io.cdap.cdap.api.annotation.Plugin;
 
 @Plugin(type = "batchsource")
 @Name("SAPHanaSource")
-@Description("A batch source to read structured records from an SAP Hana database.")
+@Description("A Works batch connector for reading structured records from an SAP HANA database," +
+		"and transforming them into structured data flow records.")
 public class SAPHanaSource extends JdbcSource {
 
 	protected static final Logger LOG = LoggerFactory.getLogger(SAPHanaSource.class);

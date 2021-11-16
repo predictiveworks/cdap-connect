@@ -4,8 +4,8 @@
 Description
 ---
 This is an IOT specific streaming connector plugin to read Web socket real-time events
-from Eclipse Ditto. This plugin is part of PredictiveWorks. IoT support and contributes
-to its semantic abstraction approach.
+from Eclipse Ditto, and to transform them into structured data flow records. This plugin 
+is part of PredictiveWorks. IoT support and contributes to its semantic abstraction approach.
 
 Eclipse Ditto abstracts an IoT device into a digital twin and provides synchronous and 
 asynchronous APIs to work with physical devices. Ditto is an IoT middleware to interact 

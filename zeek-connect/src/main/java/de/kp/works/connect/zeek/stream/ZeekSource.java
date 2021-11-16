@@ -34,7 +34,9 @@ import java.util.List;
 
 @Plugin(type = StreamingSource.PLUGIN_TYPE)
 @Name("ZeekSource")
-@Description("A Works Stream streaming source that supports real-time events that originate from Zeek.")
+@Description("A Works streaming source for reading real-time events from Works Stream," +
+		" and transforming them into structured data flow records. The events originate" +
+		" from a Zeek network traffic sensor.")
 public class ZeekSource extends StreamingSource<StructuredRecord> {
 
 	private final ZeekConfig config;

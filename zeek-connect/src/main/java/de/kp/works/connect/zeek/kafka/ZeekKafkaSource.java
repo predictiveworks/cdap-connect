@@ -34,7 +34,9 @@ import io.cdap.cdap.etl.api.streaming.StreamingSource;
 
 @Plugin(type = StreamingSource.PLUGIN_TYPE)
 @Name("ZeekKafkaSource")
-@Description("An Apache Kafka streaming source that supports real-time events that originate from Zeek.")
+@Description("A Works streaming source, based on Apache Kafka, for reading real-time events" +
+		" that originate from a Zeek network traffic sensor, and transforming them into structured" +
+		" data flow records.")
 public class ZeekKafkaSource extends StreamingSource<StructuredRecord> {
 
 	private static final long serialVersionUID = -1768880702434233235L;

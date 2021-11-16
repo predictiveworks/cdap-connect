@@ -48,7 +48,7 @@ import joptsimple.internal.Strings;
 
 @Plugin(type = BatchSink.PLUGIN_TYPE)
 @Name("SnowflakeSink")
-@Description("A batch sink to write structured records to a Snowflake database.")
+@Description("A Works batch connector for writing structured records to a Snowflake data warehouse.")
 public class SnowflakeSink extends JdbcSink<SnowflakeWritable> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SnowflakeSink.class);

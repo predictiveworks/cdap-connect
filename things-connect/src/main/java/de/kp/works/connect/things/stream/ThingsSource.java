@@ -34,7 +34,8 @@ import java.util.List;
 
 @Plugin(type = StreamingSource.PLUGIN_TYPE)
 @Name("ThingsSource")
-@Description("A Works Stream streaming source that supports real-time events that originate from a ThingsBoard gateway.")
+@Description("A Works streaming source for reading real-time events that originate from" +
+			" a ThingsBoard gateway, and transforming them into structured data flow records.")
 public class ThingsSource extends StreamingSource<StructuredRecord> {
 
 	private static final long serialVersionUID = -8515614253262827164L;

@@ -34,7 +34,7 @@ import java.util.List;
 
 @Plugin(type = StreamingSource.PLUGIN_TYPE)
 @Name("FleetSource")
-@Description("A Works streaming source for reading real-time events from Work Stream," +
+@Description("A Works streaming source for reading real-time events from Works Stream," +
 		" and transforming them into structured data flow records. The events originate" +
 		" from a Fleet (Osquery) endpoint management platform.")
 public class FleetSource extends StreamingSource<StructuredRecord> {

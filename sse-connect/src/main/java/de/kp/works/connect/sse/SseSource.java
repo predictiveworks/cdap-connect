@@ -34,7 +34,8 @@ import java.util.List;
 
 @Plugin(type = StreamingSource.PLUGIN_TYPE)
 @Name("SseSource")
-@Description("A Works Stream streaming source that supports real-time events that originate from Works SSE.")
+@Description("A Works streaming source for reading real-time events that originate from Works SSE," +
+			" and transforming them into structured data flow records.")
 public class SseSource extends StreamingSource<StructuredRecord> {
 
 	private static final long serialVersionUID = -8515614253262827164L;

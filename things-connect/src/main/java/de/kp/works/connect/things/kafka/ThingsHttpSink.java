@@ -36,7 +36,7 @@ import java.util.Map;
 
 @Plugin(type = "batchsink")
 @Name("ThingsHttpSink")
-@Description("Batch sink plugin to send messages to a Thingsboard server.")
+@Description("A Works Batch connector for writing structured (device) records to the ThingsBoard IoT platform via HTTP.")
 public class ThingsHttpSink extends BatchSink<StructuredRecord, Void, Void> {
 
 	private final ThingsSinkConfig config;

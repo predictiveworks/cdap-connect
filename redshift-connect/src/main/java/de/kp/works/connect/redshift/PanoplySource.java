@@ -29,7 +29,7 @@ import java.util.Properties;
 @Plugin(type = BatchSource.PLUGIN_TYPE)
 @Name("PanoplySource")
 @Description("A Works batch connector for reading data records from a Panoply data warehouse," +
-		" and transforming them into structured pipeline records.")
+		" and transforming them into structured data flow records.")
 
 public class PanoplySource extends RedshiftSource {
 

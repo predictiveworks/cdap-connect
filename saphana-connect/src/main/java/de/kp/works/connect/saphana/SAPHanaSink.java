@@ -46,7 +46,7 @@ import io.cdap.cdap.etl.api.batch.BatchSinkContext;
 
 @Plugin(type = "batchsink")
 @Name("SAPHanaSink")
-@Description("A batch sink to write structured records to an SAP Hana database.")
+@Description("A Works batch connector for writing structured records to an SAP HANA database.")
 public class SAPHanaSink extends JdbcSink<SAPHanaWritable> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SAPHanaSink.class);	

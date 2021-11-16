@@ -33,7 +33,8 @@ import java.util.Map;
 
 @Plugin(type = StreamingSource.PLUGIN_TYPE)
 @Name("ThingsKafkaSource")
-@Description("An Apache Kafka streaming source that supports real-time events that originate from Thingsboard.")
+@Description("A Works streaming source, based on Apache Kafka, for reading real-time events" +
+		" that originate from Thingsboard, and transforming them into structured data flow records.")
 public class ThingsKafkaSource extends StreamingSource<StructuredRecord> {
 
 	private static final long serialVersionUID = 2853490513177740072L;

@@ -39,7 +39,8 @@ import org.apache.hadoop.io.NullWritable;
 
 @Plugin(type = BatchSource.PLUGIN_TYPE)
 @Name("ShopifySource")
-@Description("A batch connector plugin to read structured records from Shopify HTTP endpoint.")
+@Description("A Works batch connector for reading structured records from a Shopify HTTP endpoint," +
+		"and transforming them into structured data flow records.")
 public class ShopifySource extends BatchSource<NullWritable, HttpPage, StructuredRecord> {
 
 	private final ShopifyConfig config;

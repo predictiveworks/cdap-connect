@@ -39,7 +39,8 @@ import org.apache.hadoop.io.NullWritable;
 
 @Plugin(type = BatchSource.PLUGIN_TYPE)
 @Name("WebhoseSource")
-@Description("A batch connector plugin to read structured records from Webhose HTTP endpoint.")
+@Description("A Works batch connector for reading structured records from a Webhose HTTP endpoint," +
+		"and transforming them into structured data flow records.")
 public class WebhoseSource extends BatchSource<NullWritable, HttpPage, StructuredRecord> {
 
 	private final WebhoseConfig config;

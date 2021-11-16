@@ -5,7 +5,7 @@ Description
 ---
 This is a batch connector plugin for writing structured records to an Aerospike database. 
 
-Aerospike is a NoSQL data platform to empower real-time, extreme scale data solutions 
+Aerospike is a commercial NoSQL data platform to empower real-time, extreme scale data solutions 
 that require high durability, predictable performance and operational simplicity.
 
 A specialty of this batch sink is, that the *Aerospike key* is automatically derived

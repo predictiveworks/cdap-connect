@@ -29,7 +29,8 @@ import joptsimple.internal.Strings;
 
 @Plugin(type = BatchSource.PLUGIN_TYPE)
 @Name("SnowflakeSource")
-@Description("A batch source to read structured records from a Snowflake database.")
+@Description("A Works batch connector for reading structured records from a Snowflake data warehouse," +
+			" and transforming them into structured data flow records.")
 public class SnowflakeSource extends JdbcSource {
 
 	protected static final String JDBC_DRIVER_NAME = "com.snowflake.client.jdbc.SnowflakeDriver";
