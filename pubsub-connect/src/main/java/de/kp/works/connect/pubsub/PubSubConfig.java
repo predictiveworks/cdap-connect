@@ -38,11 +38,12 @@ public class PubSubConfig extends BaseConfig {
 			+ "account key used for authorization. When running on clusters, the file must be present "
 			+ "on every node in the cluster.";
 
-	private static final String SUBSCRIPTION_DESC = "Cloud Pub/Sub subscription to read from. If a "
-			+ "subscription with the specified name does not exist, it will be automatically created "
-			+ "if a topic is specified. Messages published before the subscription was created will " + "not be read.";
+	private static final String SUBSCRIPTION_DESC = "Cloud PubPub subscription to read from. If a "
+			+ "subscription with the specified name does not exist, it will be automatically created, "
+			+ "if a topic is specified. Messages published before the subscription was created will "
+			+ "not be read.";
 
-	private static final String TOPIC_DESC = "Cloud Pub/Sub topic to create a subscription on. This is "
+	private static final String TOPIC_DESC = "Cloud PubSub topic to create a subscription on. This is "
 			+ "only used when the specified subscription does not already exist and needs to be automatically "
 			+ "created. If the specified subscription already exists, this value is ignored.";
 

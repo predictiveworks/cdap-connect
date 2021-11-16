@@ -47,11 +47,4 @@ public class KafkaConstants {
 
 	public static final String KAFKA_KEYTAB = "The keytab location for the Kerberos principal when Kerberos security is enabled for Kafka.";
 
-	public static final String KAFKA_TIME_FIELD = "Optional name of the field containing the read time of the Kafaka event batch. "
-			+ "If this is not set, a time field names '_timestamp' will be added to output records. "
-			+ "If set, this field must be present in the schema property and must be a long.";
-	
-	public static final String KAFKA_MESSAGE_FORMAT = "Optional application level format of the Kafka events. If no format is provided, generic "
-			+ "inference of the data schema is provided and no application specific processing is done.";
-
 }

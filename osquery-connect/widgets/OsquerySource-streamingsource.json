@@ -9,7 +9,6 @@
     },
     "type": "inline"
   },
-
   "configuration-groups": [
     {
       "label": "Plugin Configuration",
@@ -19,7 +18,7 @@
           "label": "Reference Name",
           "name": "referenceName"
         }
- 	    ]
+      ]
     },
     {
       "label": "Broker Configuration",
@@ -34,14 +33,19 @@
         },
         {
           "widget-type": "keyvalue",
-          "label": "Properties",
+          "label": "Consumer Properties",
           "name": "kafkaProperties",
           "widget-attributes": {
             "showDelimiter": "false",
             "key-placeholder": "Consumer property",
             "value-placeholder": "Consumer property value"
           }
-        },
+        }
+      ]
+    },
+    {
+      "label": "Data Configuration",
+      "properties": [
         {
           "widget-type": "textbox",
           "label": "Topic",
@@ -49,18 +53,10 @@
         },
         {
           "widget-type": "csv",
-          "label": "Partitions",
+          "label": "Topic Partitions",
           "name": "partitions",
           "widget-attributes": {
             "delimiter": ","
-          }
-        },
-        {
-          "widget-type": "textbox",
-          "label": "Max Rate Per Partition",
-          "name": "maxRatePerPartition",
-          "widget-attributes": {
-            "default": "1000"
           }
         },
         {
@@ -76,6 +72,14 @@
             "showDelimiter": "false",
             "key-placeholder": "Partition",
             "value-placeholder": "Offset"
+          }
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Max Rate Per Partition",
+          "name": "maxRatePerPartition",
+          "widget-attributes": {
+            "default": "1000"
           }
         }
       ]
@@ -96,4 +100,4 @@
       ]
     }
   ]
-}
+ }

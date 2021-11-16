@@ -61,10 +61,6 @@ public class KafkaConfig extends BaseConfig implements Serializable {
 	@Macro
 	protected String topic;
 
-	@Description(KafkaConstants.KAFKA_MESSAGE_FORMAT)
-	@Nullable
-	protected String messageFormat;
-
 	@Description(KafkaConstants.KAFKA_TOPIC_PARTITIONS)
 	@Nullable
 	@Macro
@@ -90,20 +86,6 @@ public class KafkaConfig extends BaseConfig implements Serializable {
 	@Nullable
 	@Macro
 	protected Long defaultInitialOffset;
-
-	/**
-	 * 
-	 * KAFKA OUTPUT EXTENSIONS
-	 * 
-	 *****/
-
-	/*
-	 * Additional fields that can be used (optional) to extend the output schema for
-	 * the Kafka message
-	 */
-	@Description(KafkaConstants.KAFKA_TIME_FIELD)
-	@Nullable
-	protected String timeField;
 
 	/**
 	 * 
@@ -180,10 +162,6 @@ public class KafkaConfig extends BaseConfig implements Serializable {
 
 	public String getTopic() {
 		return topic;
-	}
-
-	public String getFormat() {
-		return Strings.isNullOrEmpty(messageFormat) ? "generic" : messageFormat;
 	}
 
 	/**
@@ -265,16 +243,6 @@ public class KafkaConfig extends BaseConfig implements Serializable {
 	@Nullable
 	public String getKeytabLocation() {
 		return keytabLocation;
-	}
-
-	@Nullable
-	public String getTimeField() {
-		/*
-		 * Each event is enriched by a time field, that contains the read time of the
-		 * Kafka event batch; the field name is either provided by the user or it is set
-		 * internal
-		 */
-		return Strings.isNullOrEmpty(timeField) ? "_timestamp" : timeField;
 	}
 
 	@Override

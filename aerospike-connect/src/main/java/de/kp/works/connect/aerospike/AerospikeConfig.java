@@ -54,7 +54,7 @@ public class AerospikeConfig extends BaseConfig {
     @Macro
     public Integer port;
 
-    @Description("The timeout of an Aerospike database connection in millseconds. Default is 1000.")
+    @Description("The timeout of an Aerospike database connection in milliseconds. Default is 1000.")
     @Macro
     public Integer timeout;
 
@@ -68,7 +68,7 @@ public class AerospikeConfig extends BaseConfig {
 
     /*** CREDENTIALS ***/
 
-    @Description("Name of a registered user name. Required for authentication.")
+    @Description("Name of a registered username. Required for authentication.")
     @Macro
     public String user;
 

@@ -9,7 +9,6 @@
     },
     "type": "inline"
   },
-
   "configuration-groups": [
     {
       "label": "Plugin Configuration",
@@ -19,7 +18,7 @@
           "label": "Reference Name",
           "name": "referenceName"
         }
- 	    ]
+      ]
     },
     {
       "label": "Broker Configuration",
@@ -41,11 +40,21 @@
             "key-placeholder": "Consumer property",
             "value-placeholder": "Consumer property value"
           }
-        },
+        }
+      ]
+    },
+    {
+      "label": "Data Configuration",
+      "properties": [
         {
           "widget-type": "textbox",
           "label": "Topic",
           "name": "topic"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Time Field",
+          "name": "timeField"
         },
         {
           "widget-type": "csv",
@@ -72,31 +81,10 @@
         },
         {
           "widget-type": "textbox",
-          "label": "Time Field",
-          "name": "timeField"
-        },
-        {
-          "widget-type": "textbox",
           "label": "Max Rate Per Partition",
           "name": "maxRatePerPartition",
           "widget-attributes": {
             "default": "1000"
-          }
-        }
-      ]
-    },
-    {
-      "label": "Format",
-      "properties": [
-        {
-          "widget-type": "select",
-          "label": "Message Format",
-          "name": "messageformat",
-          "widget-attributes": {
-            "values": [
-              "generic"
-            ],
-            "default": "generic"
           }
         }
       ]

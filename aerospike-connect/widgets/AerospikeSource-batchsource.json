@@ -21,7 +21,6 @@
         }
  	  ]
     },
-
     {
       "label": "Endpoint Configuration",
       "properties": [
@@ -65,7 +64,7 @@
       "properties": [
         {
           "widget-type": "textbox",
-          "label": "User Name",
+          "label": "Username",
           "name": "user"
         },
         {
