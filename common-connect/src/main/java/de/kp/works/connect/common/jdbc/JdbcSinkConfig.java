@@ -26,11 +26,11 @@ public class JdbcSinkConfig extends JdbcConfig {
 
 	private static final long serialVersionUID = 5677211461839972980L;
 
-	@Description("Name of the Jdbc table to export data to.")
+	@Description("Name of the database table to export data to.")
 	@Macro
 	public String tableName;
 
-	@Description("Name of the primary key of the Jdbc table to export data to.")
+	@Description("Name of the primary key of the database table to export data to.")
 	@Macro
 	public String primaryKey;
 
@@ -43,11 +43,11 @@ public class JdbcSinkConfig extends JdbcConfig {
 
 		if (Strings.isNullOrEmpty(tableName))
 			throw new IllegalArgumentException(
-					"Table name must not be empty. This connector is not able to write data to the Jdbc database.");
+					"Table name must not be empty. This connector is not able to write data to the database.");
 
 		if (Strings.isNullOrEmpty(primaryKey))
 			throw new IllegalArgumentException(
-					"Primary key must not be empty. This connector is not able to write data to the Jdbc database.");
+					"Primary key must not be empty. This connector is not able to write data to the database.");
 		
 	}
 	

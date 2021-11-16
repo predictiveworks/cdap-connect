@@ -12,11 +12,11 @@ that require high durability, predictable performance and operational simplicity
 **Reference Name**: Name used to uniquely identify this source for lineage, annotating metadata, etc.
 
 ### Endpoint Configuration
-**Host**: The host of the Aerospike database.
+**Host**: The host of the database.
 
-**Port**: The port of the Aerospike database.
+**Port**: The port of the database.
 
-**Timeout**: The timeout of an Aerospike database connection in milliseconds. Default is 1000.
+**Timeout**: The timeout of a database connection in milliseconds. Default is 1000.
 
 ### Data Configuration:
 **Namespace**: The name of the Aerospike namespace used to organize data.

@@ -45,12 +45,12 @@ public class JdbcSourceConfig extends JdbcConfig {
 	 * 
 	 * 
 	 */
-	@Description("Name of the Jdbc table to import data from.")
+	@Description("Name of the database table to import data from.")
 	@Nullable
 	@Macro
 	public String tableName;
 
-	@Description("The SQL select statement to import data from the Jdbc database. "
+	@Description("The SQL select statement to import data from the database. "
 			+ "For example: select * from <your table name>.")
 	@Nullable
 	@Macro

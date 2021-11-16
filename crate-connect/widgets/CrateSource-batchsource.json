@@ -5,7 +5,7 @@
 
   "icon": {
     "arguments": {
-      "data": "data:image/png;base64,..."
+      "data": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAcJJREFUaIHtmDFLw0AUx//vmpZaqlgQihQ6CFZw6GdxtDoIOombW7dMpTi4FAdxr6P9Ii5udVAqVFykpWBp0+aeQ0kFiVxqSnsN95uSlxfu/ZLLJXmAQS/I27BtFs14u0ySSyCxzJqUEJgZuC+Mc1XbJgkAlnewGW+XCTiFiHUAXl6VAWAIAPLs2WoDQAUAppdeAIeA0F5iAgOgLgElLzIVkYzEakhMYQkkvB29H4YZMCK6ERkRS50SHvtkq6DK+ey5w9pDp/XfMRYisptLrKtyNlJuqFoiM7WMiG4YEd0wIroRGRHfl9DFQSZf3EluzmuQ/hAjVU46Jazby+2iKu/pZdC9aXTefsd9RVIJWOkkxYOVOS9InYJJbX7xyEwtI6IbRkQ3jIhu+K7JA4fd/pDHqpMp2NIPnmO7bOCw6xf3Fak1ui2gq/x/vj7P7mczsTVV3nHl/VFdYjgiM7WMiG4YEd0wIroRGZFQ/dbXD+er148pvwAWQSiRMN3zeROZqWVEdCN6IsQ0Ctpb0gQSgOPt/NwR4jogM6shQwDzpmS37kWmy29hnKs2Y20WJI8YWHCXcTYIPJLguz03f7XsWgx/8Q27LHBJfez1lQAAAABJRU5ErkJggg=="
     },
     "type": "inline"
   },
@@ -46,7 +46,7 @@
         },
         {
           "widget-type": "textarea",
-          "label": "Insert Query",
+          "label": "Import Query",
           "name": "inputQuery",
           "widget-attributes": {
             "rows": "10"
@@ -59,7 +59,7 @@
       "properties": [
         {
           "widget-type": "textbox",
-          "label": "User Name",
+          "label": "Username",
           "name": "user"
         },
         {
@@ -71,3 +71,4 @@
     }
   ]
 }
+

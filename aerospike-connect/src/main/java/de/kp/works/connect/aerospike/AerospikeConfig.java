@@ -46,15 +46,15 @@ public class AerospikeConfig extends BaseConfig {
 
     private static final long serialVersionUID = -665126953949777002L;
 
-    @Description("The host of the Aerospike database.")
+    @Description("The host of the database.")
     @Macro
     public String host;
 
-    @Description("The port of the Aerospike database.")
+    @Description("The port of the database.")
     @Macro
     public Integer port;
 
-    @Description("The timeout of an Aerospike database connection in milliseconds. Default is 1000.")
+    @Description("The timeout of a database connection in milliseconds. Default is 1000.")
     @Macro
     public Integer timeout;
 

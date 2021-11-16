@@ -18,23 +18,12 @@ package de.kp.works.connect.crate;
  * 
  */
 
-import java.util.Locale;
-
 import de.kp.works.connect.common.jdbc.JdbcSinkConfig;
-import io.cdap.cdap.api.annotation.Description;
-import io.cdap.cdap.api.annotation.Macro;
+import java.util.Locale;
 
 public class CrateSinkConfig extends JdbcSinkConfig {
 
 	private static final long serialVersionUID = 5345965522745690011L;
-
-	@Description("Name of the Jdbc table to export data to.")
-	@Macro
-	public String tableName;
-
-	@Description("Name of the primary key of the Jdbc table to export data to.")
-	@Macro
-	public String primaryKey;
 
 	public CrateSinkConfig() {
 		super();
