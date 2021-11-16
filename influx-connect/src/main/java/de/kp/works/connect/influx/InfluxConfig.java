@@ -32,15 +32,15 @@ public class InfluxConfig extends BaseConfig {
 
 	/*** CONNECTION PARAMETERS ***/
 	
-	@Description("The host of the InfluxDB.")
+	@Description("The host of the database.")
 	@Macro
 	public String host;
 
-	@Description("The port of the InfluxDB.")
+	@Description("The port of the database.")
 	@Macro
 	public String port;
 
-	@Description("The protocol of the InfluxDB connection. Supports values are 'http' and 'https'.")
+	@Description("The protocol of the database connection. Supports values are 'http' and 'https'.")
 	@Macro
 	public String protocol;
 
