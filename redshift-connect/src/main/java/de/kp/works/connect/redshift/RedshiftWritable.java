@@ -38,11 +38,8 @@ public class RedshiftWritable extends JdbcWritable {
 	}
 
 	@Override
-	public List<String> getColumns(Schema schema) throws Exception {
-		
-		String primaryKey = connect.getPrimaryKey();
-		return RedshiftUtils.getColumns(schema, primaryKey);
-		
+	public List<String> getColumns(Schema schema) {
+		return RedshiftUtils.getColumns(schema);
 	}
 
 }

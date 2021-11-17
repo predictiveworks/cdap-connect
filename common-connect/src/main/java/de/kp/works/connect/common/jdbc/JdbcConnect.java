@@ -32,14 +32,12 @@ public abstract class JdbcConnect implements Serializable {
 	
 	protected String tableName;
 	protected String primaryKey;
-
+	/*
+	 +
+	 */
 	public abstract String createQuery(List<String> columns);
 	
 	public boolean createTable(Connection conn, List<String> columns) {
-		return createTable(conn, tableName, primaryKey, columns);
-	}
-
-	private boolean createTable(Connection conn, String tableName, String primaryKey, List<String> columns) {
 
 		boolean success = false;
 

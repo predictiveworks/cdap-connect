@@ -29,7 +29,7 @@ public class RedshiftUtils extends JdbcUtils {
 
 	private static final long serialVersionUID = 5111966838738064709L;
 
-	public static List<String> getColumns(Schema schema, String primaryKey) {
+	public static List<String> getColumns(Schema schema) {
 
 		List<String> columns = Lists.newArrayList();
 
@@ -39,10 +39,9 @@ public class RedshiftUtils extends JdbcUtils {
 			String fieldName = field.getName();
 			String fieldType = getSqlType(field.getSchema());
 
-			Boolean isPrimaryKey = fieldName.equals(primaryKey);
 			Boolean isNullable = field.getSchema().isNullable();
 
-			String column = getColumn(fieldName, fieldType, isNullable, isPrimaryKey);
+			String column = getColumn(fieldName, fieldType, isNullable);
 			columns.add(column);
 			
 		}
@@ -51,7 +50,7 @@ public class RedshiftUtils extends JdbcUtils {
 
 	}
 
-	private static String getColumn(String fieldName, String fieldType, Boolean isNullable, Boolean isPrimaryKey) {
+	private static String getColumn(String fieldName, String fieldType, Boolean isNullable) {
 
 		if (isNullable)
 			return String.format("%s %s", fieldName, fieldType);
@@ -97,5 +96,5 @@ public class RedshiftUtils extends JdbcUtils {
 		return sqlType;
 	
 	}
-	
+
 }

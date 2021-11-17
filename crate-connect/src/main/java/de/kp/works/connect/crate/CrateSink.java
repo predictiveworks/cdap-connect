@@ -72,10 +72,10 @@ public class CrateSink extends JdbcSink<CrateWritable> {
 	private final CrateSinkConfig cfg;
 	private final CrateConnect connect;
 
-	public CrateSink(CrateSinkConfig crateConfig) {
+	public CrateSink(CrateSinkConfig cfg) {
 
-		this.cfg = crateConfig;
-		this.connect = new CrateConnect(cfg.getEndpoint(), cfg.tableName, cfg.primaryKey);
+		this.cfg = cfg;
+		this.connect = new CrateConnect(cfg);
 
 	}
 

@@ -30,7 +30,7 @@ public class CrateUtils extends JdbcUtils {
 
 	private static final long serialVersionUID = -8111877341898323808L;
 
-	public static List<String> getColumns(Schema schema, String primaryKey) throws Exception {
+	public static List<String> getColumns(Schema schema) {
 
 		List<String> columns = Lists.newArrayList();
 
@@ -43,10 +43,9 @@ public class CrateUtils extends JdbcUtils {
 			 * The field type can be null; in this case, the respective column is described
 			 * as STRING
 			 */
-			Boolean isPrimaryKey = fieldName.equals(primaryKey);
 			Boolean isNullable = field.getSchema().isNullable();
 
-			String column = getColumn(fieldName, fieldType, isNullable, isPrimaryKey);
+			String column = getColumn(fieldName, fieldType, isNullable);
 			columns.add(column);
 
 		}
@@ -99,7 +98,7 @@ public class CrateUtils extends JdbcUtils {
 
 	}
 
-	private static String getColumn(String fieldName, String fieldType, Boolean isNullable, Boolean isPrimaryKey) {
+	private static String getColumn(String fieldName, String fieldType, Boolean isNullable) {
 
 		if (isNullable)
 			return String.format("%s %s", fieldName, fieldType);

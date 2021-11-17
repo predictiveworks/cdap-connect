@@ -70,7 +70,7 @@ public class RedshiftSink extends JdbcSink<RedshiftWritable> {
 
 	public RedshiftSink(RedshiftSinkConfig config) {
 		this.config = config;
-		this.connect = new RedshiftConnect(config.getEndpoint(), config.tableName, config.primaryKey);
+		this.connect = new RedshiftConnect(config);
 	}
 	
 	@Override

@@ -30,7 +30,7 @@ public class RedshiftSourceConfig extends JdbcSourceConfig {
 
 	private static final long serialVersionUID = 6631946981577765660L;
 
-	@Description("Name of the Jdbc database to import data from.")
+	@Description("Name of the database to import data from.")
 	@Macro
 	public String database;
 	

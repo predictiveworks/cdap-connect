@@ -38,9 +38,8 @@ public class CrateWritable extends JdbcWritable {
 	}
 
 	@Override
-	public List<String> getColumns(Schema schema) throws Exception {
-		String primaryKey = connect.getPrimaryKey();
-		return CrateUtils.getColumns(schema, primaryKey);
+	public List<String> getColumns(Schema schema) {
+		return CrateUtils.getColumns(schema);
 	}
 
 }

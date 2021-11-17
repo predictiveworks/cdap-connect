@@ -5,7 +5,7 @@
 
   "icon": {
     "arguments": {
-      "data": "data:image/png;base64,..."
+      "data": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAABfxJREFUaIHtmV1sFFUUx8987M52drsf3aEflPTTLjViVTT6IkYC0cCDMRFioX1B5MH4oNEH5MOkRtpU4YEnEuKDUdpSFGMMxABRHjAIAfUBC6bb0g/abWl3Z3enO7s7OzN3rg9NW+x2d+9stykY/k/tvWfmnN/MnXPPPQvwWA+XqLk/2tow3W8JHKAMvAsoejVjyikKMMYAp316ZWdbG2UAALBzk/2WwAEK4B2gmQgAXr0oCYSBBgBjr58NAAB0AADMP3oaoBmAfughZoUBgIpSALvmRuZBDAzWRwNiXtgAsM7983B/DCbE5jYxp6dqOPtLjUXu6jLWXuphOZ6jWWRgSKkGmooYyeH7auIvvyL1jaoyxoVbAQUFeXe7e93mZ/myNCcMBZyFoZ12xtKwzuJ87QV7eVBCyqWb8tSFm3HRwMtf0wVdWqcuSROjU5pMYrvGxdhatrqqO/eVNj5RaeWX67ugICkdGx09ocGxaS1Oek2lwPKftgrrt2y0lyzHd94gm5/hSyq8rHXxuJzE6Eh3eGA8qCdI78UyQO953Vn7ShPvyTeevECaajnHnm3umsMtwvq1JQy3eF5OIvR5l+gfD2rEMBRFwd5t7poNNZw9n5hMgxTzDPP+m556hgbK7aCtB1uEhjI3s8SbQaijOzQwKepJ0nuzDNDvveGps1nN10imL3j71eIKRxE9n+08xQx3sFXwrXGzlsW2UgLr7d2i/34YEcO4HbR1xyZnWubLJVMgLp5iNz3Nr1k8LjgZ7nCr1ye4mDSYiIz09u6QfypCDrP1eb7cyVOmtgZTIFs2Orwss/Q1gpOxHWoVfN7idJhwDOntp4IDU2FdIfFjYSn65Q2820xspkCea7BlvXmpi7EdavH6XA4m7WmKsqG1d4X80xEymBcbzWUwYhCblaKrS9mcGSUqGylFQcZSc6JsaEe6RCKY2grWQVG5rBZEDFLmsVgZJvutb4+o0c5e8W5KhyVBAADEGJqFkVBWGJahaMGVnkAyiRjElePjuzWkRo6eCQ2peu5KUIwhrb0r5A/mgFnrTd+jMokYhLNktp2JI+342dCIhsiLv5CEtJ5fZ8az2TAUEC8uYpB4CqNMc047Y/lwh7fGwpA7rq+wFu3b7qrJZqNoOOMSXSxikKhs6Nnmm+o4z0c7vbUkMLXlbNH+XSU+3kZnXa5Toq6SxkcMMhnWU3KSCKYuG0xVKWvb3yw02HNAxBKGJsqGRhofMQjGAIOBVCyXXVMd584EU1XK2g61CL5ins6ZjfrH1RnS2ABMbohX+xSRxK6pjnPvbxbqrexCuq4qZbkDuwWfoyg3BADA1b8TYTOxmQK5/k9yRoyhFIntk9VW18c7S+osLEWtE2YhnARvAgBgWkLKH34l59t/UKZADAy493JsjNR+Qy3n/qTZW3+wRfA5eTqt1M+kH3+LTZg9x5su43+/nZDujKoSqX1jldXlspND9A2nolduJSJm48rrhHj8rDg8KZIfZUkViaHUiXPR0XyuzQsknsLoi15xMCoj4jyfSxHZSHV0hwYkGWVN8ZmUd/MhKCGt87Q4ICuYONdn0mBAjX32TbB/IkyWSJbSstpBY0FdOXpGHFRUI2P5kk3JlIF+uDIz1vZtyB+U0LIeyLI7jYMBNXHip+jdD94qaWBoslprWkLKtb6EeP66HExkqeHMqCAt0z8HlFjvZeley1ZX9eI5TcfGtTvJUFQ2tHAMqbdHUvEJUc97CWVSwXq/P9+Ih8pLLNyWjXz5g+MaAuPk+Sjx3pOvCtoy/fqiFLg1pP5nD7BkaFYUWgV1gjGG42fFkXtTC73fTF2XQqvgTlI6No59F74blQ0VYLYVyrErD7MiDsQY0o59Hx5Q1NmMZLUyJvoh+WnFntTwpKqcPBcZMjDgfHq5ZrWiDm70KzPdv0ijrImzfL4q+G+Ii3XhZpzoMLZc/W9+1Z0HoTClwcqvgEKKogHmq++FN0LhHgDD82jAUAAYuw2MeuZG5r8Rn17Z2c8EME0ZuzEAcc91NUQB1gzAX61HVV+udiyPlUn/ArekXIzZ//3nAAAAAElFTkSuQmCC"
     },
     "type": "inline"
   },
@@ -51,7 +51,7 @@
         },
         {
           "widget-type": "textarea",
-          "label": "Insert Query",
+          "label": "Import Query",
           "name": "inputQuery",
           "widget-attributes": {
             "rows": "10"
@@ -64,7 +64,7 @@
       "properties": [
         {
           "widget-type": "textbox",
-          "label": "User Name",
+          "label": "Username",
           "name": "user"
         },
         {

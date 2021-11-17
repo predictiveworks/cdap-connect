@@ -5,7 +5,7 @@
 
   "icon": {
     "arguments": {
-      "data": "data:image/png;base64,..."
+      "data": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAA7dJREFUaIHtmc1vG0UYh38z++GPXRvb/SBNrBRFraO0EIEU9UAEUsqlggMHLhQuCE78Cb1UOVVVkfgHuJeq6gkklAMgQCqgtopEq7RNUaq6EIpjY2/stdf27s7LobXjJN6uwYmyrfY52e+OZ9/HszOzegcICRas82F+nviysnqGCToNxvcyJ18YiAj4MueMnZ+fZwIA5M7FZWX1DAM+BpcqAO1dlgNA4ADEJ/fkVQA4BwDdv54D7wM88BKPIQDMYMDpTqQrIgjqsyHRhQSgdr4EezL8B2T/JoMTkcHnpvmBqcNqMpeN6P3a/FVGfSkv1r+5ZhabbRI7de8dEVEksDdelvadnJZGEzEoRoNZstR/6UtqXHnvTS176oQ28u1io/DVz7W1nRAaWmT2GM+8MyNntSiUTkyRmOTVPiI/FtSiXH73dX3srdfiBy//WP3zu8VGeZg8hp4j0y9JqV4JAIgo3huRImOTpB7jykwulho2j12Z7Kri3a+q8F2550CPliSBzU66+ycP6xqxiHP3Ydu89aBlrpuu0689Z+SZrMQ33ia2kowzeWpc1o+OSnpSU+Q/iqK+cKNRsh3y3Rd8RQ6lRPSjk+JoIkaqaaN+/Ehcm3s1/iIRUDScptUwGdDXZ2BGMix+9kNt6lCax9kTzUcVXp99JbHv1InEyIVLpd/za07zaX34DnNaZ0oiRurWOGPAwbQczSSlyP8V6JDReWQ0syHRS0rn6v4XZGX7lc08NxtiKBI0QpGgEYoEjVAkaIQiQSMUCRqhSNAIRYJGKBI0QpGg4StSqqL9T41ZW+OOS5Qv2GbReHqZZhCKhmiuPHKrjottNeBCxbX+Ljttvz5861prVdb6/Gvl9syEmz4+Qfr9X8z1Ow/btbv5ZqPlQHz6tjKRzLLo5l8xAvoX4vqV2opVsj670rgfkcGPjCnxXJYn0glZ/umWUfjhplUh//rcYJVGIsL1FV65vtKsAP4DYLsQKtC3kG27JFSPJ6HlQCzlbXMpDxNoDZJal12ZI21n+yPSwXZ27kykl6FFbj5wjXoTdm/Mtr2TbW8RMS1h37hnGcPmMfT5yNXbonxtuV3pPeixBVyv9vaT0ao3hROogx4AsF3Q97+5patLbnlumh+YGpf0hEZ9+zZqTvvXO7VSII/eOrQciIVFUVhYtArAthV7V3n+NkRGzPZY+oMK40B3o9wYEUYXAZF+NmQYQJQS5F7sRLpzJOeMnV+WVokz8QEBvgcrewkD2QL0xaQ7fmGvcwnx4l+WcWheVY1h/AAAAABJRU5ErkJggg=="
     },
     "type": "inline"
   },
@@ -19,7 +19,7 @@
           "label": "Reference Name",
           "name": "referenceName"
         }
- 	    ]
+      ]
     },
     {
       "label": "Endpoint Configuration",
@@ -51,6 +51,24 @@
         },
         {
           "widget-type": "textbox",
+          "label": "Distribution Style",
+          "name": "distStyle",
+          "widget-attributes": {
+            "default": "1000"
+          }
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Distribution Key",
+          "name": "distKey"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Sort Key",
+          "name": "sortKey"
+        },
+        {
+          "widget-type": "textbox",
           "label": "Primary Key",
           "name": "primaryKey"
         }
@@ -61,7 +79,7 @@
       "properties": [
         {
           "widget-type": "textbox",
-          "label": "User Name",
+          "label": "Username",
           "name": "user"
         },
         {

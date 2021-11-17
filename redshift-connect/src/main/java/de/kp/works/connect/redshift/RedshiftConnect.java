@@ -21,24 +21,48 @@ package de.kp.works.connect.redshift;
 import java.util.List;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
 import de.kp.works.connect.common.jdbc.JdbcConnect;
 
 public class RedshiftConnect extends JdbcConnect {
 
 	private static final long serialVersionUID = 7240703449616435430L;
 
-	public RedshiftConnect(String endpoint, String tableName, String primaryKey) {
-		this.endpoint = endpoint;
+	private final String distStyle;
+	private final String distKey;
+	private final String sortKey;
+	/*
+	 * __KUP__ Support for distribution style & key,
+	 * and sort key added.
+	 */
+	public RedshiftConnect(RedshiftSinkConfig config) {
 
-		this.tableName = tableName;
-		this.primaryKey = primaryKey;
+		this.endpoint = config.getEndpoint();
+
+		this.tableName = config.tableName;
+		this.primaryKey = config.primaryKey;
+
+		this.distStyle = config.getDistStyle();
+		this.distKey = config.getDistKey();
+
+		this.sortKey = config.getSortKey();
+
 	}
 
 	@Override
 	public String createQuery(List<String> columns) {
 
 		String colDefs = String.format("%s, PRIMARY KEY(%s)", Joiner.on(",").join(columns), primaryKey);
-		return String.format("CREATE TABLE IF NOT EXISTS %s (%s)", tableName, colDefs);
+
+		String distStyleDef = String.format("DISTSTYLE %s", this.distStyle);
+		String distKeyDef = "";
+
+		if (!Strings.isNullOrEmpty(this.distKey))
+			distKeyDef = String.format("DISTKEY (%s)", this.distKey);
+
+		return String.format(
+				"CREATE TABLE IF NOT EXISTS %s (%s) %s %s %s", tableName, colDefs, distStyleDef, distKeyDef, this.sortKey);
+
 
 	}
 

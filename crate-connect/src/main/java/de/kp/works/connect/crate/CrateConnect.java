@@ -27,11 +27,11 @@ public class CrateConnect extends JdbcConnect {
 
 	private static final long serialVersionUID = -5381262653674208518L;
 		
-	public CrateConnect(String endpoint, String tableName, String primaryKey) {
-		this.endpoint = endpoint;
+	public CrateConnect(CrateSinkConfig cfg) {
+		this.endpoint = cfg.getEndpoint();
 		
-		this.tableName = tableName;
-		this.primaryKey = primaryKey;
+		this.tableName = cfg.tableName;
+		this.primaryKey =cfg.primaryKey;
 	}
 	/*
 	 * The current implementation of the Crate DB Sink connectors supports INSERT
@@ -76,47 +76,6 @@ public class CrateConnect extends JdbcConnect {
 		 */
 		return sb.toString();		
 
-		/*
-		 * @Override
-  public String buildUpsertQueryStatement(
-      TableId table,
-      Collection<ColumnId> keyColumns,
-      Collection<ColumnId> nonKeyColumns
-  ) {
-    final Transform<ColumnId> transform = (builder, col) -> {
-      builder.appendColumnName(col.name())
-             .append("=EXCLUDED.")
-             .appendColumnName(col.name());
-    };
-
-    ExpressionBuilder builder = expressionBuilder();
-    builder.append("INSERT INTO ");
-    builder.append(table);
-    builder.append(" (");
-    builder.appendList()
-           .delimitedBy(",")
-           .transformedBy(ExpressionBuilder.columnNames())
-           .of(keyColumns, nonKeyColumns);
-    builder.append(") VALUES (");
-    builder.appendMultiple(",", "?", keyColumns.size() + nonKeyColumns.size());
-    builder.append(") ON CONFLICT (");
-    builder.appendList()
-           .delimitedBy(",")
-           .transformedBy(ExpressionBuilder.columnNames())
-           .of(keyColumns);
-    if (nonKeyColumns.isEmpty()) {
-      builder.append(") DO NOTHING");
-    } else {
-      builder.append(") DO UPDATE SET ");
-      builder.appendList()
-              .delimitedBy(",")
-              .transformedBy(transform)
-              .of(nonKeyColumns);
-    }
-    return builder.toString();
-  }
-		 */
-		
 	}
 	
 	@Override
