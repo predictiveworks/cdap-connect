@@ -27,12 +27,12 @@ public class SnowflakeConnect extends JdbcConnect {
 
 	private static final long serialVersionUID = 8506601314108327815L;
 
-	public SnowflakeConnect(String endpoint, String tableName, String primaryKey) {
-		this.endpoint = endpoint;
+	public SnowflakeConnect(SnowflakeSinkConfig config) {
+		this.endpoint = config.getEndpoint();
 
 		/* Table name is escaped */
-		this.tableName = tableName;
-		this.primaryKey = primaryKey;
+		this.tableName = config.tableName;
+		this.primaryKey = config.primaryKey;
 	}
 
 	@Override

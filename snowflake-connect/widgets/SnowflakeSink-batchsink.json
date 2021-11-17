@@ -5,7 +5,7 @@
 
   "icon": {
     "arguments": {
-      "data": "data:image/png;base64,..."
+      "data": "data:image/png;base64,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"
     },
     "type": "inline"
   },
@@ -33,6 +33,33 @@
           "widget-type": "textbox",
           "label": "Port",
           "name": "port"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Account",
+          "name": "account"
+        },
+        {
+          "widget-type": "select",
+          "label": "Region",
+          "name": "region",
+          "widget-attributes": {
+            "values": [
+              "us-west-2",
+              "us-east-1",
+              "ca-central-1",
+              "eu-west-1",
+              "eu-central-1",
+              "ap-southeast-1",
+              "ap-southeast-2",
+              "east-us-2.azure",
+              "canada-central.azure",
+              "west-europe.azure",
+              "australia-east.azure",
+              "southeast-asia.azure"
+            ],
+            "default": "us-west-2"
+          }
         }
       ]
     },
@@ -43,11 +70,6 @@
           "widget-type": "textbox",
           "label": "Warehouse Name",
           "name": "warehouse"
-        },
-        {
-          "widget-type": "textbox",
-          "label": "Account",
-          "name": "account"
         },
         {
           "widget-type": "textbox",
@@ -75,15 +97,53 @@
       "label": "Authentication",
       "properties": [
         {
+          "widget-type": "select",
+          "label": "SSL",
+          "name": "ssl",
+          "widget-attributes": {
+            "values": [
+              "on",
+              "off"
+            ],
+            "default": "on"
+          }
+        },
+        {
           "widget-type": "textbox",
-          "label": "User Name",
+          "label": "Username",
           "name": "user"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "User Role",
+          "name": "role"
+        },
+        {
+          "widget-type": "select",
+          "label": "Authenticator",
+          "name": "authenticator",
+          "widget-attributes": {
+            "values": [
+              "snowflake",
+              "externalbrowser",
+              "oauth",
+              "snowflake_jwt",
+              "username_password_mfa"
+            ],
+            "default": "snowflake"
+          }
+        },
+        {
+          "widget-type": "textbox",
+          "label": "OAuth Token",
+          "name": "authToken"
         },
         {
           "widget-type": "textbox",
           "label": "Password",
           "name": "password"
         }
+
       ]
     }
   ]

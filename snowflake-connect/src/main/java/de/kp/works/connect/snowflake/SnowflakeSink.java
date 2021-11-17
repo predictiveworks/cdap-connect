@@ -67,7 +67,7 @@ public class SnowflakeSink extends JdbcSink<SnowflakeWritable> {
 	
 	public SnowflakeSink(SnowflakeSinkConfig config) {
 		this.config = config;
-		this.connect = new SnowflakeConnect(config.getEndpoint(), config.tableName, config.primaryKey);
+		this.connect = new SnowflakeConnect(config);
 		
 	}
 	
@@ -100,23 +100,51 @@ public class SnowflakeSink extends JdbcSink<SnowflakeWritable> {
 	protected Properties getProperties() {
 		
 		Properties properties = new Properties();
-		
-		properties.put("user", config.user);
-		properties.put("password", config.password);
-		
+		/*
+		 * Mandatory parameters
+		 *
+		 * __HINT__ Providing client info is recommended, but not
+		 * mandatory; the current implementation does not support
+		 * client info.
+		 */
 		properties.put("account", config.account);
 		properties.put("db", config.database);
 
-		properties.put("warehouse", config.warehouse);
-		
-		if (Strings.isNullOrEmpty(config.schema))
-			 properties.put("schema", "");
-		
+		properties.put("schema", config.getSchema());
+		properties.put("user", config.user);
+
+		/* Always set CLIENT_SESSION_KEEP_ALIVE */
+		properties.put("client_session_keep_alive", "true");
+
+		/* Force DECIMAL for NUMBER (SNOW-33227) */
+		properties.put("JDBC_TREAT_DECIMAL_AS_INT", "false");
+
+		/* Authentication
+		 *
+		 * The first choice is token authentication, as the current
+		 * version does not support private keys
+		 */
+		if (!Strings.isNullOrEmpty(config.authToken))
+			properties.put("token", config.authToken);
+
 		else
-			properties.put("schema", config.schema);
-		
+			properties.put("password", config.password);
+
+		properties.put("authenticator", config.getAuthenticator());
+		properties.put("ssl", config.getSsl());
+
+		/* Optional parameters */
+
+		if (!Strings.isNullOrEmpty(config.role))
+			properties.put("role", config.role);
+
+		if (!Strings.isNullOrEmpty(config.warehouse))
+			properties.put("warehouse", config.warehouse);
+
+		properties.put("password", config.password);
+
 		return properties;
-		
+
 	}
 
 	@Override
@@ -148,7 +176,7 @@ public class SnowflakeSink extends JdbcSink<SnowflakeWritable> {
 
 		Map<String, String> conf = new HashMap<>();
 		/*
-		 * CONECTION PROPERTIES
+		 * CONNECTION PROPERTIES
 		 */
 		conf.put(DBConfiguration.DRIVER_CLASS_PROPERTY, getJdbcDriverName());
 		conf.put(DBConfiguration.URL_PROPERTY, getEndpoint());
