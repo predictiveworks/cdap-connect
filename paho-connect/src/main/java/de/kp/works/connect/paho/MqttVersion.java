@@ -20,8 +20,8 @@ package de.kp.works.connect.paho;
 
 public enum MqttVersion {
 
-    MQTT_V31("mqtt_v31"),
-    MQTT_V311("mqtt_v311");
+    MQTT_V31("mqtt-v31"),
+    MQTT_V311("mqtt-v311");
 
     private final String value;
 

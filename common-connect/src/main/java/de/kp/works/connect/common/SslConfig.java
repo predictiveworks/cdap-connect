@@ -49,7 +49,7 @@ public class SslConfig extends BaseConfig {
 	
 	protected static final String TRUSTSTORE_PATH_DESC = "A path to a file which contains the client SSL truststore.";
 
-	protected static final String TRUSTSTORE_TYPE_DESC = "The format of the client SSL truststore. Suported values are 'JKS', "
+	protected static final String TRUSTSTORE_TYPE_DESC = "The format of the client SSL truststore. Supported values are 'JKS', "
 			+ "'JCEKS' and 'PKCS12'. Default is 'JKS'.";
 
 	protected static final String TRUSTSTORE_PASS_DESC = "The password of the client SSL truststore.";

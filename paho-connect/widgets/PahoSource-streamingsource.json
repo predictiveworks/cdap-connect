@@ -5,7 +5,7 @@
 
   "icon": {
     "arguments": {
-      "data": "data:image/png;base64,..."
+      "data": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAABVNJREFUaIHtmFtsVEUYx/8z57Z7dre7vWy7pYVWSimXVlIN16qJRENAQn2QxEo0Rh98wBB5EhRjYwxBn4wXeAAjagTjCwbUBGOiMcQ0qSFV5NIbLaXbbrul2233cvZcZnxYdmt01xYl9ED297Qzc87J9/u+nTlzBihgL0jmR3s7p91ScD9hvA2ELmRMc0LAOQdOLjerDrW3EwYAYmawWwruJ8ALoEIE4AsX5TzgoADYiz1iEAAOAkA29RR4GqC2l0jDAZApArRlerIijEO+OySycAbImYa9J8MtUBCxGwURu1EQsRsFEbtRELEb94yIOPcldxa3kwiqTAVCgJTJeTzJTMOaezdrG5EH6mXvtvVq5cCoGesN6rG4xk1JIHRJhai6nFTovJKK9AWNRL77bSHS0ugo2brWuejDr6O9oQhL/XWsq1+fFgjIjhY1UOalcsel1FSuZ9y2OeL3idKqGsUlCbOfz/NBEkBaW9TqMx2J4b9LZLA4+KlzidGackEtcuZO/m0TaaxV3K/vKl2xconiupX7AsWC4nESaWjMTM517Q/ntYmVNbI711hOkUWlorJ+haNIEgl5uFH1PbpGLXHIsycSlaWivLpWcd1XKTsEkq5AZ7c2DQCyBNpcp3gef9BVWuIRstmTBJBNq1Vv6yZXeWPtrKxmcAYAtQFJnUtkcobrblXIWZGcncuqZPWl7b6l0wmmT8cts7RIULZvdAf2HQtfbqiW1X1tJSvO92qT9VWy53rYih88MdHPGOMA0LbZV+12ElEWCX1igzuw9/D4RUUCbX/Ov9zrptJgyEg82SIv6uzWJg+fjgyFo0wfj1iJbRuci7r6UtNJnVv5ROqrRJfJcq9gOSvy8++JSDLFzasjeuzVo+HLb30+ccXvEx3NdYrn2ripvXn8xqWvfpoZ+bVHm2xYLBUBgGVlsmbpL78fuvDxd1ODfq/g8Dghblvn9pcXC47XjoUvv/Pljf4jZ6YGWhqd/lU16cocPxsb9LmovHend1mgmCq5Yir3UXnXY66aq0E9Pu+KAIDFOK6NGUkAGBo3tbjGjGKPIC2thHN3q69uLGIlBQoiCoRKIiH85snFLxeTNwwLfDxq6QDglCn1eag0HjG1SMwyAeCPAS0GAGVeQQKAgZCZ/LYjHmxtcS0+8Gzx6p7rerR/xJqJxJnhlECXVkmeplqp+McuLXQ9bGnzrggAMMb5/XUOryKCrqlzuItUKocipv5Qk7NkMGTG3vgk3DM6aWoAIAuzz0lo6dqkdMYAQBIJ6R8x4tV+SW2uUzyEAFvXucs4B+8Z1rPvhWq/pHIODI0ZMUEgZOMqpXznI86azc3OSpFycuT0dO+pc4nRfPHmrQjjhPu9gvLBnkCTQ6ZCV582+Vt/aqbMK0rPb/HWvre7ojEaS2d9y1p32TcdsXEA0A3OASChwwKAHZvcFYdPTw3VVkjqK0+V1FsMjHPg0++jg6FJUwcAQgiiMVM/+EXi4vBE7ozPRXbNb3t7uJsQMpNpf7Qn0HS2Mxa6MKDFRErRN6on+c1ppoiEEgpoOmeSSAg4h2GBqwqhms454+m/mSwSQsBJygQDAK9KRJ9HEkcm9NR8th1zwTn3nDxQ3QDM480+EPrn+p4y00smABgmzwaUSM32A4CeHsuORxPcjCZ08z/G/a/kFWn/bOJKPGnlXQrtRl6R8JRp3MlA/i/3zPdIQcRuFETsRkHEbhRE7EZBxG7ceyKEEwO3diS10BAK6JnGbEUIPwGw4rtDhgCc+xi3TmR6stv45WbVoW4hyClhz3BAWpgA5wcBNxj40QZrybsLHUuBfPwJl6MgMjy4lUkAAAAASUVORK5CYII="
     },
     "type": "inline"
   },
@@ -18,6 +18,143 @@
           "widget-type": "textbox",
           "label": "Reference Name",
           "name": "referenceName"
+        }
+      ]
+    },
+    {
+      "label": "Endpoint Configuration",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "Broker Address",
+          "name": "mqttBroker"
+        }
+      ]
+    },
+    {
+      "label": "Data Configuration",
+      "properties": [
+        {
+          "widget-type": "csv",
+          "label": "Topics",
+          "name": "mqttTopics",
+          "widget-attributes": {
+            "delimiter": ","
+          }
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Client ID",
+          "name": "mqttClientId"
+        },
+        {
+          "widget-type": "select",
+          "label": "QoS",
+          "name": "mqttQoS",
+          "widget-attributes": {
+            "values": [
+              "at-most-once",
+              "at-least-once",
+              "exactly-once"
+            ],
+            "default": "at-most-once"
+          }
+        },
+        {
+          "widget-type": "select",
+          "label": "Version",
+          "name": "mqttVersion",
+          "widget-attributes": {
+            "values": [
+              "mqtt-v31",
+              "mqtt-v311"
+            ],
+            "default": "mqtt-v31"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Authentication",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "Username",
+          "name": "mqttUser"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Password",
+          "name": "mqttPass"
+        }
+      ]
+    },
+    {
+      "label": "Security",
+      "properties": [
+        {
+          "widget-type": "csv",
+          "label": "Cipher Suites",
+          "name": "sslCipherSuites",
+          "widget-attributes": {
+            "delimiter": ","
+          }
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Keystore Path",
+          "name": "sslKeyStorePath"
+        },
+        {
+          "widget-type": "select",
+          "label": "Keystore Type",
+          "name": "sslKeyStoreType",
+          "widget-attributes": {
+            "values": [
+              "JKS",
+              "JCEKS",
+              "PKCS12"
+            ],
+            "default": "JKS"
+          }
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Keystore Algo",
+          "name": "sslKeyStoreAlgo"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Keystore Pass",
+          "name": "sslKeyStorePass"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Truststore Path",
+          "name": "sslTrustStorePath"
+        },
+        {
+          "widget-type": "select",
+          "label": "Truststore Type",
+          "name": "sslTrustStoreType",
+          "widget-attributes": {
+            "values": [
+              "JKS",
+              "JCEKS",
+              "PKCS12"
+            ],
+            "default": "JKS"
+          }
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Truststore Algo",
+          "name": "sslTrustStoreAlgo"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Truststore Pass",
+          "name": "sslTrustStorePass"
         }
       ]
     }

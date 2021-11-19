@@ -5,7 +5,7 @@
 
   "icon": {
     "arguments": {
-      "data": "data:image/png;base64,..."
+      "data": "data:image/png;base64,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"
     },
     "type": "inline"
   },
@@ -28,21 +28,11 @@
           "widget-type": "textbox",
           "label": "Endpoint",
           "name": "endpoint"
-        },
-        {
-          "widget-type": "textbox",
-          "label": "Proxy Host",
-          "name": "proxyHost"
-        },
-        {
-          "widget-type": "textbox",
-          "label": "Proxy Port",
-          "name": "proxyPort"
         }
       ]
     },
     {
-      "label": "Thing & Features",
+      "label": "Thing & Features Identifier",
       "properties": [
         {
           "widget-type": "textbox",
@@ -57,7 +47,7 @@
       ]
     },
     {
-      "label": "Notifications",
+      "label": "Change Events",
       "properties": [
         {
           "widget-type": "select",
@@ -114,7 +104,7 @@
       "properties": [
         {
           "widget-type": "textbox",
-          "label": "User Name",
+          "label": "Username",
           "name": "user"
         },
         {
@@ -143,9 +133,22 @@
           "name": "tokenEndpoint"
         },
         {
-          "widget-type": "textbox",
+          "widget-type": "csv",
           "label": "Scopes",
-          "name": "scopes"
+          "name": "scopes",
+          "widget-attributes": {
+            "delimiter": ","
+          }
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Proxy Host",
+          "name": "proxyHost"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Proxy Port",
+          "name": "proxyPort"
         }
       ]
     },

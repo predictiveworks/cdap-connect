@@ -41,36 +41,38 @@ public class DittoConfig extends BaseConfig {
  
 	/** PROXY **/
 	
-	@Description("The proxy host of the Thing service endpoint.")
+	@Description("The proxy host optionally used by Eclipse Ditto's authentication provider.")
 	@Macro
 	@Nullable
 	public String proxyHost;
 	
-	@Description("The proxy port of the Thing service endpoint.")
+	@Description("The proxy port optionally used by Eclipse Ditto's authentication provider.")
 	@Macro
 	@Nullable
 	public String proxyPort;
 	
 	/** BASIC AUTHENTICATION **/
 	
-	@Description("The user name of the Thing service.")
+	@Description("The name of the user registered with the Ditto (Thing) service. Required for basic"
+				+ "authentication only.")
 	@Macro
 	@Nullable
 	public String user;
 	
-	@Description("The user password of the Thing service.")
+	@Description("The password  of the user registered with the Ditto (Thing) service. Required for basic"
+				+ "authentication only.")
 	@Macro
 	@Nullable
 	public String password;
 	
 	/** OAUTH **/
 
-	@Description("Client identifier obtained during the registration process.")
+	@Description("Client identifier obtained during the OAuth registration process.")
 	@Macro
 	@Nullable
 	public String clientId;
 
-	@Description("Client secret obtained during the registration process.")
+	@Description("Client secret obtained during the OAuth registration process.")
 	@Macro
 	@Nullable
 	public String clientSecret;
