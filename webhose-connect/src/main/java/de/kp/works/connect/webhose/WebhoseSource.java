@@ -63,7 +63,7 @@ public class WebhoseSource extends BatchSource<NullWritable, HttpPage, Structure
 	public void prepareRun(BatchSourceContext context) {
 		/*
 		 * Validate configuration when macros are
-		 * already subsituted
+		 * already substituted
 		 */
 		config.validate();
 		context.setInput(Input.of(config.referenceName, new WebhoseInputFormatProvider(config)));

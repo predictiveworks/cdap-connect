@@ -46,7 +46,7 @@ public class WebhosePageIterator implements Iterator<HttpPage>, Closeable {
 	private HttpPage page;
 	
 	/*
-	 * Wehose provides the next url as part of the result
+	 * Webhose provides the next url as part of the result
 	 * of the JSON response
 	 */
 	public WebhosePageIterator(WebhoseConfig config) {

@@ -20,6 +20,41 @@
           "name": "referenceName"
         }
       ]
+    },
+    {
+      "label": "Data Configuration",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "Fleet Folder",
+          "name": "fleetFolder"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Log Extension",
+          "name": "fleetExtension"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Buffer Size",
+          "name": "fleetBufferSize"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Line Size",
+          "name": "fleetLineSize"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Threads",
+          "name": "fleetNumThreads"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Polling Interval",
+          "name": "fleetPolling"
+        }
+      ]
     }
   ]
 
