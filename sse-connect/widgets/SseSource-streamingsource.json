@@ -7,8 +7,122 @@
 
   "icon": {
     "arguments": {
-      "data": "data:image/png;base64,..."
+      "data": "data:image/png;base64,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"
     },
     "type": "inline"
-  }
+  },
+  "configuration-groups": [
+    {
+      "label": "Plugin Configuration",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "Reference Name",
+          "name": "referenceName"
+        }
+      ]
+    },
+    {
+      "label": "Endpoint Configuration",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "Server URL",
+          "name": "serverUrl"
+        }
+      ]
+    },
+    {
+      "label": "Data Configuration",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "Threads",
+          "name": "numThreads",
+          "widget-attributes": {
+            "default": "1"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Authentication",
+      "properties": [
+        {
+          "widget-type": "password",
+          "label": "Token",
+          "name": "authToken"
+        }
+      ]
+    },
+    {
+      "label": "SSL Security",
+      "properties": [
+        {
+          "widget-type": "csv",
+          "label": "Cipher Suites",
+          "name": "sslCipherSuites",
+          "widget-attributes": {
+            "delimiter": ","
+          }
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Keystore Path",
+          "name": "sslKeyStorePath"
+        },
+        {
+          "widget-type": "select",
+          "label": "Keystore Type",
+          "name": "sslKeyStoreType",
+          "widget-attributes": {
+            "values": [
+              "JKS",
+              "JCEKS",
+              "PKCS12"
+            ],
+            "default": "JKS"
+          }
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Keystore Algo",
+          "name": "sslKeyStoreAlgo"
+        },
+        {
+          "widget-type": "password",
+          "label": "Keystore Pass",
+          "name": "sslKeyStorePass"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Truststore Path",
+          "name": "sslTrustStorePath"
+        },
+        {
+          "widget-type": "select",
+          "label": "Truststore Type",
+          "name": "sslTrustStoreType",
+          "widget-attributes": {
+            "values": [
+              "JKS",
+              "JCEKS",
+              "PKCS12"
+            ],
+            "default": "JKS"
+          }
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Truststore Algo",
+          "name": "sslTrustStoreAlgo"
+        },
+        {
+          "widget-type": "password",
+          "label": "Truststore Pass",
+          "name": "sslTrustStorePass"
+        }
+      ]
+    }
+  ]
 }

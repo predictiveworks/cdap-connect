@@ -6,8 +6,122 @@
 
   "icon": {
     "arguments": {
-      "data": "data:image/png;base64,..."
+      "data": "data:image/png;base64,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"
     },
     "type": "inline"
-  }
+  },
+  "configuration-groups": [
+    {
+      "label": "Plugin Configuration",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "Reference Name",
+          "name": "referenceName"
+        }
+      ]
+    },
+    {
+      "label": "Endpoint Configuration",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "Server URL",
+          "name": "serverUrl"
+        }
+      ]
+    },
+    {
+      "label": "Data Configuration",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "Threads",
+          "name": "numThreads",
+          "widget-attributes": {
+            "default": "1"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Authentication",
+      "properties": [
+        {
+          "widget-type": "password",
+          "label": "Token",
+          "name": "authToken"
+        }
+      ]
+    },
+    {
+      "label": "SSL Security",
+      "properties": [
+        {
+          "widget-type": "csv",
+          "label": "Cipher Suites",
+          "name": "sslCipherSuites",
+          "widget-attributes": {
+            "delimiter": ","
+          }
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Keystore Path",
+          "name": "sslKeyStorePath"
+        },
+        {
+          "widget-type": "select",
+          "label": "Keystore Type",
+          "name": "sslKeyStoreType",
+          "widget-attributes": {
+            "values": [
+              "JKS",
+              "JCEKS",
+              "PKCS12"
+            ],
+            "default": "JKS"
+          }
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Keystore Algo",
+          "name": "sslKeyStoreAlgo"
+        },
+        {
+          "widget-type": "password",
+          "label": "Keystore Pass",
+          "name": "sslKeyStorePass"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Truststore Path",
+          "name": "sslTrustStorePath"
+        },
+        {
+          "widget-type": "select",
+          "label": "Truststore Type",
+          "name": "sslTrustStoreType",
+          "widget-attributes": {
+            "values": [
+              "JKS",
+              "JCEKS",
+              "PKCS12"
+            ],
+            "default": "JKS"
+          }
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Truststore Algo",
+          "name": "sslTrustStoreAlgo"
+        },
+        {
+          "widget-type": "password",
+          "label": "Truststore Pass",
+          "name": "sslTrustStorePass"
+        }
+      ]
+    }
+  ]
 }

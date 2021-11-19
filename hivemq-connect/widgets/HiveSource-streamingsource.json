@@ -11,7 +11,6 @@
     },
     "type": "inline"
   },
-
   "configuration-groups": [
     {
       "label": "Plugin Configuration",
@@ -92,7 +91,7 @@
       ]
     },
     {
-      "label": "Security",
+      "label": "SSL Security",
       "properties": [
         {
           "widget-type": "csv",

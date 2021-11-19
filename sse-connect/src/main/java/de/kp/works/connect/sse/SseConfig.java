@@ -19,7 +19,7 @@ package de.kp.works.connect.sse;
  */
 
 import com.google.common.base.Strings;
-import de.kp.works.connect.common.SslConfig;
+import de.kp.works.connect.common.BaseConfig;
 import de.kp.works.stream.sse.SseNames;
 import io.cdap.cdap.api.annotation.Description;
 import io.cdap.cdap.api.annotation.Macro;
@@ -27,7 +27,28 @@ import io.cdap.cdap.api.annotation.Macro;
 import javax.annotation.Nullable;
 import java.util.Properties;
 
-public class SseConfig extends SslConfig {
+public class SseConfig extends BaseConfig {
+
+    protected static final String CIPHER_SUITES_DESC = "A comma-separated list of cipher suites which are allowed for "
+            + "a secure connection. Samples are TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256, TLS_RSA_WITH_AES_128_GCM_SHA256 and others.";
+
+    protected static final String KEYSTORE_ALGO_DESC = "The algorithm used for the client SSL keystore.";
+
+    protected static final String KEYSTORE_PASS_DESC = "The password of the client SSL keystore.";
+
+    protected static final String KEYSTORE_PATH_DESC = "A path to a file which contains the client SSL keystore.";
+
+    protected static final String KEYSTORE_TYPE_DESC = "The format of the client SSL keystore. Supported values are 'JKS', "
+            + "'JCEKS' and 'PKCS12'. Default is 'JKS'.";
+
+    protected static final String TRUSTSTORE_PATH_DESC = "A path to a file which contains the client SSL truststore.";
+
+    protected static final String TRUSTSTORE_TYPE_DESC = "The format of the client SSL truststore. Supported values are 'JKS', "
+            + "'JCEKS' and 'PKCS12'. Default is 'JKS'.";
+
+    protected static final String TRUSTSTORE_ALGO_DESC = "The algorithm used for the client SSL truststore.";
+
+    protected static final String TRUSTSTORE_PASS_DESC = "The password of the client SSL truststore.";
 
     @Description("The URL of the SSE server.")
     @Macro
@@ -42,6 +63,53 @@ public class SseConfig extends SslConfig {
     @Macro
     @Nullable
     public String numThreads;
+    /*
+     * TLS SECURITY
+     */
+    @Description(CIPHER_SUITES_DESC)
+    @Macro
+    @Nullable
+    public String sslCipherSuites;
+
+    @Description(KEYSTORE_PATH_DESC)
+    @Macro
+    @Nullable
+    public String sslKeyStorePath;
+
+    @Description(KEYSTORE_TYPE_DESC)
+    @Macro
+    @Nullable
+    public String sslKeyStoreType;
+
+    @Description(KEYSTORE_ALGO_DESC)
+    @Macro
+    @Nullable
+    public String sslKeyStoreAlgo;
+
+    @Description(KEYSTORE_PASS_DESC)
+    @Macro
+    @Nullable
+    public String sslKeyStorePass;
+
+    @Description(TRUSTSTORE_PATH_DESC)
+    @Macro
+    @Nullable
+    public String sslTrustStorePath;
+
+    @Description(TRUSTSTORE_TYPE_DESC)
+    @Macro
+    @Nullable
+    public String sslTrustStoreType;
+
+    @Description(TRUSTSTORE_ALGO_DESC)
+    @Macro
+    @Nullable
+    public String sslTrustStoreAlgo;
+
+    @Description(TRUSTSTORE_PASS_DESC)
+    @Macro
+    @Nullable
+    public String sslTrustStorePass;
 
     public void validate() {
         super.validate();
