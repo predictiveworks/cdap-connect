@@ -7,7 +7,7 @@
 
   "icon": {
     "arguments": {
-      "data": "data:image/png;base64,..."
+      "data": "data:image/png;base64,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"
     },
     "type": "inline"
   },
@@ -20,6 +20,143 @@
           "widget-type": "textbox",
           "label": "Reference Name",
           "name": "referenceName"
+        }
+      ]
+    },
+    {
+      "label": "Endpoint Configuration",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "Broker Host",
+          "name": "mqttHost"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Broker Port",
+          "name": "mqttPort"
+        }
+      ]
+    },
+    {
+      "label": "Data Configuration",
+      "properties": [
+        {
+          "widget-type": "csv",
+          "label": "Topics",
+          "name": "mqttTopics",
+          "widget-attributes": {
+            "delimiter": ","
+          }
+        },
+        {
+          "widget-type": "select",
+          "label": "QoS",
+          "name": "mqttQoS",
+          "widget-attributes": {
+            "values": [
+              "at-most-once",
+              "at-least-once",
+              "exactly-once"
+            ],
+            "default": "at-most-once"
+          }
+        },
+        {
+          "widget-type": "select",
+          "label": "Version",
+          "name": "mqttVersion",
+          "widget-attributes": {
+            "values": [
+              "mqtt-v311",
+              "mqtt-v5"
+            ],
+            "default": "mqtt-v311"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Authentication",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "Username",
+          "name": "mqttUser"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Password",
+          "name": "mqttPass"
+        }
+      ]
+    },
+    {
+      "label": "Security",
+      "properties": [
+        {
+          "widget-type": "csv",
+          "label": "Cipher Suites",
+          "name": "sslCipherSuites",
+          "widget-attributes": {
+            "delimiter": ","
+          }
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Keystore Path",
+          "name": "sslKeyStorePath"
+        },
+        {
+          "widget-type": "select",
+          "label": "Keystore Type",
+          "name": "sslKeyStoreType",
+          "widget-attributes": {
+            "values": [
+              "JKS",
+              "JCEKS",
+              "PKCS12"
+            ],
+            "default": "JKS"
+          }
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Keystore Algo",
+          "name": "sslKeyStoreAlgo"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Keystore Pass",
+          "name": "sslKeyStorePass"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Truststore Path",
+          "name": "sslTrustStorePath"
+        },
+        {
+          "widget-type": "select",
+          "label": "Truststore Type",
+          "name": "sslTrustStoreType",
+          "widget-attributes": {
+            "values": [
+              "JKS",
+              "JCEKS",
+              "PKCS12"
+            ],
+            "default": "JKS"
+          }
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Truststore Algo",
+          "name": "sslTrustStoreAlgo"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Truststore Pass",
+          "name": "sslTrustStorePass"
         }
       ]
     }

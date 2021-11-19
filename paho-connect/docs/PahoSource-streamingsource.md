@@ -9,10 +9,9 @@ and to transform them into structured data flow records.
 **Reference Name**: Name used to uniquely identify this source for lineage, annotating metadata, etc.
 
 ### Endpoint Configuration
-**Broker Address**:
+**Broker Address**: The address of the MQTT broker to connect to, including protocol and port.
 
 ### Data Configuration:
-**Topics**: The address of the MQTT broker to connect to, including protocol and port.
 
 **Topics**: The comma-separated list of MQTT topics to listen to.
 

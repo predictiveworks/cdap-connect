@@ -48,7 +48,7 @@ public enum MqttQoS {
 	 * to a client. If the client is disconnected at the time the server receives the 
 	 * publication, the publication might be discarded, depending on the server implementation.
 	 */
-	AT_MOST_ONCE("at_most_once"),
+	AT_MOST_ONCE("at-most-once"),
 	/*
 	 * At least once: The message is always delivered at least once. It might be delivered 
 	 * multiple times if there is a failure before an acknowledgment is received by the sender. 
@@ -56,7 +56,7 @@ public enum MqttQoS {
 	 * that the message has been published by the receiver. The message is stored in case the
 	 * message must be sent again.
 	 */
-	AT_LEAST_ONCE("at_least_once"),
+	AT_LEAST_ONCE("at-least-once"),
 	/*
 	 * Exactly once: The message is always delivered exactly once. The message must be stored 
 	 * locally at the sender, until the sender receives confirmation that the message has been 
@@ -66,7 +66,7 @@ public enum MqttQoS {
 	 * and acknowledgement sequence is used than for AT_LEAST_ONCE to ensure no duplication of 
 	 * messages occurs.
 	 */
-	EXACTLY_ONCE("exactly_once");
+	EXACTLY_ONCE("exactly-once");
 
 	private final String value;
 

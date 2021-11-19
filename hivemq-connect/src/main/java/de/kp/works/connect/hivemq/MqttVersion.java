@@ -20,8 +20,8 @@ package de.kp.works.connect.hivemq;
 
 public enum MqttVersion {
 
-    MQTT_V311("mqtt_v311"),
-    MQTT_V5("mqtt_v5");
+    MQTT_V311("mqtt-v311"),
+    MQTT_V5("mqtt-v5");
 
     private final String value;
 
