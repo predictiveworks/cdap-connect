@@ -139,7 +139,7 @@
           "name": "authToken"
         },
         {
-          "widget-type": "textbox",
+          "widget-type": "password",
           "label": "Password",
           "name": "password"
         }

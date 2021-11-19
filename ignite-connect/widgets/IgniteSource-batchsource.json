@@ -5,7 +5,7 @@
 
   "icon": {
     "arguments": {
-      "data": "data:image/png;base64,..."
+      "data": "data:image/png;base64,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"
     },
     "type": "inline"
   },
@@ -45,10 +45,13 @@
           "name": "cacheName"
        },
        {
-          "widget-type": "textbox",
+          "widget-type": "csv",
           "label": "Field Names",
-          "name": "fieldNames"
-        },
+          "name": "fieldNames",
+         "widget-attributes": {
+           "delimiter": ","
+         }
+       },
         {
           "widget-type": "textbox",
           "label": "Partitions",
@@ -61,26 +64,26 @@
       ]
     },
     {
-      "label": "Basic Authentication",
+      "label": "Authentication",
       "properties": [
         {
           "widget-type": "textbox",
-          "label": "User Name",
+          "label": "Username",
           "name": "user"
         },
         {
-          "widget-type": "textbox",
+          "widget-type": "password",
           "label": "Password",
           "name": "password"
         }
       ]
     },
     {
-      "label": "Connection Security",
+      "label": "SSL Security",
       "properties": [
          {
-          "widget-type": "textbox",
-          "label": "Transport Security",
+          "widget-type": "select",
+          "label": "Use SSL",
           "name": "sslMode",
           "widget-attributes": {
             "values": [
@@ -91,7 +94,7 @@
           }
         },
         {
-          "widget-type": "textbox",
+          "widget-type": "select",
           "label": "Verify Certificates",
           "name": "sslVerify",
           "widget-attributes": {
@@ -103,8 +106,16 @@
           }
         },
         {
+          "widget-type": "csv",
+          "label": "Cipher Suites",
+          "name": "sslCipherSuites",
+          "widget-attributes": {
+            "delimiter": ","
+          }
+        },
+        {
           "widget-type": "textbox",
-          "label": "Keystore Location",
+          "label": "Keystore Path",
           "name": "sslKeyStorePath"
         },
         {
@@ -121,25 +132,18 @@
           }
         },
         {
+          "widget-type": "textbox",
+          "label": "Keystore Algo",
+          "name": "sslKeyStoreAlgo"
+        },
+        {
           "widget-type": "password",
-          "label": "Keystore Password",
+          "label": "Keystore Pass",
           "name": "sslKeyStorePass"
         },
         {
-          "widget-type": "select",
-          "label": "Keystore Algorithm",
-          "name": "sslKeyStoreAlgo",
-          "widget-attributes": {
-            "values": [
-              "SunX509"
-            ],
-            "default": "SunX509"
-
-          }
-        },
-        {
           "widget-type": "textbox",
-          "label": "Truststore Location",
+          "label": "Truststore Path",
           "name": "sslTrustStorePath"
         },
         {
@@ -157,29 +161,16 @@
           }
         },
         {
-          "widget-type": "password",
-          "label": "Truststore Password",
-          "name": "sslTrustStorePass"
-        },
-        {
-          "widget-type": "select",
-          "label": "Truststore Algorithm",
-          "name": "sslTrustStoreAlgo",
-          "widget-attributes": {
-            "values": [
-              "SunX509"
-            ],
-            "default": "SunX509"
-
-          }
-        },
-        {
           "widget-type": "textbox",
-          "label": "Cipher Suites",
-          "name": "sslCipherSuites"
+          "label": "Truststore Algo",
+          "name": "sslTrustStoreAlgo"
+        },
+        {
+          "widget-type": "password",
+          "label": "Truststore Pass",
+          "name": "sslTrustStorePass"
         }
       ]
     }
-
   ]
 }

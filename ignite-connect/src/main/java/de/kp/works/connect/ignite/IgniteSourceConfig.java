@@ -31,7 +31,7 @@ public class IgniteSourceConfig extends IgniteConfig {
 
 	private static final long serialVersionUID = -2818369977710528068L;
 
-	@Description("The comma-separated list of field names that are used to extract from the specified Ignite cache.")
+	@Description("The comma-separated list of field names that are used to extract from the specified cache.")
 	@Macro
 	public String fieldNames;
 

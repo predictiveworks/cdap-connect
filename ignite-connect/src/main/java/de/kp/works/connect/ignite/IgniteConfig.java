@@ -18,26 +18,48 @@ package de.kp.works.connect.ignite;
  * 
  */
 
-import java.nio.ByteBuffer;
-import java.util.*;
-
-import javax.annotation.Nullable;
-import javax.cache.Cache;
-
-import de.kp.works.connect.common.SslConfig;
+import com.google.common.base.Strings;
+import de.kp.works.connect.common.BaseConfig;
+import io.cdap.cdap.api.annotation.Description;
+import io.cdap.cdap.api.annotation.Macro;
+import io.cdap.cdap.api.data.schema.Schema;
 import org.apache.ignite.cache.query.ScanQuery;
 import org.apache.ignite.client.ClientCache;
 import org.apache.ignite.client.IgniteClient;
 
-import com.google.common.base.Strings;
+import javax.annotation.Nullable;
+import javax.cache.Cache;
+import java.nio.ByteBuffer;
+import java.util.*;
 
-import io.cdap.cdap.api.annotation.Description;
-import io.cdap.cdap.api.annotation.Macro;
-import io.cdap.cdap.api.data.schema.Schema;
-
-public class IgniteConfig extends SslConfig {
+public class IgniteConfig extends BaseConfig {
 
 	private static final long serialVersionUID = 2258065855745759770L;
+
+	protected static final String SSL_VERIFY_DESC = "An indicator to determine whether certificates have to be verified. "
+			+ "Supported values are 'true' and 'false'. If 'false', untrusted trust "
+			+ "certificates (e.g. self signed), will not lead to an error.";
+
+	protected static final String CIPHER_SUITES_DESC = "A comma-separated list of cipher suites which are allowed for "
+			+ "a secure connection. Samples are TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256, TLS_RSA_WITH_AES_128_GCM_SHA256 and others.";
+
+	protected static final String KEYSTORE_ALGO_DESC = "The algorithm used for the client SSL keystore.";
+
+	protected static final String KEYSTORE_PASS_DESC = "The password of the client SSL keystore.";
+
+	protected static final String KEYSTORE_PATH_DESC = "A path to a file which contains the client SSL keystore.";
+
+	protected static final String KEYSTORE_TYPE_DESC = "The format of the client SSL keystore. Supported values are 'JKS', "
+			+ "'JCEKS' and 'PKCS12'.";
+
+	protected static final String TRUSTSTORE_PATH_DESC = "A path to a file which contains the client SSL truststore.";
+
+	protected static final String TRUSTSTORE_TYPE_DESC = "The format of the client SSL truststore. Supported values are 'JKS', "
+			+ "'JCEKS' and 'PKCS12'.";
+
+	protected static final String TRUSTSTORE_ALGO_DESC = "The algorithm used for the client SSL truststore.";
+
+	protected static final String TRUSTSTORE_PASS_DESC = "The password of the client SSL truststore.";
 
 	@Description("The host of the Apache Ignite cluster.")
 	@Macro
@@ -62,12 +84,63 @@ public class IgniteConfig extends SslConfig {
 	@Macro
 	@Nullable
 	public String password;
-
+	/*
+	 * TLS SECURITY
+	 */
 	@Description("Indicator to determine whether SSL transport security is used or not.")
 	@Macro
-	@Nullable
 	public String sslMode;
-	
+
+	@Description(SSL_VERIFY_DESC)
+	@Macro
+	@Nullable
+	public String sslVerify;
+
+	@Description(CIPHER_SUITES_DESC)
+	@Macro
+	@Nullable
+	public String sslCipherSuites;
+
+	@Description(KEYSTORE_PATH_DESC)
+	@Macro
+	@Nullable
+	public String sslKeyStorePath;
+
+	@Description(KEYSTORE_TYPE_DESC)
+	@Macro
+	@Nullable
+	public String sslKeyStoreType;
+
+	@Description(KEYSTORE_ALGO_DESC)
+	@Macro
+	@Nullable
+	public String sslKeyStoreAlgo;
+
+	@Description(KEYSTORE_PASS_DESC)
+	@Macro
+	@Nullable
+	public String sslKeyStorePass;
+
+	@Description(TRUSTSTORE_PATH_DESC)
+	@Macro
+	@Nullable
+	public String sslTrustStorePath;
+
+	@Description(TRUSTSTORE_TYPE_DESC)
+	@Macro
+	@Nullable
+	public String sslTrustStoreType;
+
+	@Description(TRUSTSTORE_ALGO_DESC)
+	@Macro
+	@Nullable
+	public String sslTrustStoreAlgo;
+
+	@Description(TRUSTSTORE_PASS_DESC)
+	@Macro
+	@Nullable
+	public String sslTrustStorePass;
+
 	public IgniteConfig() {
 	}
 	
