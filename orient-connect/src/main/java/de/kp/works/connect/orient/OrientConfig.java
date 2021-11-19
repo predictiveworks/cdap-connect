@@ -32,15 +32,15 @@ public class OrientConfig extends BaseConfig {
 
 	/*** CONNECTION PARAMETERS ***/
 	
-	@Description("The host (e.g. IP address) of the OrientDB.")
+	@Description("The host (e.g. IP address) of the database.")
 	@Macro
 	public String host;
 	
-	@Description("The port of the OrientDB.")
+	@Description("The port of the database.")
 	@Macro
 	public Integer port;
 
-	@Description("The name of the OrientDB database.")
+	@Description("The name of the database.")
 	@Macro
 	public String database;
 
@@ -101,7 +101,7 @@ public class OrientConfig extends BaseConfig {
 		
 		if (port < 0) {
 			throw new IllegalArgumentException(
-					String.format("[%s] The database post must nonnegative.", this.getClass().getName()));
+					String.format("[%s] The database post must non negative.", this.getClass().getName()));
 		}
 		
 		if (Strings.isNullOrEmpty(database)) {

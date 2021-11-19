@@ -1,11 +1,11 @@
 {
   "metadata": {"spec-version": "1.5"},
 
-  "display-name": "OrientDB Sink",
+  "display-name": "Orient Sink",
 
   "icon": {
     "arguments": {
-      "data": "data:image/png;base64,..."
+      "data": "data:image/png;base64,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"
     },
     "type": "inline"
   },
@@ -41,7 +41,7 @@
       "properties": [
         {
           "widget-type": "textbox",
-          "label": "Database",
+          "label": "Database Name",
           "name": "database"
         },
         {
@@ -75,7 +75,7 @@
       "properties": [
         {
           "widget-type": "textbox",
-          "label": "User Name",
+          "label": "Username",
           "name": "user"
         },
         {
