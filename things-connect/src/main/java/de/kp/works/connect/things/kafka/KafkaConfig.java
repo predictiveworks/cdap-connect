@@ -90,21 +90,6 @@ public class KafkaConfig extends BaseConfig implements Serializable {
 	@Nullable
 	@Macro
 	protected Long defaultInitialOffset;
-
-	/**
-	 * 
-	 * KAFKA OUTPUT EXTENSIONS
-	 * 
-	 *****/
-
-	/*
-	 * Additional fields that can be used (optional) to extend the output schema for
-	 * the Kafka message
-	 */
-	@Description(KafkaConstants.KAFKA_TIME_FIELD)
-	@Nullable
-	protected String timeField;
-
 	/**
 	 * 
 	 * KAFKA SECURITY PARAMETERS
@@ -265,16 +250,6 @@ public class KafkaConfig extends BaseConfig implements Serializable {
 	@Nullable
 	public String getKeytabLocation() {
 		return keytabLocation;
-	}
-
-	@Nullable
-	public String getTimeField() {
-		/*
-		 * Each event is enriched by a time field, that contains the read time of the
-		 * Kafka event batch; the field name is either provided by the user or it is set
-		 * internal
-		 */
-		return Strings.isNullOrEmpty(timeField) ? "_timestamp" : timeField;
 	}
 
 	@Override

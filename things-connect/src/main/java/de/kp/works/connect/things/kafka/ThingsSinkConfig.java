@@ -28,56 +28,35 @@ public class ThingsSinkConfig extends BaseConfig {
 
 	private static final long serialVersionUID = 1401383241435144467L;
 
-	public static final String HOST = "host";
-	public static final String PORT = "port";
-
-	public static final String USER = "user";
-	public static final String PASSWORD = "password";
-
-	public static final String ASSET_NAME = "assetName";
-
-	public static final String ASSET_LIMIT = "assetLimit";
-	public static final String ASSET_TYPE = "assetType";
-
-	public static final String ASSET_FEATURES = "assetFeatures";
-
-	@Name(HOST)
 	@Description("The host of the Thingsboard server.")
 	@Macro
 	public String host;
 
-	@Name(PORT)
 	@Description("The port of the Thingsboard server.")
 	@Macro
 	public String port;
 
-	@Name(USER)
 	@Description("User name. E.g. 'tenant@thingsboard.org'.")
 	@Macro
 	public String user;
 
-	@Name(PASSWORD)
 	@Description("Password. E.g. 'tenant'.")
 	@Macro
 	public String password;
 
-	@Name(ASSET_NAME)
-	@Description("The name of the asset name.")
+	@Description("The name of the asset.")
 	@Macro
 	public String assetName;
 
-	@Name(ASSET_TYPE)
-	@Description("Asset type.")
+	@Description("The asset type.")
 	@Macro
 	public String assetType;
 
-	@Name(ASSET_LIMIT)
 	@Description("The number of assets of the specified asset type to take into account to decide whether "
 			+ "an asset with the provided name already exists. Default is 1000.")
 	@Macro
 	public String assetLimit;
 	   
-	@Name(ASSET_FEATURES)
 	@Description("A comma-separated list of field names, that describe the features of the sending asset.")
 	@Macro
 	public String assetFeatures;
