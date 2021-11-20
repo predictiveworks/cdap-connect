@@ -7,7 +7,7 @@
 
   "icon": {
     "arguments": {
-      "data": "data:image/png;base64,..."
+      "data": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAABMhJREFUaIHtmMtvG0Ucx7+zO971Y+04jzaxHWibh0MjiOgDtY1ITxVIVBEgqEQruJQDd24FDjkgVFX8B9xbKpAQUpGKOFRUUEp4lAAtTtM4VRInaWOT+LG73sfMcDBOI0TshEbNlvpzsXd+ntX3s7Mz3h2ggbcg1S8jI0Ia92VOES6Og0hbmakuBEII4FzSTZweGSEcAGi1OO7LnCLASUjyEiC2LuU6EJAA8Ddv0gwAfAAAK5deAl4DJM9LVBAAyDIBjldbVkS4gPJwSKwgOKBUD7w9GTZAQ8RrNES8RkPEazREvEZDxGvQWsXumBJ45XA49qDCrAXnQnz2TWlhct421/pNTZHFvON8nzKXNj/axlnMO06tek2RgiHcr8cMT4jU49GYIwAQb5HVp3v8YSIRGCbnY2mrsD1KFb3MOKUSVEqk1IxlAMDQk8Go5QoxmjLzADCwS9WyBebM5VwrEiR0aCAU/XmiXJjPuTYA9CSU4MAuNUwpIbbD+WiqnJ/LuRYhwKH+QLQ5LFMAWCoy98p1c7lWzroj8vax1m4fhVQyOeOAYAJ4pk+N7t6hhlrDRBk+FGoHAJ8MMjyoxY4dDserfV8eisSCfkkGgCN7wy3JTkV7cTDcXq3v6/VH2pokJT1nGXpZsHdOtCZlAnJwd6DphQNae8nkrGRyxln9N766IxJQifz5Ff3uv9VSM67+xnO+xwCgK6YEZhYdI+SXaEcLVe4suXZHi+yfmqusNHt61eiH57Ppd1/f1kvI39sHADI5Zv540yoAFo7sDW2LajKNBCWamraKG5mfdUUkieDoQa0NAAyTs0urTl4yGeNMQAsQuSfhC6XnHT0ckGiyUwlJBGSpyGwmILY3yYrrCpE3hHt7wdEHulRtbLJcAoBIQKLxVqrGWqjikyEvl5gLAP071PDJ55sSAHDtVrlwbdIq3peIEEDJ5AwAylblczXTi66eTCjBnoQSvDiqL4aDhA50+yMyAaYWHB0Ann0qFLVdwY8e1NpkSZBD/YHmqkj/TrWpJSKpXTE19PGl/AwTldsok3XKV25Ulv7FZVZz6V2niECtIU7PWUZ3XA3GW32B9LxtqoosDQ8qHRBE3Jq1DQDY36c2X/rFyNqu4L9O2YWXBrU4IZUttat/mLkvrpaynW1UfWs4unN0vFwAgLzOndRMpf96qCtSj4mMo786FIgxLoTDIByTMZUSaVfMp335QynbHpUVApCvftJz1T77ev3RgS5VW32e2axrBVVZbtZkapQF64opof1JNQIAlg3+222rdF8iF0f1hX+2jU1aBb3MGABMzNrGjWm7OH3n3uPDhe+KC9ubfcrcn661s0Pxf3K5mFnd/8LV0h2VQvr9tlW0bcGr7Z9eLmRCfiJ/e93Ia0FCu+JqEAB0k7F6Iitbpsffnx0nhNScUF5DCBE+915nH/Co/LNHgoTu6Q2EH1SYWlybMIsFQ7hr1WuKbGvy+Q48EWje/Fgbg3MhZu+65YJh/zeRyXnbPHM+l978aJvP/2aONES8RkPEazREvEZDxGs0RLzGiggRxFn1evIwQCTArh7cGxEizgK8+eGQIYAQUS7Y2WrLytNv0k2cHpczQiL8hAB8WxNwfRAIh0N81MceP7PVWRqsxV/WUwTjjinFkQAAAABJRU5ErkJggg=="
     },
     "type": "inline"
   },
@@ -43,7 +43,162 @@
         }
 
       ]
+    },
+    {
+      "label": "Data Configuration",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "Subscriptions",
+          "name": "brokerSubscriptions"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Threads",
+          "name": "numThreads",
+          "widget-attributes": {
+            "default": "1"
+          }
+        }
+      ]
+    },
+    {
+      "label": "SSL Server Security",
+      "properties": [
+        {
+          "widget-type": "csv",
+          "label": "Cipher Suites",
+          "name": "serverSslCipherSuites",
+          "widget-attributes": {
+            "delimiter": ","
+          }
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Keystore Path",
+          "name": "serverSslKeyStorePath"
+        },
+        {
+          "widget-type": "select",
+          "label": "Keystore Type",
+          "name": "serverSslKeyStoreType",
+          "widget-attributes": {
+            "values": [
+              "JKS",
+              "JCEKS",
+              "PKCS12"
+            ],
+            "default": "JKS"
+          }
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Keystore Algo",
+          "name": "serverSslKeyStoreAlgo"
+        },
+        {
+          "widget-type": "password",
+          "label": "Keystore Pass",
+          "name": "serverSslKeyStorePass"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Truststore Path",
+          "name": "serverSslTrustStorePath"
+        },
+        {
+          "widget-type": "select",
+          "label": "Truststore Type",
+          "name": "serverSslTrustStoreType",
+          "widget-attributes": {
+            "values": [
+              "JKS",
+              "JCEKS",
+              "PKCS12"
+            ],
+            "default": "JKS"
+          }
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Truststore Algo",
+          "name": "serverSslTrustStoreAlgo"
+        },
+        {
+          "widget-type": "password",
+          "label": "Truststore Pass",
+          "name": "serverSslTrustStorePass"
+        }
+      ]
+    },
+    {
+      "label": "SSL Broker Security",
+      "properties": [
+        {
+          "widget-type": "csv",
+          "label": "Cipher Suites",
+          "name": "brokerSslCipherSuites",
+          "widget-attributes": {
+            "delimiter": ","
+          }
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Keystore Path",
+          "name": "brokerSslKeyStorePath"
+        },
+        {
+          "widget-type": "select",
+          "label": "Keystore Type",
+          "name": "brokerSslKeyStoreType",
+          "widget-attributes": {
+            "values": [
+              "JKS",
+              "JCEKS",
+              "PKCS12"
+            ],
+            "default": "JKS"
+          }
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Keystore Algo",
+          "name": "brokerSslKeyStoreAlgo"
+        },
+        {
+          "widget-type": "password",
+          "label": "Keystore Pass",
+          "name": "brokerSslKeyStorePass"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Truststore Path",
+          "name": "brokerSslTrustStorePath"
+        },
+        {
+          "widget-type": "select",
+          "label": "Truststore Type",
+          "name": "brokerSslTrustStoreType",
+          "widget-attributes": {
+            "values": [
+              "JKS",
+              "JCEKS",
+              "PKCS12"
+            ],
+            "default": "JKS"
+          }
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Truststore Algo",
+          "name": "brokerSslTrustStoreAlgo"
+        },
+        {
+          "widget-type": "password",
+          "label": "Truststore Pass",
+          "name": "brokerSslTrustStorePass"
+        }
+      ]
     }
   ]
-
 }
