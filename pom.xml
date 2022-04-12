@@ -64,7 +64,7 @@
 
  	  <!-- CDAP v6.2.0 compliant -->
       <cdap.version>6.2.0</cdap.version>
-      <hadoop.version>2.8.0</hadoop.version>
+      <hadoop.version>3.2.3</hadoop.version>
       <plugin.version>2.4.0</plugin.version>
 
 	  <!-- Apache Spark 
