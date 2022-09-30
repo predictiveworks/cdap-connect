@@ -27,7 +27,7 @@
         <docs.dir>docs</docs.dir>
         <widgets.dir>widgets</widgets.dir>
 
-        <redshift-jdbc.version>2.1.0.1</redshift-jdbc.version>
+        <redshift-jdbc.version>2.1.0.8</redshift-jdbc.version>
 
     </properties>
 
